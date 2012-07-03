@@ -11,9 +11,8 @@ public abstract class AbstractProcess {
 
 	public String getIdentifier() {
 		return this.getClass().getSimpleName();
-	}
-	
-	public abstract String getDetail();
+	}	
+	public abstract List<Metadata> getMetadata();
 	
 	public abstract List<String> getInputIdentifiers();
 	public abstract List<String> getOutputIdentifiers();

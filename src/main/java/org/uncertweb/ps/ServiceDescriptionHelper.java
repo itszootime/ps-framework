@@ -173,14 +173,7 @@ public class ServiceDescriptionHelper {
 			.setAttribute("maxOccurs", (dataDescription.getMaxOccurs() == Integer.MAX_VALUE ? "unbounded" : String.valueOf(dataDescription.getMaxOccurs())));
 		
 		// add metadata
-		if (metadata != null && metadata.size() > 0) {
-			String metadataText = "";
-			for (Metadata m : metadata) {
-				metadataText += "\n@" + m.getKey() + " " + m.getValue();
-			}
-			// looks like jdom strips whitespace at start and end of string
-			element.addContent(new Element("annotation", XSD_NS).addContent(new Element("documentation", XSD_NS).setText(metadataText)));
-		}
+		addMetadata(element, metadata);
 		
 		// add type
 		List<Class<?>> supportedSimpleTypes = Arrays.asList(new Class<?>[] {
@@ -242,6 +235,17 @@ public class ServiceDescriptionHelper {
 		}
 		
 		return element;
+	}
+
+	private static void addMetadata(Element element, List<Metadata> metadata) {
+		if (metadata != null && metadata.size() > 0) {
+			String metadataText = "";
+			for (Metadata m : metadata) {
+				metadataText += "\n@" + m.getKey() + " " + m.getValue();
+			}
+			// looks like jdom strips whitespace at start and end of string
+			element.addContent(new Element("annotation", XSD_NS).addContent(new Element("documentation", XSD_NS).setText(metadataText)));
+		}
 	}
 
 	public static Document generateWSDL(String serviceURL) {
@@ -315,9 +319,7 @@ public class ServiceDescriptionHelper {
 			portOutput.setAttribute("message", psNS.getPrefix() + ":" + process.getIdentifier() + "Response");
 
 			// add metadata
-			if (process.getDetail() != null) {
-				portOperation.addContent(new Element("annotation", XSD_NS).addContent(new Element("documentation", XSD_NS).setText(process.getDetail())));
-			}
+			addMetadata(portOperation, process.getMetadata());
 			
 			// binding operations
 			Element bindingOperation = new Element("operation", wsdlNS);
