@@ -13,6 +13,8 @@ public abstract class AbstractProcess {
 		return this.getClass().getSimpleName();
 	}
 	
+	public abstract String getDetail();
+	
 	public abstract List<String> getInputIdentifiers();
 	public abstract List<String> getOutputIdentifiers();
 	

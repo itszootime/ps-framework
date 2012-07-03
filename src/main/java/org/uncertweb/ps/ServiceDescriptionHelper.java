@@ -314,6 +314,11 @@ public class ServiceDescriptionHelper {
 			portOperation.addContent(portOutput);
 			portOutput.setAttribute("message", psNS.getPrefix() + ":" + process.getIdentifier() + "Response");
 
+			// add metadata
+			if (process.getDetail() != null) {
+				portOperation.addContent(new Element("annotation", XSD_NS).addContent(new Element("documentation", XSD_NS).setText(process.getDetail())));
+			}
+			
 			// binding operations
 			Element bindingOperation = new Element("operation", wsdlNS);
 			binding.addContent(bindingOperation);
