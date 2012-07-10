@@ -15,8 +15,15 @@ public class SoapFault extends Element {
 	
 	public SoapFault(Code code, String string, String detail) {
 		this(code, string);
+		setDetail(detail);
+	}
+	
+	public void setDetail(String detail) {
 		// FIXME: proper detail structure required
-		this.addContent(new Element("detail").addContent(new Element("exception", Namespaces.PS).setText(detail)));
+		this.removeChild("detail");
+		if (detail != null) {
+			this.addContent(new Element("detail").addContent(new Element("exception", Namespaces.PS).setText(detail)));
+		}
 	}
 	
 }

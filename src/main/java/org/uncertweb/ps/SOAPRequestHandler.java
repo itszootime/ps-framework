@@ -371,7 +371,11 @@ public class SOAPRequestHandler {
 			else {
 				message += ".";
 			}
-			responseBody.addContent(new SoapFault(Code.Server, message));
+			SoapFault fault = new SoapFault(Code.Server, message);
+			if (e.getCause() != null) {
+				fault.setDetail(e.getCause().getMessage());
+			}
+			responseBody.addContent(fault);
 		}
 		catch (JDOMException e) {
 			logger.error("Problem reading/generating request/response.", e);
