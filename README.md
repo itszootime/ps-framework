@@ -62,6 +62,7 @@ A process is created by extending the `AbstractProcess` class. This class define
 Once your class has extended `AbstractProcess`, implement the `getInputIdentifiers` and `getOutputIdentifiers` methods. These methods should return a list of unique identifiers for the inputs and outputs of your process. The chosen identifiers will be used throughout the process class.
 
 ```java
+@Override
 public List<String> getInputIdentifiers() {
   return Arrays.asList(new String[] { "FirstInput", "SecondInput" });
 }
@@ -72,6 +73,7 @@ The types of these inputs and outputs are defined in the `getInputDataDescriptio
 At a minimum, the `DataDescription` object is constructed with one parameter: the class the input or output will be an instance of. This is used by the framework to determine which encoding class to use when parsing and generating data. The `DataDescription` object can also have a minimum and maximum number of occurrences, and a raw flag to tell the framework to bypass encoding classes when handling referenced data. This is most useful when processing large data (such as raster coverages), when you may not want to read the whole file into memory.
 
 ```java
+@Override
 public DataDescription getInputDataDescription(String identifier) {
   if (identifier.equals("FirstInput")) {
     // A is a double, minimum and maximum occurrences is 1 (default)
@@ -105,7 +107,7 @@ return outputs;
 
 Once complete, add the fully qualified name of your process class to the framework configuration file, `src/main/resources/config.json`.
 
-```javascript
+```json
 { 'encodingClasses': [],
   'gsonTypeAdapterClasses': [],
   'processClasses': [ 'com.example.YourProcessClass' ],
@@ -125,7 +127,7 @@ The resulting WAR file can be deployed using Tomcat.
 
 ### SOAP/WSDL
 
-The framework automatically generates a WSDL document and associated schema. These can are accessible through /service?wsdl and /service?schema respectively. The WSDL document can be used with client code generation tools such as [Apache Axis](http://axis.apache.org/axis2/java/core/) ([guide](http://axis.apache.org/axis2/java/core/docs/quickstartguide.html#clients)) and [Microsoft Visual Studio](http://www.microsoft.com/visualstudio/en-us) ([guide](http://www.techrepublic.com/article/easily-create-web-services-clients-with-visual-studio-net/1050426)), or workflow software such as [Taverna](http://www.taverna.org.uk/).
+The framework automatically generates a WSDL document and associated schema. These can are accessible through `/service?wsdl` and `/service?schema` respectively. The WSDL document can be used with client code generation tools such as [Apache Axis](http://axis.apache.org/axis2/java/core/) ([guide](http://axis.apache.org/axis2/java/core/docs/quickstartguide.html#clients)) and [Microsoft Visual Studio](http://www.microsoft.com/visualstudio/en-us) ([guide](http://www.techrepublic.com/article/easily-create-web-services-clients-with-visual-studio-net/1050426)), or workflow software such as [Taverna](http://www.taverna.org.uk/).
 
 If you wish to construct requests yourself, the child element of the SOAP Body should take the following form:
 
@@ -152,15 +154,15 @@ The child element of the SOAP Body in the response will take the following form:
 
 If any errors are encountered during request processing, the child element of the SOAP Body in the response will be a SOAP Fault.
 
-All SOAP requests should be sent using HTTP POST to /service/soap.
+All SOAP requests should be sent using HTTP POST to `/service/soap`.
 
 ### JSON
 
-The framework automatically generates a basic service description which accessible through /service?jsondesc. This description can help to build generic execution clients.
+The framework automatically generates a basic service description which accessible through `/service?jsondesc`. This description can help to build generic execution clients.
 
 Request objects should take the following form:
 
-```javascript
+```json
 { "ProcessIdentifierRequest": {
     "InputIdentifierA": 0.523, // data could be a value, array, object
     "InputIdentifierB": {
@@ -171,7 +173,7 @@ Request objects should take the following form:
 
 Response objects will take the following form:
 
-```javascript
+```json
 { "ProcessIdentifierResponse": {
     "OutputIdentifierA": 12.094
 } }
@@ -179,14 +181,14 @@ Response objects will take the following form:
 
 If any errors are encountered during request processing, an exception object is returned.
 
-```javascript
+```json
 { "ServiceException": {
     "message": "something bad happened",
     "detail": "here's more detail on why it happened"
 } }
 ```
 
-All JSON requests should be sent with HTTP POST to /service/json.
+All JSON requests should be sent with HTTP POST to `/service/json`.
 
 
 ## Supported data types
@@ -245,15 +247,35 @@ This has slightly different semantics to data with maximum occurrences set to a 
 </ps:SomeProcessRequest>
 ```
 
-## TODO
 
-### Implementing custom encoding
+## Custom encoding classes
 
 Binary encoding classes will always return as reference.
 
-### Image encoding
 
-Binary file transfer is possible, always returned as reference.
+## Adding metadata to process descriptions
 
-### Metadata
-`getMetadata`, `getInputMetadata`, `getOutputMetadata`
+To help describe your processes, metadata can be added. The `AbstractProcess` class defines three methods to support this: `getMetadata`, `getInputMetadata`, and `getOutputMetadata`. The former method should return metadata for the process itself, and the latter two should return metadata for each of the inputs and outputs.
+
+Metadata is returned as a list of `Metadata` objects. The `Metadata` object is essentially a key-value pair. The key can be any string, but here are some examples you may wish to use:
+
+* description
+* variable-units-of-measure
+* spatial-crss
+* spatial-resolutions
+
+An example `getInputMetadata` implementation may look like so:
+
+```java
+@Override
+public List<Metadata> getInputMetadata(String identifier) {
+  List<Metadata> metadata = new ArrayList<Metadata>();
+  if (identifier.equals("FirstInput")) {
+    metadata.add(new Metadata("description", "A length of something"));
+    metadata.add(new Metadata("variable-units-of-measure", "m"));
+  }
+  return metadata;
+}
+```
+
+When returned by a process class, the metadata is included in the generated XML schema as annotation elements. Metadata inclusion in the JSON service description is a planned feature.
