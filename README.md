@@ -121,6 +121,74 @@ mvn clean package
 The resulting WAR file can be deployed using Tomcat.
 
 
+## Using the service
+
+### SOAP/WSDL
+
+The framework automatically generates a WSDL document and associated schema. These can are accessible through /service?wsdl and /service?schema respectively. The WSDL document can be used with client code generation tools such as [Apache Axis](http://axis.apache.org/axis2/java/core/) ([guide](http://axis.apache.org/axis2/java/core/docs/quickstartguide.html#clients)) and [Microsoft Visual Studio](http://www.microsoft.com/visualstudio/en-us) ([guide](http://www.techrepublic.com/article/easily-create-web-services-clients-with-visual-studio-net/1050426)), or workflow software such as [Taverna](http://www.taverna.org.uk/).
+
+If you wish to construct requests yourself, the child element of the SOAP Body should take the following form:
+
+```xml
+<ps:ProcessIdentifierRequest xmlns:ps="http://www.uncertweb.org/ProcessingService">
+  <ps:InputIdentifierA>
+    <!-- inline data here -->
+  </ps:InputIdentifierA>
+  <ps:InputIdentifierB>
+    <ps:DataReference href="http://some.url/somedata.xml" mimeType="text/xml" />
+  </ps:InputIdentifierB>
+</ps:ProcessIdentifierRequest>
+```
+
+The child element of the SOAP Body in the response will take the following form:
+
+```xml
+<ps:ProcessIdentifierResponse xmlns:ps="http://www.uncertweb.org/ProcessingSerivce">
+  <ps:OuputIdentifierA>
+    <!-- inline or data reference here -->
+  </ps:OutputIdentifierA>
+</ps:ProcessIdentifierResponse>
+```
+
+If any errors are encountered during request processing, the child element of the SOAP Body in the response will be a SOAP Fault.
+
+All SOAP requests should be sent using HTTP POST to /service/soap.
+
+### JSON
+
+The framework automatically generates a basic service description which accessible through /service?jsondesc. This description can help to build generic execution clients.
+
+Request objects should take the following form:
+
+```javascript
+{ "ProcessIdentifierRequest": {
+    "InputIdentifierA": 0.523, // data could be a value, array, object
+    "InputIdentifierB": {
+      "DataReference": { "href": "http://some.url/somedata.xml", "mimeType": "text/xml" }
+    }
+} }
+```
+
+Response objects will take the following form:
+
+```javascript
+{ "ProcessIdentifierResponse": {
+    "OutputIdentifierA": 12.094
+} }
+```
+
+If any errors are encountered during request processing, an exception object is returned.
+
+```javascript
+{ "ServiceException": {
+    "message": "something bad happened",
+    "detail": "here's more detail on why it happened"
+} }
+```
+
+All JSON requests should be sent with HTTP POST to /service/json.
+
+
 ## Supported data types
 
 To allow the user to focus on the functionality of the process, encoding is automatically selected depending on the class of the input or output. This automatic selection can be controlled by implementing custom encoding classes. The framework has built-in support for GeoJSON, UncertML and the UncertWeb profiles of GML and O&M.
@@ -148,14 +216,14 @@ All classes in the UncertWeb O&M profile API are supported for both XML and JSON
 
 All classes in the UncertML API version 2.0 are supported for both XML and JSON encoding.
 
-### Basic
+### Primitives
 
-The following basic classes are supported for both XML and JSON encoding:
+The following primitive wrapper classes are supported for both XML and JSON encoding:
 
 * String
 * Double
 
-It is possible to use basic classes in arrays when creating a `DataDescription` for an input or output:
+It is possible to use primitive wrapper classes in arrays when creating a `DataDescription` for an input or output:
 
 ```java
 new DataDescription(Double[].class);
@@ -165,20 +233,19 @@ This has slightly different semantics to data with maximum occurrences set to a 
 
 ```xml
 <!-- new DataDescription(Double[].class); -->
-<SomeProcessRequest>
-  <AnArrayInput>1 2 3</AnArrayInput>
-</SomeProcessRequest>
+<ps:SomeProcessRequest xmlns:ps="http://www.uncertweb.org/ProcessingService">
+  <ps:SomeInput>1 2 3</ps:SomeInput>
+</ps:SomeProcessRequest>
+
 <!-- new DataDescription(Double.class, 1, Integer.MAX_VALUE) -->
-<SomeProcessRequest>
-  <MultiInput>1</MultiInput>
-  <MultiInput>2</MultiInput>
-  <MultiInput>3</MultiInput>
-</SomeProcessRequest>
+<ps:SomeProcessRequest xmlns:ps="http://www.uncertweb.org/ProcessingService">
+  <ps:SomeInput>1</ps:SomeInput>
+  <ps:SomeInput>2</ps:SomeInput>
+  <ps:SomeInput>3</ps:SomeInput>
+</ps:SomeProcessRequest>
 ```
 
 ## TODO
-
-### Executing a process
 
 ### Implementing custom encoding
 
