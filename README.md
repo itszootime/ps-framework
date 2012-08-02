@@ -77,7 +77,7 @@ public DataDescription getInputDataDescription(String identifier) {
     // A is a double, minimum and maximum occurrences is 1 (default)
     return new DataDescription(Double.class);
   } else if (identifier.equals("SecondInput")) {
-    // B is a double, minimum occurences is 1, but maximum is unbounded
+    // B is a double, minimum occurences is 1 and maximum is unbounded
     return new DataDescription(Double.class, 1, Integer.MAX_VALUE);
   }
 }
@@ -119,3 +119,74 @@ mvn clean package
 ```
 
 The resulting WAR file can be deployed using Tomcat.
+
+
+## Supported data types
+
+To allow the user to focus on the functionality of the process, encoding is automatically selected depending on the class of the input or output. This automatic selection can be controlled by implementing custom encoding classes. The framework has built-in support for GeoJSON, UncertML and the UncertWeb profiles of GML and O&M.
+
+### Geometry
+
+The following geometry classes in the [JTS Topology Suite](http://www.vividsolutions.com/jts/jtshome.html) will be encoded as GML (UncertWeb profile) or GeoJSON:
+
+* Point
+* LineString
+* Polygon
+* MultiPoint
+* MultiPolygon
+* MultiLineString
+
+Plus from the UncertWeb GML profile API:
+
+* RectifiedGrid
+
+### Observations
+
+All classes in the UncertWeb O&M profile API are supported for both XML and JSON encoding.
+
+### Uncertainty
+
+All classes in the UncertML API version 2.0 are supported for both XML and JSON encoding.
+
+### Basic
+
+The following basic classes are supported for both XML and JSON encoding:
+
+* String
+* Double
+
+It is possible to use basic classes in arrays when creating a `DataDescription` for an input or output:
+
+```java
+new DataDescription(Double[].class);
+```
+
+This has slightly different semantics to data with maximum occurrences set to a value greater than 1. For example, in XML, the list element will be used rather than multiple named elements.
+
+```xml
+<!-- new DataDescription(Double[].class); -->
+<SomeProcessRequest>
+  <AnArrayInput>1 2 3</AnArrayInput>
+</SomeProcessRequest>
+<!-- new DataDescription(Double.class, 1, Integer.MAX_VALUE) -->
+<SomeProcessRequest>
+  <MultiInput>1</MultiInput>
+  <MultiInput>2</MultiInput>
+  <MultiInput>3</MultiInput>
+</SomeProcessRequest>
+```
+
+## TODO
+
+### Executing a process
+
+### Implementing custom encoding
+
+Binary encoding classes will always return as reference.
+
+### Image encoding
+
+Binary file transfer is possible, always returned as reference.
+
+### Metadata
+`getMetadata`, `getInputMetadata`, `getOutputMetadata`
