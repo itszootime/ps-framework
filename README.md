@@ -160,10 +160,9 @@ All SOAP requests should be sent using HTTP POST to `/service/soap`.
 
 The framework automatically generates a basic service description which accessible through `/service?jsondesc`. This description can help to build generic execution clients.
 
-Request objects should take the following form:
+Request objects should take the following form (InputIdentifier A data could be a value, array, object): 
 
 ```json
-// data could be a value, array, object
 { "ProcessIdentifierRequest": {
     "InputIdentifierA": 0.523,
     "InputIdentifierB": {
@@ -278,20 +277,19 @@ Finally, the methods for actually dealing with data encoding:
 
 If you don't want to use JDOM, you can implement the alternative `parse` and `encode` methods which handle the streams directly.
 
-Once created, add the fully qualified name of your encoding class to the configuration file.
+Once created, add the fully qualified name of your encoding class to the configuration file (remainder of config ommitted).
 
 ```json
 { "encodingClasses": [
     "com.example.YourEncodingClass"
   ] }
-// remainder of config ommitted
 ```
 
 ### JSON
 
-The framework uses the (Gson)[http://code.google.com/p/google-gson/] library to handle JSON. In some cases, Gson can automatically serialize and deserialize Java objects. When Gson fails to do this automatically (e.g. when a class doesn't have a no-argument constructor), or where more control is required, it is possible to override the default Gson behaviour.
+The framework uses the [Gson](http://code.google.com/p/google-gson/) library to handle JSON. In some cases, Gson can automatically serialize and deserialize Java objects. When Gson fails to do this automatically (e.g. when a class doesn't have a no-argument constructor), or where more control is required, it is possible to override the default Gson behaviour.
 
-If you wish override the default behaviour, but take advantage of the benefits provided by Gson, you can implement the `JsonSerializer`, `JsonDeserializer`, and `InstanceCreator` interfaces as necessary. Refer to the (Gson user guide)[https://sites.google.com/site/gson/gson-user-guide] for details on how to use each of these interfaces. Once created, add the fully qualified name of your implementing classes to the configuration file, where they will be registered when the service starts.
+If you wish override the default behaviour, but take advantage of the benefits provided by Gson, you can implement the `JsonSerializer`, `JsonDeserializer`, and `InstanceCreator` interfaces as necessary. Refer to the [Gson user guide](https://sites.google.com/site/gson/gson-user-guide) for details on how to use each of these interfaces. Once created, add the fully qualified name of your implementing classes to the configuration file, where they will be registered when the service starts (remainder of config ommitted).
 
 ```json
 { "gsonTypeAdapterClasses": [
@@ -301,7 +299,6 @@ If you wish override the default behaviour, but take advantage of the benefits p
         "com.example.YourGsonInstanceCreator"
       ] }
   ] }
-// remainder of config ommitted
 ```
 
 ### Binary
