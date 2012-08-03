@@ -108,10 +108,10 @@ return outputs;
 Once complete, add the fully qualified name of your process class to the framework configuration file, `src/main/resources/config.json`.
 
 ```json
-{ 'encodingClasses': [],
-  'gsonTypeAdapterClasses': [],
-  'processClasses': [ 'com.example.YourProcessClass' ],
-  'additionalProperties': [] }
+{ "encodingClasses": [],
+  "gsonTypeAdapterClasses": [],
+  "processClasses": [ "com.example.YourProcessClass" ],
+  "additionalProperties": [] }
 ```
 
 Your project is now ready to be built and packaged into a web application archive (WAR) file.
@@ -163,8 +163,9 @@ The framework automatically generates a basic service description which accessib
 Request objects should take the following form:
 
 ```json
+// data could be a value, array, object
 { "ProcessIdentifierRequest": {
-    "InputIdentifierA": 0.523, // data could be a value, array, object
+    "InputIdentifierA": 0.523,
     "InputIdentifierB": {
       "DataReference": { "href": "http://some.url/somedata.xml", "mimeType": "text/xml" }
     }
@@ -282,8 +283,8 @@ Once created, add the fully qualified name of your encoding class to the configu
 ```json
 { "encodingClasses": [
     "com.example.YourEncodingClass"
-  ],
-  // remainder of config ommitted }
+  ] }
+// remainder of config ommitted
 ```
 
 ### JSON
@@ -299,8 +300,8 @@ If you wish override the default behaviour, but take advantage of the benefits p
         "com.example.YourGsonDeserializer",
         "com.example.YourGsonInstanceCreator"
       ] }
-  ],
-  // remainder of config ommitted }
+  ] }
+// remainder of config ommitted
 ```
 
 ### Binary
