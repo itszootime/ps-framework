@@ -160,7 +160,7 @@ All SOAP requests should be sent using HTTP POST to `/service/soap`.
 
 The framework automatically generates a basic service description which accessible through `/service?jsondesc`. This description can help to build generic execution clients.
 
-Request objects should take the following form (InputIdentifier A data could be a value, array, object): 
+Request objects should take the following form ('InputIdentifierA' data could be a value, array, object): 
 
 ```json
 { "ProcessIdentifierRequest": {
