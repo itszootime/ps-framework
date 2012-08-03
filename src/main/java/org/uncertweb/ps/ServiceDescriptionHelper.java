@@ -400,6 +400,13 @@ public class ServiceDescriptionHelper {
 			processesArray.add(processObject);
 			processObject.addProperty("identifier", process.getIdentifier());
 			
+			List<Metadata> pMdList = process.getMetadata();
+			if (pMdList != null) {
+				for (Metadata md : pMdList) {
+					processObject.addProperty(md.getKey(), md.getValue());
+				}
+			}
+			
 			JsonArray inputsArray = new JsonArray();
 			processObject.add("inputs", inputsArray);
 			for (String inputIdentifier : process.getInputIdentifiers()) {
@@ -410,7 +417,12 @@ public class ServiceDescriptionHelper {
 				DataDescription dataDesc = process.getInputDataDescription(inputIdentifier);
 				inputObject.addProperty("type", dataDesc.getClassOf().getSimpleName().toLowerCase());
 				
-				// more
+				List<Metadata> mdList = process.getInputMetadata(inputIdentifier);
+				if (mdList != null) {
+					for (Metadata md : mdList) {
+						inputObject.addProperty(md.getKey(), md.getValue());
+					}
+				}
 			}
 			
 			JsonArray outputsArray = new JsonArray();
@@ -422,6 +434,13 @@ public class ServiceDescriptionHelper {
 				
 				DataDescription dataDesc = process.getOutputDataDescription(outputIdentifier);
 				outputObject.addProperty("type", dataDesc.getClassOf().getSimpleName().toLowerCase());
+				
+				List<Metadata> mdList = process.getOutputMetadata(outputIdentifier);
+				if (mdList != null) {
+					for (Metadata md : mdList) {
+						outputObject.addProperty(md.getKey(), md.getValue());
+					}
+				}
 			}
 		}
 		
