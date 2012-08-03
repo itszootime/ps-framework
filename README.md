@@ -250,7 +250,69 @@ This has slightly different semantics to data with maximum occurrences set to a 
 
 ## Custom encoding classes
 
-Binary encoding classes will always return as reference.
+### XML
+
+A custom XML encoding class can be created by extending `AbstractXMLEncoding`. This class defines a number of methods that enable the framework to select the correct encoding class, handle data, and generate schema for process requests and responses. The first of these are:
+
+* `getNamespace` should return the namespace for the generated elements.
+* `getSchemaLocation` should return the location of an XML schema document for the encoding.
+* `isSupportedClass` should return whether the given `Class` is supported.
+
+As the name of a Java class may not necessarily be the same as the encoded element, the `getIncludeForClass` should describe how a given `Class` is mapped to the schema for this encoding. An example for how the JTS Point class maps to a GML Point element:
+
+```java
+public Include getIncludeForClass(Class<\?> clazz) {
+  if (clazz.equals(Point.class)) {
+    // this will generate an element with ref="gml:Point"
+    // given that xmlns:gml="http://www.opengis.net/gml/3.2"
+    return new IncludeRef("Point");
+  }
+}
+```
+
+Finally, the methods for actually dealing with data encoding:
+
+* `parse` should return an instance of the given `Class` parsed from the JDOM `Element`
+* `encode` method should return an `Element` representing the encoded `Object`.
+
+If you don't want to use JDOM, you can implement the alternative `parse` and `encode` methods which handle the streams directly.
+
+Once created, add the fully qualified name of your encoding class to the configuration file.
+
+```json
+{ "encodingClasses": [
+    "com.example.YourEncodingClass"
+  ],
+  // remainder of config ommitted }
+```
+
+### JSON
+
+The framework uses the (Gson)[http://code.google.com/p/google-gson/] library to handle JSON. In some cases, Gson can automatically serialize and deserialize Java objects. When Gson fails to do this automatically (e.g. when a class doesn't have a no-argument constructor), or where more control is required, it is possible to override the default Gson behaviour.
+
+If you wish override the default behaviour, but take advantage of the benefits provided by Gson, you can implement the `JsonSerializer`, `JsonDeserializer`, and `InstanceCreator` interfaces as necessary. Refer to the (Gson user guide)[https://sites.google.com/site/gson/gson-user-guide] for details on how to use each of these interfaces. Once created, add the fully qualified name of your implementing classes to the configuration file, where they will be registered when the service starts.
+
+```json
+{ "gsonTypeAdapterClasses": [
+    { "com.example.YourClass": [
+        "com.example.YourGsonSerializer",
+        "com.example.YourGsonDeserializer",
+        "com.example.YourGsonInstanceCreator"
+      ] }
+  ],
+  // remainder of config ommitted }
+```
+
+### Binary
+
+The `AbstractBinaryEncoding` class can be extended to support binary data within your process. Binary encoding classes will always return a data referenced in a response, never inline. This class has four abstract methods to implement:
+
+* `encode` should encode the given `Object` to the `OutputStream`.
+* `parse` should return an instance of the given `Class` parsed from the `InputStream`.
+* `isSupportedClass` should return whether the given `Class` is supported.
+* `isSupportedMimeType` should return whether the given MIME type is supported.
+
+Once created, add the encoding class to the configuration file.
 
 
 ## Adding metadata to process descriptions
@@ -264,7 +326,7 @@ Metadata is returned as a list of `Metadata` objects. The `Metadata` object is e
 * spatial-crss
 * spatial-resolutions
 
-An example `getInputMetadata` implementation may look like so:
+An example `getInputMetadata` implementation may look as follows:
 
 ```java
 @Override
