@@ -261,7 +261,7 @@ A custom XML encoding class can be created by extending `AbstractXMLEncoding`. T
 As the name of a Java class may not necessarily be the same as the encoded element, the `getIncludeForClass` should describe how a given `Class` is mapped to the schema for this encoding. An example for how the JTS Point class maps to a GML Point element:
 
 ```java
-public Include getIncludeForClass(Class<\?> clazz) {
+public Include getIncludeForClass(Class<?> clazz) {
   if (clazz.equals(Point.class)) {
     // this will generate an element with ref="gml:Point"
     // given that xmlns:gml="http://www.opengis.net/gml/3.2"
