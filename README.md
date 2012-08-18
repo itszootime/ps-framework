@@ -52,6 +52,19 @@ The last thing you'll need to do is add the framework servlet classes and mappin
     <servlet-name>Data</servlet-name>
     <url-pattern>/data</url-pattern>
   </servlet-mapping>
+  <!-- Add the following if you wish to use CORS -->
+  <filter>
+    <filter-name>CorsFilter</filter-name>
+    <filter-class>org.jcors.web.CorsEnablingFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>CorsFilter</filter-name>
+    <url-pattern>/service/*</url-pattern>
+  </filter-mapping>
+  <filter-mapping>
+    <filter-name>CorsFilter</filter-name>
+    <url-pattern>/data</url-pattern>
+  </filter-mapping>
 </web-app>
 ```
 
