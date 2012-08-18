@@ -5,24 +5,36 @@
 <web-app>
   <display-name>UncertWeb Processing Service</display-name>
   <servlet>
-  	<servlet-name>Service</servlet-name>
-  	<display-name>Service</display-name>
-  	<description></description>
-  	<servlet-class>org.uncertweb.ps.ServiceServlet</servlet-class>
-    <!--  <load-on-startup>1</load-on-startup> -->
+    <servlet-name>Service</servlet-name>
+    <display-name>Service</display-name>
+    <description></description>
+    <servlet-class>org.uncertweb.ps.ServiceServlet</servlet-class>
+    <!-- <load-on-startup>1</load-on-startup> -->
   </servlet>
   <servlet>
-  	<servlet-name>Data</servlet-name>
-  	<display-name>Data</display-name>
-  	<description></description>
-  	<servlet-class>org.uncertweb.ps.DataServlet</servlet-class>
+    <servlet-name>Data</servlet-name>
+    <display-name>Data</display-name>
+    <description></description>
+    <servlet-class>org.uncertweb.ps.DataServlet</servlet-class>
   </servlet>
   <servlet-mapping>
-  	<servlet-name>Service</servlet-name>
-  	<url-pattern>/service/*</url-pattern>
+    <servlet-name>Service</servlet-name>
+    <url-pattern>/service/*</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
     <servlet-name>Data</servlet-name>
     <url-pattern>/data</url-pattern>
   </servlet-mapping>
+  <filter>
+    <filter-name>CorsFilter</filter-name>
+    <filter-class>org.jcors.web.CorsEnablingFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>CorsFilter</filter-name>
+    <url-pattern>/service/*</url-pattern>
+  </filter-mapping>
+  <filter-mapping>
+    <filter-name>CorsFilter</filter-name>
+    <url-pattern>/data</url-pattern>
+  </filter-mapping>
 </web-app>
