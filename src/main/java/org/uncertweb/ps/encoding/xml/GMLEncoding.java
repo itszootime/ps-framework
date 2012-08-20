@@ -27,7 +27,7 @@ public class GMLEncoding extends AbstractXMLEncoding {
 
 	// constants
 	private static final String NAMESPACE = "http://www.opengis.net/gml/3.2";
-	private static final String SCHEMA_LOCATION = "http://v-mars.uni-muenster.de/uncertweb/schema/profiles/gml/UncertWeb_GML.xsd";
+	private static final String SCHEMA_LOCATION = "http://52north.org/schema/geostatistics/uncertweb/Profiles/GML/UncertWeb_GML.xsd";
 	private static final List<Class<?>> SUPPORTED_CLASSES = Arrays.asList(new Class<?>[] {
 		Point.class, LineString.class, Polygon.class, RectifiedGrid.class, MultiPoint.class,
 		MultiPolygon.class, MultiLineString.class

@@ -48,7 +48,7 @@ public class UncertMLEncoding extends AbstractXMLEncoding {
 	}
 
 	public String getSchemaLocation() {
-		return "http://v-mars.uni-muenster.de/uncertweb/schema/uncertml/uncertml.xsd";
+		return "http://52north.org/schema/geostatistics/uncertweb/Schema/uncertml/uncertml2.xsd";
 	}
 
 	public Include getIncludeForClass(Class<?> classOf) {

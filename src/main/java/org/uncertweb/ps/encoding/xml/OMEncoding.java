@@ -96,7 +96,7 @@ public class OMEncoding extends AbstractXMLEncoding {
 	}
 
 	public String getSchemaLocation() {
-		return "http://uncertws.aston.ac.uk/schema/profiles/OM/UncertWeb_OM.xsd";
+		return "http://52north.org/schema/geostatistics/uncertweb/Profiles/OM/UncertWeb_OM.xsd";
 	}
 
 	public Include getIncludeForClass(Class<?> classOf) {
