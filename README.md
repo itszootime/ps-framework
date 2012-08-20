@@ -59,7 +59,7 @@ The last thing you'll need to do is add the framework servlet classes and mappin
 
 Enabling [CORS](http://www.w3.org/TR/cors/) allows processes to be accessed by a web page from a different domain. Without this, JavaScript developers will require a server-side proxy to access your processes. If you wish to enable CORS, add the following Maven dependency to your `pom.xml` file.
 
-```
+```xml
 <dependency>
   <groupId>org.jcors</groupId>
   <artifactId>jcors </artifactId>
@@ -69,7 +69,7 @@ Enabling [CORS](http://www.w3.org/TR/cors/) allows processes to be accessed by a
 
 In addition to the filter and mapping in your webapp configuration file.
 
-```
+```xml
 <filter>
   <filter-name>CorsFilter</filter-name>
   <filter-class>org.jcors.web.CorsEnablingFilter</filter-class>
