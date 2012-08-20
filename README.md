@@ -52,20 +52,36 @@ The last thing you'll need to do is add the framework servlet classes and mappin
     <servlet-name>Data</servlet-name>
     <url-pattern>/data</url-pattern>
   </servlet-mapping>
-  <!-- Add the following if you wish to use CORS -->
-  <filter>
-    <filter-name>CorsFilter</filter-name>
-    <filter-class>org.jcors.web.CorsEnablingFilter</filter-class>
-  </filter>
-  <filter-mapping>
-    <filter-name>CorsFilter</filter-name>
-    <url-pattern>/service/*</url-pattern>
-  </filter-mapping>
-  <filter-mapping>
-    <filter-name>CorsFilter</filter-name>
-    <url-pattern>/data</url-pattern>
-  </filter-mapping>
 </web-app>
+```
+
+### Cross-origin resource sharing
+
+Enabling [CORS](http://www.w3.org/TR/cors/) allows processes to be accessed by a web page from a different domain. Without this, JavaScript developers will require a server-side proxy to access your processes. If you wish to enable CORS, add the following Maven dependency to your `pom.xml` file.
+
+```
+<dependency>
+  <groupId>org.jcors</groupId>
+  <artifactId>jcors </artifactId>
+  <version>1.1</version>
+</dependency>
+```
+
+In addition to the filter and mapping in your webapp configuration file.
+
+```
+<filter>
+  <filter-name>CorsFilter</filter-name>
+  <filter-class>org.jcors.web.CorsEnablingFilter</filter-class>
+</filter>
+<filter-mapping>
+  <filter-name>CorsFilter</filter-name>
+  <url-pattern>/service/*</url-pattern>
+</filter-mapping>
+<filter-mapping>
+  <filter-name>CorsFilter</filter-name>
+  <url-pattern>/data</url-pattern>
+</filter-mapping>
 ```
 
 ## Creating a process
@@ -133,7 +149,7 @@ Your project is now ready to be built and packaged into a web application archiv
 mvn clean package
 ```
 
-The resulting WAR file can be deployed using Tomcat.
+The resulting WAR file can be deployed using any Java Servlet 2.5+ compatible web container, such as [Apache Tomcat](http://tomcat.apache.org/).
 
 
 ## Using the service

@@ -62,11 +62,6 @@
       <artifactId>joda-time</artifactId>
       <version>1.6.2</version>
     </dependency>
-    <dependency>
-      <groupId>org.jcors</groupId>
-      <artifactId>jcors </artifactId>
-      <version>1.1</version>
-    </dependency>
 
     <!-- UncertWeb developed dependencies -->
     <dependency>
