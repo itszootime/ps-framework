@@ -48,9 +48,11 @@ public class OMEncoding extends AbstractXMLEncoding {
 			
 			while (fois.hasNext()) {
 				Element e = (Element)fois.next();			
-				Element shape = e.getChild("SF_SpatialSamplingFeature", Namespace.getNamespace("http://www.opengis.net/samplingSpatial/2.0"))
-					.getChild("shape", Namespace.getNamespace("http://www.opengis.net/samplingSpatial/2.0"));
-				shape.removeAttribute("type");
+				Element ssf = e.getChild("SF_SpatialSamplingFeature", Namespace.getNamespace("http://www.opengis.net/samplingSpatial/2.0"));
+				if (ssf != null) {
+					Element shape = ssf.getChild("shape", Namespace.getNamespace("http://www.opengis.net/samplingSpatial/2.0"));
+					shape.removeAttribute("type");
+				}
 			}			
 			
 			// convert to string for external parsing
