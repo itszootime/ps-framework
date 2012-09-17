@@ -10,7 +10,9 @@ import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
 import org.uncertml.distribution.multivariate.DirichletDistribution;
+import org.uncertweb.ps.data.Output;
 import org.uncertweb.ps.data.ProcessOutputs;
+import org.uncertweb.ps.encoding.EncodeException;
 import org.uncertweb.ps.encoding.json.gson.GeometryDeserializer;
 import org.uncertweb.ps.encoding.json.gson.GeometrySerializer;
 import org.uncertweb.ps.encoding.json.gson.ProcessExceptionSerializer;
@@ -26,6 +28,9 @@ import org.uncertweb.ps.process.ProcessRepository;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 
 public class JSONRequestHandler {
@@ -34,6 +39,7 @@ public class JSONRequestHandler {
 
 	public void handleRequest(Reader reader, Writer writer, String basePath, String baseURL) {
 		GsonBuilder gsonBuilder = new GsonBuilder();
+		gsonBuilder.disableHtmlEscaping();
 		gsonBuilder.registerTypeAdapter(Request.class, new RequestDeserializer());
 		gsonBuilder.registerTypeAdapter(Response.class, new ResponseSerializer());
 		gsonBuilder.registerTypeAdapter(ServiceException.class, new ServiceExceptionSerializer());
@@ -104,7 +110,52 @@ public class JSONRequestHandler {
 			Response response = new Response(process.getIdentifier(), outputs);
 
 			// generate response
-			gson.toJson(response, writer);
+			JsonObject responseObject = gson.toJsonTree(response).getAsJsonObject();
+			JsonObject innerObject = responseObject.get(response.getProcessIdentifier() + "Response").getAsJsonObject();
+			
+			// check requested outputs
+			List<RequestedOutput> reqOutputs = request.getRequestedOutputs();
+			if (reqOutputs.size() > 0) {
+				// horrible inefficient
+				for (Output output : response.getOutputs()) {
+					String outputIdentifier = output.getIdentifier();
+					boolean include = false;
+					for (RequestedOutput reqOutput : reqOutputs) {
+						if (reqOutput.getName().equals(output.getIdentifier())) {
+							// set include flag
+							include = true;
+							
+							// check for ref
+							if (reqOutput.isReference()) {
+								//
+								JsonElement dataElement;
+								if (output.isMultipleOutput()) {
+									JsonArray array = new JsonArray();
+									for (JsonElement element : innerObject.get(outputIdentifier).getAsJsonArray()) {
+										array.add(generateReferenceObject(element, gson, basePath, baseURL));
+									}
+									dataElement = array;
+								}
+								else {
+									dataElement = generateReferenceObject(innerObject.get(outputIdentifier), gson, basePath, baseURL);
+								}
+								innerObject.add(outputIdentifier, dataElement);
+							}
+							
+							// all done
+							break;
+						}
+					}
+					
+					// if not included, remove
+					if (!include) {
+						innerObject.remove(outputIdentifier);
+					}
+				}
+			}
+			
+			// write
+			gson.toJson(responseObject, writer);
 		}
 		catch (JsonParseException e) {
 			// invalid requests end up here!
@@ -119,6 +170,14 @@ public class JSONRequestHandler {
 			logger.error("Failed to handle request.", e);
 			gson.toJson(new ProcessException("Couldn't execute process.", e), writer);
 		}
+		catch (EncodeException e) {
+			logger.error("Couldn't generate data reference.", e);
+			gson.toJson(new ServiceException("Couldn't generate data reference."), writer);
+		}
+		catch (IOException e) {
+			logger.error("Couldn't generate data reference.", e);
+			gson.toJson(new ServiceException("Couldn't generate data reference."), writer);
+		}
 
 		try {
 			writer.close();
@@ -126,6 +185,16 @@ public class JSONRequestHandler {
 		catch (IOException e) {
 			// all hope is lost
 		}
+	}
+	
+	private JsonObject generateReferenceObject(Object data, Gson gson, String basePath, String baseURL) throws IOException, EncodeException {
+		URL url = DataReferenceHelper.generateJSONDataReference(data, gson, basePath, baseURL);
+		JsonObject refObj = new JsonObject();
+		JsonObject innerRefObj = new JsonObject();
+		refObj.add("DataReference", innerRefObj);
+		innerRefObj.addProperty("href", url.toString());
+		innerRefObj.addProperty("mimeType", "unknown");
+		return refObj;
 	}
 
 }

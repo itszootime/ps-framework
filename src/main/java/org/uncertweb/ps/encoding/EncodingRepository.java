@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.uncertweb.ps.Config;
+import org.uncertweb.ps.encoding.binary.AbstractBinaryEncoding;
 import org.uncertweb.ps.encoding.xml.AbstractXMLEncoding;
 import org.uncertweb.ps.encoding.xml.GMLEncoding;
 import org.uncertweb.ps.encoding.xml.OMEncoding;
@@ -70,6 +71,15 @@ public class EncodingRepository {
 		for (Encoding encoding : encodings) {
 			if (encoding.isSupportedClass(classOf) && encoding instanceof AbstractXMLEncoding) {
 				return (AbstractXMLEncoding) encoding;
+			}
+		}
+		return null;
+	}
+	
+	public AbstractBinaryEncoding getBinaryEncoding(Class<?> classOf) {
+		for (Encoding encoding : encodings) {
+			if (encoding.isSupportedClass(classOf) && encoding instanceof AbstractBinaryEncoding) {
+				return (AbstractBinaryEncoding) encoding;
 			}
 		}
 		return null;

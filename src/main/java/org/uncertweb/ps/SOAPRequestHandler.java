@@ -295,7 +295,7 @@ public class SOAPRequestHandler {
 								else {
 									// reference
 									try {
-										String href = DataReferenceHelper.generateDataReference(o, dataDescription, basePath, baseURL).toString();
+										String href = DataReferenceHelper.generateXMLDataReference(o, dataDescription, basePath, baseURL).toString();
 
 										// add reference url to response
 										Element referenceElement = new Element("DataReference", psNamespace);

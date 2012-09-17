@@ -3,6 +3,7 @@ package org.uncertweb.ps.encoding.json.gson;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map.Entry;
 
 import org.uncertweb.api.om.io.JSONObservationParser;
@@ -10,6 +11,7 @@ import org.uncertweb.api.om.observation.AbstractObservation;
 import org.uncertweb.api.om.observation.collections.IObservationCollection;
 import org.uncertweb.ps.DataReferenceHelper;
 import org.uncertweb.ps.Request;
+import org.uncertweb.ps.RequestedOutput;
 import org.uncertweb.ps.data.DataDescription;
 import org.uncertweb.ps.data.MultipleInput;
 import org.uncertweb.ps.data.SingleInput;
@@ -80,6 +82,21 @@ public class RequestDeserializer implements JsonDeserializer<Request> {
 						request.getInputs().add(new SingleInput(inputIdentifier, objects.get(0)));
 					}
 				}
+			}
+		}
+		
+		// check for requested outputs
+		if (object.has("RequestedOutputs")) {
+			List<RequestedOutput> reqOutputs = request.getRequestedOutputs();
+			JsonObject outputsObj = object.get("RequestedOutputs").getAsJsonObject();
+			for (Entry<String, JsonElement> entry : outputsObj.entrySet()) {
+				String outputIdentifier = entry.getKey();
+				JsonObject outputObj = entry.getValue().getAsJsonObject();
+				boolean asReference = false;
+				if (outputObj.has("asReference")) {
+					asReference = outputObj.get("asReference").getAsBoolean();
+				}
+				reqOutputs.add(new RequestedOutput(outputIdentifier, asReference));
 			}
 		}
 
