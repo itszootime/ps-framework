@@ -132,12 +132,12 @@ public class JSONRequestHandler {
 								if (output.isMultipleOutput()) {
 									JsonArray array = new JsonArray();
 									for (JsonElement element : innerObject.get(outputIdentifier).getAsJsonArray()) {
-										array.add(generateReferenceObject(element, gson, basePath, baseURL));
+										array.add(generateReferenceObject(element, basePath, baseURL));
 									}
 									dataElement = array;
 								}
 								else {
-									dataElement = generateReferenceObject(innerObject.get(outputIdentifier), gson, basePath, baseURL);
+									dataElement = generateReferenceObject(innerObject.get(outputIdentifier), basePath, baseURL);
 								}
 								innerObject.add(outputIdentifier, dataElement);
 							}
@@ -187,13 +187,13 @@ public class JSONRequestHandler {
 		}
 	}
 	
-	private JsonObject generateReferenceObject(Object data, Gson gson, String basePath, String baseURL) throws IOException, EncodeException {
-		URL url = DataReferenceHelper.generateJSONDataReference(data, gson, basePath, baseURL);
+	private JsonObject generateReferenceObject(JsonElement element, String basePath, String baseURL) throws IOException, EncodeException {
+		URL url = DataReferenceHelper.generateJSONDataReference(element, basePath, baseURL);
 		JsonObject refObj = new JsonObject();
 		JsonObject innerRefObj = new JsonObject();
 		refObj.add("DataReference", innerRefObj);
 		innerRefObj.addProperty("href", url.toString());
-		innerRefObj.addProperty("mimeType", "unknown");
+		innerRefObj.addProperty("mimeType", "application/json");
 		return refObj;
 	}
 

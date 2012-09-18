@@ -17,7 +17,8 @@ import org.uncertweb.ps.encoding.Encoding;
 import org.uncertweb.ps.encoding.EncodingRepository;
 import org.uncertweb.ps.encoding.ParseException;
 
-import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
 
 public class DataReferenceHelper {
 
@@ -97,7 +98,7 @@ public class DataReferenceHelper {
 		return dataURL;		
 	}
 
-	public static URL generateJSONDataReference(Object data, Gson gson, String basePath, String baseURL) throws IOException, EncodeException {
+	public static URL generateJSONDataReference(JsonElement element, String basePath, String baseURL) throws IOException, EncodeException {
 		URL dataURL;
 
 		// FIXME: hacky, skipping isRaw
@@ -114,9 +115,9 @@ public class DataReferenceHelper {
 
 		// generate to file			
 		// find encoding
-		FileOutputStream fos = new FileOutputStream(new File(dataDir, filename));
-		gson.toJson(data, new OutputStreamWriter(fos));
-		fos.close();
+		OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(new File(dataDir, filename)));
+		new GsonBuilder().create().toJson(element, osw);
+		osw.close();
 
 		// FIXME: need binary too
 
