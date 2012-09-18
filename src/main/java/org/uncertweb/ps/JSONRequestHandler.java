@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
 import org.uncertml.distribution.multivariate.DirichletDistribution;
+import org.uncertml.statistic.DiscreteProbability;
 import org.uncertweb.ps.data.Output;
 import org.uncertweb.ps.data.ProcessOutputs;
 import org.uncertweb.ps.encoding.EncodeException;
@@ -51,6 +52,8 @@ public class JSONRequestHandler {
 		gsonBuilder.registerTypeAdapter(Point.class, new GeometrySerializer());	
 		gsonBuilder.registerTypeAdapter(DirichletDistribution.class, new UncertaintyDeserializer());
 		gsonBuilder.registerTypeAdapter(DirichletDistribution.class, new UncertaintySerializer());
+		gsonBuilder.registerTypeAdapter(DiscreteProbability.class, new UncertaintyDeserializer());
+		gsonBuilder.registerTypeAdapter(DiscreteProbability.class, new UncertaintySerializer());
 
 		// register additional ones in config
 		for (Entry<String, List<String>> entry : Config.getInstance().getGsonTypeAdapterClasses().entrySet()) {

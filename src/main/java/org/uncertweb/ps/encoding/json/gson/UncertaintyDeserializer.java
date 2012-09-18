@@ -2,7 +2,6 @@ package org.uncertweb.ps.encoding.json.gson;
 
 import java.lang.reflect.Type;
 
-import org.apache.log4j.Logger;
 import org.uncertml.IUncertainty;
 import org.uncertml.exception.UncertaintyParserException;
 import org.uncertml.io.JSONParser;
