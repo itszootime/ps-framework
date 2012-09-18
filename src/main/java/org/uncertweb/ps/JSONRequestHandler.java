@@ -11,11 +11,16 @@ import java.util.Map.Entry;
 import org.apache.log4j.Logger;
 import org.uncertml.distribution.multivariate.DirichletDistribution;
 import org.uncertml.statistic.DiscreteProbability;
+import org.uncertweb.api.om.observation.collections.MeasurementCollection;
+import org.uncertweb.api.om.observation.collections.TextObservationCollection;
+import org.uncertweb.api.om.observation.collections.UncertaintyObservationCollection;
 import org.uncertweb.ps.data.Output;
 import org.uncertweb.ps.data.ProcessOutputs;
 import org.uncertweb.ps.encoding.EncodeException;
 import org.uncertweb.ps.encoding.json.gson.GeometryDeserializer;
 import org.uncertweb.ps.encoding.json.gson.GeometrySerializer;
+import org.uncertweb.ps.encoding.json.gson.OMDeserializer;
+import org.uncertweb.ps.encoding.json.gson.OMSerializer;
 import org.uncertweb.ps.encoding.json.gson.ProcessExceptionSerializer;
 import org.uncertweb.ps.encoding.json.gson.RequestDeserializer;
 import org.uncertweb.ps.encoding.json.gson.ResponseSerializer;
@@ -54,6 +59,12 @@ public class JSONRequestHandler {
 		gsonBuilder.registerTypeAdapter(DirichletDistribution.class, new UncertaintySerializer());
 		gsonBuilder.registerTypeAdapter(DiscreteProbability.class, new UncertaintyDeserializer());
 		gsonBuilder.registerTypeAdapter(DiscreteProbability.class, new UncertaintySerializer());
+		gsonBuilder.registerTypeAdapter(UncertaintyObservationCollection.class, new OMDeserializer());
+		gsonBuilder.registerTypeAdapter(UncertaintyObservationCollection.class, new OMSerializer());
+		gsonBuilder.registerTypeAdapter(MeasurementCollection.class, new OMDeserializer());
+		gsonBuilder.registerTypeAdapter(MeasurementCollection.class, new OMSerializer());
+		gsonBuilder.registerTypeAdapter(TextObservationCollection.class, new OMDeserializer());
+		gsonBuilder.registerTypeAdapter(TextObservationCollection.class, new OMSerializer());
 
 		// register additional ones in config
 		for (Entry<String, List<String>> entry : Config.getInstance().getGsonTypeAdapterClasses().entrySet()) {
