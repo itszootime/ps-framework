@@ -146,7 +146,7 @@ Once complete, add the fully qualified name of your process class to the framewo
 Your project is now ready to be built and packaged into a web application archive (WAR) file.
 
 ```console
-mvn clean package
+$ mvn clean package
 ```
 
 The resulting WAR file can be deployed using any Java Servlet 2.5+ compatible web container, such as [Apache Tomcat](http://tomcat.apache.org/).
