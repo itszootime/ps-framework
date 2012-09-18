@@ -5,7 +5,7 @@ The UncertWeb Processing Service is a generic framework for exposing processes o
 
 If you like to do things the easy way, clone the example project at https://github.com/itszootime/ps-example. This is a pre-configured Maven project complete with sample processes, all ready to package and deploy.
 
-Alternatively, creating your own Maven webapp project is the next easiest way to use the framework. The UncertWeb Maven repository, hosted at the University of Münster, is required to resolve the necessary dependencies. Adding the following snippet to your `pom.xml` file will include the repository in your project.
+Alternatively, creating your own Maven webapp project is the next easiest way to use the framework. The UncertWeb Maven repository, hosted at the [University of Münster](http://www.uni-muenster.de/), is required to resolve the necessary dependencies. Adding the following snippet to your `pom.xml` file will include the repository in your project.
 
 ```xml
 <repositories>
@@ -18,7 +18,7 @@ Alternatively, creating your own Maven webapp project is the next easiest way to
 </repositories>
 ```
 
-The framework dependency can then be added too.
+The framework dependency can then be added.
 
 ```xml
 <dependencies>
