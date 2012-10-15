@@ -67,7 +67,12 @@ public class SOAPRequestHandler {
 			//SAXBuilder builder = new SAXBuilder();
 			SAXBuilder builder = new SAXBuilder("org.apache.xerces.parsers.SAXParser", true);
 			builder.setFeature("http://apache.org/xml/features/validation/schema", true);
-			builder.setProperty("http://apache.org/xml/properties/schema/external-schemaLocation", "http://schemas.xmlsoap.org/soap/envelope/ " + this.getClass().getClassLoader().getResource("schemas/envelope.xsd") + " " + "http://www.uncertweb.org/ProcessingService " + baseURL + "/service?schema");
+			builder.setProperty("http://apache.org/xml/properties/schema/external-schemaLocation",
+				"http://www.w3.org/XML/1998/namespace " + this.getClass().getClassLoader().getResource("schemas/xml.xsd")
+				+ " http://www.w3.org/1999/xlink " + this.getClass().getClassLoader().getResource("schemas/xlink.xsd")
+				+ " http://schemas.xmlsoap.org/soap/envelope/ " + this.getClass().getClassLoader().getResource("schemas/envelope.xsd")
+				+ " http://www.uncertweb.org/ProcessingService " + baseURL + "/service?schema" 
+			);
 			builder.setProperty("http://apache.org/xml/properties/internal/grammar-pool", POOL);
 
 			// set validation

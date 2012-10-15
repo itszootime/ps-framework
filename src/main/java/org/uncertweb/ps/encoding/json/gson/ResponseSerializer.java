@@ -2,16 +2,12 @@ package org.uncertweb.ps.encoding.json.gson;
 
 import java.lang.reflect.Type;
 
-import org.uncertml.IUncertainty;
-import org.uncertml.io.JSONEncoder;
 import org.uncertweb.api.om.io.JSONObservationEncoder;
 import org.uncertweb.api.om.observation.AbstractObservation;
 import org.uncertweb.api.om.observation.collections.IObservationCollection;
 import org.uncertweb.ps.Response;
 import org.uncertweb.ps.data.Output;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -55,13 +51,14 @@ public class ResponseSerializer implements JsonSerializer<Response> {
 		if (isOM(src.getClass())) {
 			try {
 				JSONObservationEncoder encoder = new JSONObservationEncoder();
-				Gson gson = new GsonBuilder().create();
+				String json;
 				if (src instanceof IObservationCollection) {
-					return gson.fromJson(encoder.encodeObservationCollection((IObservationCollection) src), JsonElement.class);
+					json = encoder.encodeObservationCollection((IObservationCollection)src);
 				}
 				else {
-					return gson.fromJson(encoder.encodeObservation((AbstractObservation) src), JsonElement.class);
+					json = encoder.encodeObservation((AbstractObservation)src);					
 				}
+				return new JsonParser().parse(json);
 			}
 			catch (Exception e) {
 				return null; // shouldn't ever happen?
