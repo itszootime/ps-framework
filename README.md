@@ -5,7 +5,7 @@ The UncertWeb Processing Service is a generic framework for exposing processes o
 
 If you like to do things the easy way, clone the example project at https://github.com/itszootime/ps-example. This is a pre-configured Maven project complete with sample processes, all ready to package and deploy.
 
-Alternatively, creating your own Maven webapp project is the next easiest way to use the framework. The UncertWeb Maven repository, hosted at the University of Münster, is required to resolve the necessary dependencies. Adding the following snippet to your `pom.xml` file will include the repository in your project.
+Alternatively, creating your own Maven webapp project is the next easiest way to use the framework. The UncertWeb Maven repository, hosted at the [University of Münster](http://www.uni-muenster.de/), is required to resolve the necessary dependencies. Adding the following snippet to your `pom.xml` file will include the repository in your project.
 
 ```xml
 <repositories>
@@ -18,7 +18,7 @@ Alternatively, creating your own Maven webapp project is the next easiest way to
 </repositories>
 ```
 
-The framework dependency can then be added too.
+The framework dependency can then be added.
 
 ```xml
 <dependencies>
@@ -146,7 +146,7 @@ Once complete, add the fully qualified name of your process class to the framewo
 Your project is now ready to be built and packaged into a web application archive (WAR) file.
 
 ```console
-mvn clean package
+$ mvn clean package
 ```
 
 The resulting WAR file can be deployed using any Java Servlet 2.5+ compatible web container, such as [Apache Tomcat](http://tomcat.apache.org/).
@@ -158,7 +158,7 @@ The resulting WAR file can be deployed using any Java Servlet 2.5+ compatible we
 
 The framework automatically generates a WSDL document and associated schema. These can are accessible through `/service?wsdl` and `/service?schema` respectively. The WSDL document can be used with client code generation tools such as [Apache Axis](http://axis.apache.org/axis2/java/core/) ([guide](http://axis.apache.org/axis2/java/core/docs/quickstartguide.html#clients)) and [Microsoft Visual Studio](http://www.microsoft.com/visualstudio/en-us) ([guide](http://www.techrepublic.com/article/easily-create-web-services-clients-with-visual-studio-net/1050426)), or workflow software such as [Taverna](http://www.taverna.org.uk/).
 
-If you wish to construct requests yourself, the child element of the SOAP Body should take the following form:
+If you wish to construct requests yourself, the child element of the SOAP body should take the following form:
 
 ```xml
 <ps:ProcessIdentifierRequest xmlns:ps="http://www.uncertweb.org/ProcessingService">
@@ -171,7 +171,7 @@ If you wish to construct requests yourself, the child element of the SOAP Body s
 </ps:ProcessIdentifierRequest>
 ```
 
-The child element of the SOAP Body in the response will take the following form:
+The child element of the SOAP body in the response will take the following form:
 
 ```xml
 <ps:ProcessIdentifierResponse xmlns:ps="http://www.uncertweb.org/ProcessingSerivce">
@@ -181,7 +181,7 @@ The child element of the SOAP Body in the response will take the following form:
 </ps:ProcessIdentifierResponse>
 ```
 
-If any errors are encountered during request processing, the child element of the SOAP Body in the response will be a SOAP Fault.
+If any errors are encountered during request processing, the child element of the SOAP body in the response will be a SOAP fault.
 
 All SOAP requests should be sent using HTTP POST to `/service/soap`.
 
