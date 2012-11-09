@@ -12,6 +12,9 @@ import org.apache.log4j.Logger;
 import org.jdom.Document;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
+import org.uncertweb.ps.handler.json.JSONRequestHandler;
+import org.uncertweb.ps.handler.soap.SOAPRequestHandler;
+import org.uncertweb.util.Stopwatch;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -89,6 +92,11 @@ public class ServiceServlet extends HttpServlet {
 		String basePath = this.getServletContext().getRealPath("/");
 		String baseURL = "http://" + servletRequest.getServerName() + ":" + servletRequest.getServerPort() + servletRequest.getContextPath();
 		
+		// store in config
+		Config config = Config.getInstance();
+		config.setServerProperty("basePath", basePath);
+		config.setServerProperty("baseURL", baseURL);
+		
 		// get encoding from request url
 		String pathInfo = servletRequest.getPathInfo();
 		if (pathInfo != null) {
@@ -97,12 +105,12 @@ public class ServiceServlet extends HttpServlet {
 				servletResponse.setContentType("text/xml");
 				servletResponse.addHeader("SOAPAction", "http://www.uncertweb.org/ProcessingService");
 				SOAPRequestHandler requestHandler = new SOAPRequestHandler();
-				requestHandler.handleRequest(servletRequest.getInputStream(), servletResponse.getOutputStream(), basePath, baseURL);
+				requestHandler.handleRequest(servletRequest.getInputStream(), servletResponse.getOutputStream());
 			}
 			else if (pathInfo.equals("/json")) {
 				servletResponse.setContentType("application/json");
 				JSONRequestHandler requestHandler = new JSONRequestHandler();
-				requestHandler.handleRequest(servletRequest.getReader(), servletResponse.getWriter(), basePath, baseURL);
+				requestHandler.handleRequest(servletRequest.getReader(), servletResponse.getWriter());
 			}
 		}
 		

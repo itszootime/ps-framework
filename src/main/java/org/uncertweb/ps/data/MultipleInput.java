@@ -25,10 +25,10 @@ public class MultipleInput extends Input {
 		return objects;
 	}
 	
-	public <T> List<T> getObjectsAs(Class<T> classOf) {
+	public <T> List<T> getObjectsAs(Class<T> type) {
 		List<T> list = new ArrayList<T>();
 		for (Object o : objects) {
-			list.add((T) o);
+			list.add(type.cast(o));
 		}
 		return list;
 	}

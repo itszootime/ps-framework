@@ -13,8 +13,8 @@ public class SingleOutput extends Output {
 		return object;
 	}
 	
-	public <T> T getObjectAs(Class<T> classOf) {
-		return (T) object;
+	public <T> T getObjectAs(Class<T> type) {
+		return type.cast(object);
 	}
 	
 }

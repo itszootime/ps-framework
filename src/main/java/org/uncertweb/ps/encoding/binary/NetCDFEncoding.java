@@ -2,6 +2,7 @@ package org.uncertweb.ps.encoding.binary;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
@@ -14,28 +15,28 @@ import ucar.nc2.util.IO;
 
 public class NetCDFEncoding extends AbstractBinaryEncoding {
 
-	public boolean isSupportedClass(Class<?> classOf) {
+	public boolean isSupportedType(Class<?> classOf) {
 		return classOf.equals(NetcdfFile.class);
 	}
 
-	public Object parse(InputStream is, Class<?> classOf) throws ParseException {
+	public <T> T parse(InputStream inputStream, Class<T> type) throws ParseException {
 		try {
-			// TODO: opening in memory slow/unsafe (could run out of memory easily)
-			byte[] bytes = IO.readContentsToByteArray(is);
+			// FIXME: opening in memory is a bad idea (could run out of memory easily)
+			byte[] bytes = IO.readContentsToByteArray(inputStream);
 			NetcdfFile file = NetcdfFile.openInMemory("file", bytes);
-			return file;
+			return type.cast(file);
 		}
-		catch (Exception e) {
-			throw new ParseException("Couldn't parse NetCDF from stream.", e);
+		catch (IOException e) {
+			throw new ParseException("Couldn't read NetCDF from stream.", e);
 		}
 	}
 
-	public void encode(Object o, OutputStream os) throws EncodeException {
+	public <T> void encode(T object, OutputStream outputStream) throws EncodeException {
 		try {
 			// cast
-			NetcdfFile file = (NetcdfFile) o;
+			NetcdfFile file = (NetcdfFile)object;
 
-			// TODO: doesn't seem like a nice way to write the file
+			// FIXME: need better use of temporary files
 			String filename = "temp" + System.currentTimeMillis();
 			FileWriter.writeToFile(file, filename);
 			
@@ -44,15 +45,14 @@ public class NetCDFEncoding extends AbstractBinaryEncoding {
 			byte[] buffer = new byte[1024];
 			int n;
 			while ((n = fis.read(buffer)) != -1) {
-				os.write(buffer, 0, n);
+				outputStream.write(buffer, 0, n);
 			}
 			
 			// remove file
 			new File(filename).delete();
 		}
-		catch (Exception e) {
-			// no checked exceptions are thrown, but i'm suspicious
-			throw new EncodeException("Couldn't generate NetCDF for object.", e);
+		catch (IOException e) {
+			throw new EncodeException("Couldn't write NetCDF to stream.", e);
 		}
 	}
 

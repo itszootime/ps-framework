@@ -6,9 +6,11 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.uncertweb.ps.Config;
 import org.uncertweb.ps.encoding.binary.AbstractBinaryEncoding;
+import org.uncertweb.ps.encoding.json.AbstractJSONEncoding;
 import org.uncertweb.ps.encoding.xml.AbstractXMLEncoding;
 import org.uncertweb.ps.encoding.xml.GMLEncoding;
 import org.uncertweb.ps.encoding.xml.OMEncoding;
+import org.uncertweb.ps.encoding.xml.PrimitiveEncoding;
 import org.uncertweb.ps.encoding.xml.UncertMLEncoding;
 
 
@@ -22,6 +24,7 @@ public class EncodingRepository {
 		encodings = new ArrayList<Encoding>();
 		
 		// add built-in encodings
+		encodings.add(new PrimitiveEncoding());
 		encodings.add(new GMLEncoding());
 		encodings.add(new OMEncoding());
 		encodings.add(new UncertMLEncoding());
@@ -55,40 +58,37 @@ public class EncodingRepository {
 		}
 		return instance;
 	}
-
-	// this'll give you the first supported encoding it encounters
-	public Encoding getEncoding(Class<?> classOf) {
+	
+	public AbstractXMLEncoding getXMLEncoding(Class<?> type) {
 		for (Encoding encoding : encodings) {
-			if (encoding.isSupportedClass(classOf)) {
-				return encoding;
+			if (encoding.isSupportedType(type) && encoding instanceof AbstractXMLEncoding) {
+				return (AbstractXMLEncoding)encoding;
 			}
 		}
 		return null;
 	}
 	
-	// this'll give you the first supported encoding it encounters
-	public AbstractXMLEncoding getXMLEncoding(Class<?> classOf) {
+	public AbstractBinaryEncoding getBinaryEncoding(Class<?> type) {
 		for (Encoding encoding : encodings) {
-			if (encoding.isSupportedClass(classOf) && encoding instanceof AbstractXMLEncoding) {
-				return (AbstractXMLEncoding) encoding;
+			if (encoding.isSupportedType(type) && encoding instanceof AbstractBinaryEncoding) {
+				return (AbstractBinaryEncoding)encoding;
 			}
 		}
 		return null;
 	}
 	
-	public AbstractBinaryEncoding getBinaryEncoding(Class<?> classOf) {
+	public AbstractJSONEncoding getJSONEncoding(Class<?> type) {
 		for (Encoding encoding : encodings) {
-			if (encoding.isSupportedClass(classOf) && encoding instanceof AbstractBinaryEncoding) {
-				return (AbstractBinaryEncoding) encoding;
+			if (encoding.isSupportedType(type) && encoding instanceof AbstractJSONEncoding) {
+				return (AbstractJSONEncoding)encoding;
 			}
 		}
 		return null;
 	}
 	
-	// this'll give you the first supported encoding it encounters
-	public Encoding getEncoding(Class<?> classOf, String mimeType) {
+	public Encoding getEncoding(Class<?> type, String mimeType) {
 		for (Encoding encoding : encodings) {
-			if (encoding.isSupportedClass(classOf) && encoding.isSupportedMimeType(mimeType)) {
+			if (encoding.isSupportedType(type) && encoding.isSupportedMimeType(mimeType)) {
 				return encoding;
 			}
 		}

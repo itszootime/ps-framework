@@ -10,10 +10,10 @@ import org.uncertweb.api.om.io.JSONObservationParser;
 import org.uncertweb.api.om.observation.AbstractObservation;
 import org.uncertweb.api.om.observation.collections.IObservationCollection;
 import org.uncertweb.ps.DataReferenceHelper;
-import org.uncertweb.ps.Request;
-import org.uncertweb.ps.RequestedOutput;
 import org.uncertweb.ps.data.DataDescription;
 import org.uncertweb.ps.data.MultipleInput;
+import org.uncertweb.ps.data.Request;
+import org.uncertweb.ps.data.RequestedOutput;
 import org.uncertweb.ps.data.SingleInput;
 import org.uncertweb.ps.encoding.ParseException;
 import org.uncertweb.ps.process.AbstractProcess;
@@ -140,7 +140,7 @@ public class RequestDeserializer implements JsonDeserializer<Request> {
 			}
 			return DataReferenceHelper.parseDataReference(dataReference.get("href").getAsString(), dataReference.get("mimeType").getAsString(), compression, dataDescription);
 		}
-		else if (isOM(dataDescription.getClassOf())) { // FIXME: bit of a workaround
+		else if (isOM(dataDescription.getType())) { // FIXME: bit of a workaround
 			JSONObservationParser parser = new JSONObservationParser();
 			try {
 				return parser.parse(dataElement.toString());
@@ -150,7 +150,7 @@ public class RequestDeserializer implements JsonDeserializer<Request> {
 			}
 		}
 		else {
-			return context.deserialize(dataElement, dataDescription.getClassOf());
+			return context.deserialize(dataElement, dataDescription.getType());
 		}
 	}
 

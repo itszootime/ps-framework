@@ -5,8 +5,8 @@ import java.lang.reflect.Type;
 import org.uncertweb.api.om.io.JSONObservationEncoder;
 import org.uncertweb.api.om.observation.AbstractObservation;
 import org.uncertweb.api.om.observation.collections.IObservationCollection;
-import org.uncertweb.ps.Response;
 import org.uncertweb.ps.data.Output;
+import org.uncertweb.ps.data.Response;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;

@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.jdom.Content;
 import org.jdom.Document;
-import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.XMLOutputter;
@@ -14,49 +14,42 @@ import org.uncertweb.ps.encoding.Encoding;
 import org.uncertweb.ps.encoding.ParseException;
 
 public abstract class AbstractXMLEncoding implements Encoding {
-	
-	public boolean isSupportedMimeType(String mimeType) {
-		return mimeType.equals("text/xml");
-	}
 
-	public abstract Object parse(Element element, Class<?> classOf) throws ParseException;
-	public abstract Element encode(Object object) throws EncodeException;
+	public abstract <T> T parse(Content content, Class<T> type) throws ParseException;
+	public abstract <T> Content encode(T object) throws EncodeException;
 
-	public Object parse(InputStream is, Class<?> classOf) throws ParseException {
+	public <T> T parse(InputStream inputStream, Class<T> type) throws ParseException {
 		try {
-			// parse
-			/*
-			BufferedReader r = new BufferedReader(new InputStreamReader(is));
-			String line;
-			while ((line = r.readLine()) != null) {
-				System.out.println(line);
-			}*/
-			Document document = new SAXBuilder().build(is);
-			return parse(document.getRootElement(), classOf);
+			Document document = new SAXBuilder().build(inputStream);
+			return parse(document.getRootElement(), type);
 		}
 		catch (IOException e) {
-			throw new ParseException("Couldn't parse XML from stream.", e);
+			throw new ParseException("Couldn't read XML from stream.", e);
 		}
 		catch (JDOMException e) {
 			throw new ParseException("Couldn't parse XML from stream.", e);
 		}
 	}
 
-	public void encode(Object o, OutputStream os) throws EncodeException {
+	public <T> void encode(T object, OutputStream outputStream) throws EncodeException {
 		try {
 			// output
 			Document document = new Document();
-			document.addContent(encode(o).detach());
-			new XMLOutputter().output(document, os);
+			document.addContent(encode(object).detach());
+			new XMLOutputter().output(document, outputStream);
 		}
 		catch (IOException e) {
-			throw new EncodeException("Couldn't encode XML to stream.", e);
+			throw new EncodeException("Couldn't write XML to stream.", e);
 		}
+	}
+	
+	public boolean isSupportedMimeType(String mimeType) {
+		return mimeType.equals("text/xml");
 	}
 
 	public abstract String getNamespace();
 	public abstract String getSchemaLocation();	
-	public abstract Include getIncludeForClass(Class<?> classOf);
+	public abstract Include getInclude(Class<?> type);
 
 	public abstract class Include {
 		private String name;

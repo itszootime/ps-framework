@@ -18,7 +18,7 @@ import org.uncertweb.ps.encoding.ParseException;
 
 public class OMEncoding extends AbstractXMLEncoding {
 
-	public boolean isSupportedClass(Class<?> classOf) {
+	public boolean isSupportedType(Class<?> classOf) {
 		for (Class<?> interf : classOf.getInterfaces()) {
 			if (interf.equals(IObservationCollection.class)) {
 				return true;
@@ -101,7 +101,7 @@ public class OMEncoding extends AbstractXMLEncoding {
 		return "http://52north.org/schema/geostatistics/uncertweb/Profiles/OM/UncertWeb_OM.xsd";
 	}
 
-	public Include getIncludeForClass(Class<?> classOf) {
+	public Include getInclude(Class<?> classOf) {
 		return new IncludeRef("OM_" + classOf.getSimpleName());
 	}
 

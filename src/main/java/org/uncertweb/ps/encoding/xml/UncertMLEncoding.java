@@ -51,11 +51,11 @@ public class UncertMLEncoding extends AbstractXMLEncoding {
 		return "http://52north.org/schema/geostatistics/uncertweb/Schema/uncertml/uncertml2.xsd";
 	}
 
-	public Include getIncludeForClass(Class<?> classOf) {
+	public Include getInclude(Class<?> classOf) {
 		return new IncludeRef(classOf.getSimpleName());
 	}
 
-	public boolean isSupportedClass(Class<?> classOf) {
+	public boolean isSupportedType(Class<?> classOf) {
 		if (classOf instanceof Class) {
 			Class<?> typeClass = (Class<?>) classOf;
 			if (!typeClass.isInterface() && !Modifier.isAbstract(typeClass.getModifiers())) {

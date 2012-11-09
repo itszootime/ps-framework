@@ -2,49 +2,33 @@ package org.uncertweb.ps.data;
 
 
 public class DataDescription {
-
-	private String name;
-	private Class<?> classOf;
-	private int minOccurs;
-	private int maxOccurs;
-	private boolean raw;
 	
-	public DataDescription(Class<?> classOf) {
-		this.classOf = classOf;
-		this.minOccurs = 1;
-		this.maxOccurs = 1;
-		this.raw = false;
+	private Class<?> type;
+	private int minimum;
+	private int maximum;
+	
+	public DataDescription(Class<?> type) {
+		this.type = type;
+		this.minimum = 1;
+		this.maximum = 1;
 	}
 	
-	public DataDescription(Class<?> classOf, boolean raw) {
-		this(classOf);
-		this.raw = raw;
+	public DataDescription(Class<?> type, int minimum, int maximum) {
+		this(type);
+		this.minimum = minimum;
+		this.maximum = maximum;
 	}
 	
-	public DataDescription(Class<?> classOf, int minOccurs, int maxOccurs) {
-		this(classOf);
-		this.minOccurs = minOccurs;
-		this.maxOccurs = maxOccurs;
-	}
-	
-	public String getName() {
-		return name;
-	}
-	
-	public Class<?> getClassOf() {
-		return classOf;
+	public Class<?> getType() {
+		return type;
 	}
 
 	public int getMinOccurs() {
-		return minOccurs;
+		return minimum;
 	}
 
 	public int getMaxOccurs() {
-		return maxOccurs;
-	}
-
-	public boolean isRaw() {
-		return raw;
+		return maximum;
 	}
 
 }

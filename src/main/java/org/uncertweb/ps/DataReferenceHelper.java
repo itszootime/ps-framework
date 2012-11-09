@@ -16,6 +16,7 @@ import org.uncertweb.ps.encoding.EncodeException;
 import org.uncertweb.ps.encoding.Encoding;
 import org.uncertweb.ps.encoding.EncodingRepository;
 import org.uncertweb.ps.encoding.ParseException;
+import org.uncertweb.util.Stopwatch;
 
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
@@ -40,9 +41,9 @@ public class DataReferenceHelper {
 
 				// get encoding and parse
 				Stopwatch timer = new Stopwatch();
-				Encoding encoding = EncodingRepository.getInstance().getEncoding(dataDescription.getClassOf(), mimeType);
+				Encoding encoding = EncodingRepository.getInstance().getEncoding(dataDescription.getType(), mimeType);
 				logger.debug("Parsing referenced data using " + encoding.getClass().getSimpleName() + "...");
-				Object data = encoding.parse(new BufferedInputStream(inputStream), dataDescription.getClassOf());
+				Object data = encoding.parse(new BufferedInputStream(inputStream), dataDescription.getType());
 				logger.debug("Parsed referenced data in " + timer.getElapsedTime() + ".");
 
 				return data;
@@ -77,9 +78,9 @@ public class DataReferenceHelper {
 
 			// find encoding
 			EncodingRepository repository = EncodingRepository.getInstance();
-			Encoding encoding = repository.getXMLEncoding(dataDescription.getClassOf());
+			Encoding encoding = repository.getXMLEncoding(dataDescription.getType());
 			if (encoding == null) {
-				encoding = repository.getBinaryEncoding(dataDescription.getClassOf());
+				encoding = repository.getBinaryEncoding(dataDescription.getType());
 			}
 
 			// if we've got encoding, go
@@ -89,7 +90,7 @@ public class DataReferenceHelper {
 				fos.close();
 			}
 			else {
-				throw new EncodeException("Couldn't find encoding for " + dataDescription.getClassOf().getSimpleName());
+				throw new EncodeException("Couldn't find encoding for " + dataDescription.getType().getSimpleName());
 			}			
 
 			// set url
