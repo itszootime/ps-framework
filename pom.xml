@@ -4,7 +4,7 @@
   <groupId>org.uncertweb</groupId>
   <artifactId>ps-framework</artifactId>
   <packaging>jar</packaging>
-  <version>0.2.6-SNAPSHOT</version>
+  <version>1.0-SNAPSHOT</version>
   <name>ps-framework</name>
   <url>http://www.uncertweb.org</url>
   <description>SOAP/WSDL and JSON framework for processing services.</description>
