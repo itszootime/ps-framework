@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.jdom.Attribute;
 import org.jdom.Content;
 import org.jdom.Element;
 import org.uncertweb.ps.DataReferenceParser;
@@ -55,11 +56,7 @@ public class XMLRequestParser {
 		}
 
 		// parse requested outputs
-		List<RequestedOutput> reqOutputs = request.getRequestedOutputs();
-		List<RequestedOutput> parsedReqOutputs = parseRequestedOutputs(requestElement);
-		for (RequestedOutput reqOutput : parsedReqOutputs) {
-			reqOutputs.add(reqOutput);
-		}
+		request.setRequestedOutputs(parseRequestedOutputs(requestElement));
 
 		return request;
 	}
@@ -72,6 +69,10 @@ public class XMLRequestParser {
 		for (String inputIdentifier : process.getInputIdentifiers()) {
 			// get data class for type from process
 			DataDescription dataDescription = process.getInputDataDescription(inputIdentifier);
+			if (dataDescription == null) {
+				// FIXME: not a client problem
+				throw new RequestParseException("Couldn't find description for input " + inputIdentifier + ".");
+			}
 			Class<?> type = dataDescription.getType();
 
 			// get input element
@@ -125,8 +126,8 @@ public class XMLRequestParser {
 			
 			// couldn't find suitable encoding
 			if (encoding == null) {
-				// this is not the clients fault
-				throw new RequestParseException("Unsupported encoding type in process.");
+				// FIXME: not a client problem
+				throw new RequestParseException("No encoding found for type " + type.getName() + ".");
 			}
 			
 			return encoding.parse(content, type);
@@ -164,11 +165,15 @@ public class XMLRequestParser {
 				Element reqOutputElement = (Element)o;
 				String name = reqOutputElement.getName();
 				boolean reference = false;
-				if (reqOutputElement.getAttributeValue("reference").equals("true") || reqOutputElement.getAttributeValue("reference").equals("1")) {
+				Attribute refAttr = reqOutputElement.getAttribute("reference");
+				if (refAttr != null && (refAttr.getValue().equals("true") || refAttr.equals("1"))) {
 					reference = true;
 				}
 				reqOutputs.add(new RequestedOutput(name, reference));
 			}
+		}
+		else {
+			reqOutputs = null;
 		}
 
 		// all done

@@ -28,4 +28,8 @@ public class Request {
 		return requestedOutputs;
 	}
 	
+	public void setRequestedOutputs(List<RequestedOutput> requestedOutputs) {
+		this.requestedOutputs = requestedOutputs;
+	}
+	
 }

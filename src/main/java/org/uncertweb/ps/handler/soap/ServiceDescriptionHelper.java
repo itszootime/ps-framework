@@ -1,4 +1,4 @@
-package org.uncertweb.ps;
+package org.uncertweb.ps.handler.soap;
 
 import java.net.URL;
 import java.util.Arrays;

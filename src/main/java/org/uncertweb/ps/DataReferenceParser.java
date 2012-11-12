@@ -14,7 +14,7 @@ import org.uncertweb.util.Stopwatch;
 
 public class DataReferenceParser {
 
-	private static final Logger logger = Logger.getLogger(DataReferenceHelper.class);
+	private static final Logger logger = Logger.getLogger(DataReferenceParser.class);
 
 	public <T> T parse(URL url, Class<T> type, String mimeType) throws ParseException {
 		return this.parse(url, type, mimeType, false);

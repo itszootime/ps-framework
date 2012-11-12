@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ps:HashProcessRequest xmlns:ps="http://www.uncertweb.org/ProcessingService">
+  <ps:String>i am a string to be hashed</ps:String>
+  <ps:RequestedOutputs>
+  	<ps:SHA1/>
+  </ps:RequestedOutputs>
+</ps:HashProcessRequest>

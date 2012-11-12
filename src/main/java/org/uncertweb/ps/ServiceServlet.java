@@ -14,6 +14,7 @@ import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 import org.uncertweb.ps.handler.json.JSONRequestHandler;
 import org.uncertweb.ps.handler.soap.SOAPRequestHandler;
+import org.uncertweb.ps.handler.soap.ServiceDescriptionHelper;
 import org.uncertweb.util.Stopwatch;
 
 import com.google.gson.Gson;

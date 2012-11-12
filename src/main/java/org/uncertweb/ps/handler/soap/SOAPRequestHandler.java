@@ -3,8 +3,6 @@ package org.uncertweb.ps.handler.soap;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,15 +16,11 @@ import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 import org.uncertweb.ps.ClientException;
 import org.uncertweb.ps.Config;
-import org.uncertweb.ps.ServiceException;
 import org.uncertweb.ps.data.ProcessOutputs;
 import org.uncertweb.ps.data.Request;
+import org.uncertweb.ps.data.Response;
 import org.uncertweb.ps.process.AbstractProcess;
 import org.uncertweb.ps.process.ProcessException;
 import org.uncertweb.ps.process.ProcessRepository;
@@ -96,13 +90,14 @@ public class SOAPRequestHandler {
 			// find process
 			AbstractProcess process = ProcessRepository.getInstance().getProcess(request.getProcessIdentifier());
 			
-			// run process
-			// TODO: this should probably be in some sort of service runner, this could also check for correct number of inputs (more appropriate for json)
-			// FIXME: pretty sure simultaneous requests will fail			
+			// run process		
 			ProcessOutputs outputs = process.run(request.getInputs());
 			
 			// build response
-			Element responseElement = XMLResponseGenerator.generate(process, request.getRequestedOutputs(), outputs);
+			Response response = new Response(process.getIdentifier(), outputs);
+			
+			// generate response element
+			Element responseElement = XMLResponseGenerator.generate(response, request.getRequestedOutputs());
 			responseBody.addContent(responseElement);
 
 			// TODO: remove post validation
@@ -180,7 +175,12 @@ public class SOAPRequestHandler {
 		catch (RequestParseException e) {
 			logger.error("Couldn't parse request.", e);
 			responseBody.removeContent();
-			responseBody.addContent(new SoapFault(Code.Server, "Couldn'parse request."));
+			responseBody.addContent(new SoapFault(Code.Server, "Couldn't parse request."));
+		}
+		catch (ResponseGenerateException e) {
+			logger.error("Couldn't generate response.", e);
+			responseBody.removeContent();
+			responseBody.addContent(new SoapFault(Code.Server, "Couldn't generate response."));
 		}
 
 		// output
