@@ -3,6 +3,7 @@ package org.uncertweb.ps.encoding.xml;
 import java.io.ByteArrayInputStream;
 import java.util.Iterator;
 
+import org.jdom.Content;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.Namespace;
@@ -18,25 +19,26 @@ import org.uncertweb.ps.encoding.ParseException;
 
 public class OMEncoding extends AbstractXMLEncoding {
 
-	public boolean isSupportedType(Class<?> classOf) {
-		for (Class<?> interf : classOf.getInterfaces()) {
+	@Override
+	public boolean isSupportedType(Class<?> type) {
+		for (Class<?> interf : type.getInterfaces()) {
 			if (interf.equals(IObservationCollection.class)) {
 				return true;
 			}
 		}
-		Class<?> superClass = classOf.getSuperclass();
+		Class<?> superClass = type.getSuperclass();
 		if (superClass != null) {
 			return superClass.equals(AbstractObservation.class);
 		}
 		return false;
 	}
 
-	public Object parse(Element element, Class<?> classOf) throws ParseException {
+	public <T> T parse(Content content, Class<T> type) throws ParseException {
 		try {
-			// FIXME: workaround for broken parser
+			// this is a workaround for broken parser
+			Element element = (Element)content;
 			Iterator<?> fois = element.getDescendants(new Filter() {
 				private static final long serialVersionUID = 1L;
-
 				public boolean matches(Object obj) {
 					if (obj instanceof Element) {
 						Element e = (Element)obj;
@@ -59,10 +61,10 @@ public class OMEncoding extends AbstractXMLEncoding {
 			String om = new XMLOutputter().outputString(element);
 			XBObservationParser parser = new XBObservationParser();			
 			if (element.getName().endsWith("Collection")) {
-				return parser.parseObservationCollection(om);
+				return type.cast(parser.parseObservationCollection(om));
 			}
 			else {
-				return parser.parseObservation(om);
+				return type.cast(parser.parseObservation(om));
 			}
 		}
 		catch (Exception e) {
@@ -70,7 +72,7 @@ public class OMEncoding extends AbstractXMLEncoding {
 		}
 	}
 
-	public Element encode(Object object) throws EncodeException {
+	public <T> Content encode(T object) throws EncodeException {
 		try {
 			// generate random char
 			// to ensure we are encoding valid o&m, some instances will have multiple collections in one document
@@ -80,10 +82,10 @@ public class OMEncoding extends AbstractXMLEncoding {
 			XBObservationEncoder encoder = new XBObservationEncoder();
 			String om;
 			if (object instanceof IObservationCollection) {
-				om = encoder.encodeObservationCollectionWithId((IObservationCollection) object, String.valueOf(idPrefix));
+				om = encoder.encodeObservationCollectionWithId((IObservationCollection)object, String.valueOf(idPrefix));
 			}
 			else {
-				om = encoder.encodeObservationWithId((AbstractObservation) object, String.valueOf(idPrefix));
+				om = encoder.encodeObservationWithId((AbstractObservation)object, String.valueOf(idPrefix));
 			}
 			Document document = new SAXBuilder().build(new ByteArrayInputStream(om.getBytes()));
 			return document.getRootElement();
@@ -104,7 +106,5 @@ public class OMEncoding extends AbstractXMLEncoding {
 	public Include getInclude(Class<?> classOf) {
 		return new IncludeRef("OM_" + classOf.getSimpleName());
 	}
-
-
 
 }
