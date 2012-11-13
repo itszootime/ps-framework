@@ -22,6 +22,7 @@ import org.uncertweb.ps.data.ProcessOutputs;
 import org.uncertweb.ps.data.Request;
 import org.uncertweb.ps.data.Response;
 import org.uncertweb.ps.handler.RequestParseException;
+import org.uncertweb.ps.handler.ResponseGenerateException;
 import org.uncertweb.ps.process.AbstractProcess;
 import org.uncertweb.ps.process.ProcessException;
 import org.uncertweb.ps.process.ProcessRepository;

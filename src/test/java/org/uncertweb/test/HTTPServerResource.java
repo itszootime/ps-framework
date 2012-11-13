@@ -30,9 +30,9 @@ public class HTTPServerResource extends ExternalResource {
 	public void addFileHandler(final String filename) {
 		server.createContext("/" + filename, new HttpHandler() {
 			public void handle(HttpExchange exchange) throws IOException {
-				String response = IOUtils.toString(this.getClass().getClassLoader().getResourceAsStream(filename));
-				exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, response.length());
-		        exchange.getResponseBody().write(response.getBytes());
+				byte[] bytes= IOUtils.toByteArray(this.getClass().getClassLoader().getResourceAsStream(filename));
+				exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, bytes.length);
+		        exchange.getResponseBody().write(bytes);
 		        exchange.close();
 			}
 		});

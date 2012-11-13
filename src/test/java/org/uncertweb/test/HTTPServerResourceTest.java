@@ -16,18 +16,33 @@ public class HTTPServerResourceTest {
 	public HTTPServerResource server = new HTTPServerResource(8000);
 
 	@Test
-	public void httpServer() throws IOException {
+	public void httpServerWithString() throws IOException {
 		// load from file
-		String fileContent = IOUtils.toString(this.getClass().getClassLoader().getResourceAsStream("sum-request.xml"));
+		String fileContent = IOUtils.toString(this.getClass().getClassLoader().getResourceAsStream("polygon.xml"));
 		
 		// load from server
-		server.addFileHandler("sum-request.xml");
-		URL url = new URL("http://localhost:8000/sum-request.xml");
+		server.addFileHandler("polygon.xml");
+		URL url = new URL("http://localhost:8000/polygon.xml");
 		URLConnection conn = url.openConnection();
 		String serverContent = IOUtils.toString(conn.getInputStream());
 		
 		// check
 		Assert.assertEquals(fileContent, serverContent);
+	}
+	
+	@Test
+	public void httpServerWithBinary() throws IOException {
+		// load from file
+		byte[] fileContent = IOUtils.toByteArray(this.getClass().getClassLoader().getResourceAsStream("polygon.zip"));
+		
+		// load from server
+		server.addFileHandler("polygon.zip");
+		URL url = new URL("http://localhost:8000/polygon.zip");
+		URLConnection conn = url.openConnection();
+		byte[] serverContent = IOUtils.toByteArray(conn.getInputStream());
+		
+		// check
+		SupAssert.assertArrayEquals(fileContent, serverContent);
 	}
 	
 }

@@ -4,7 +4,9 @@ import junit.framework.Assert;
 
 import org.jdom.Element;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.uncertweb.ps.data.ProcessOutputs;
 import org.uncertweb.ps.data.Response;
 import org.uncertweb.ps.data.SingleOutput;
@@ -13,6 +15,9 @@ import org.uncertweb.ps.test.Utilities;
 import org.uncertweb.xml.Namespaces;
 
 public class XMLResponseGeneratorTest {
+	
+	@Rule
+	public TemporaryFolder storageFolder = new TemporaryFolder();
 
 	@BeforeClass
 	public static void setUp() {
@@ -47,7 +52,7 @@ public class XMLResponseGeneratorTest {
 	
 	@Test
 	public void generateWithDataReference() throws ResponseGenerateException {
-		Assert.fail();
+		new FlatFileStorage(storageFolder.);
 	}
 
 }

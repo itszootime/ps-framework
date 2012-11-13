@@ -20,5 +20,12 @@ public class SupAssert {
 			Assert.assertEquals(expected[i], actual[i]);
 		}
 	}
+	
+	public static void assertArrayEquals(byte[] expected, byte[] actual) {
+		Assert.assertEquals(expected.length, actual.length);
+		for (int i = 0; i < expected.length; i++) {
+			Assert.assertEquals(expected[i], actual[i]);
+		}
+	}
 
 }
