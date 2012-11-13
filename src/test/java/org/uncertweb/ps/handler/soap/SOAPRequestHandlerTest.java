@@ -22,12 +22,12 @@ public class SOAPRequestHandlerTest {
 	private SOAPRequestHandler handler;
 
 	@BeforeClass
-	public static void setUpClass() {
+	public static void setUp() {
 		Utilities.setupProcessRepository();
 	}
 	
 	@Before
-	public void setUp() {
+	public void before() {
 		handler = new SOAPRequestHandler();
 	}
 	

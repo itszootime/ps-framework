@@ -55,7 +55,10 @@ public class DataReferenceParser {
 	private ZipInputStream createZipStream(InputStream inputStream) throws ParseException {
 		try {
 			ZipInputStream zipStream = new ZipInputStream(inputStream);
-			ZipEntry e = ((ZipInputStream) zipStream).getNextEntry();
+			ZipEntry e = zipStream.getNextEntry();
+			if (e == null) {
+				throw new ParseException("No files found in zip!");
+			}
 			logger.info("Compressed file referenced, will parse first entry: " + e.getName() + ".");
 			return zipStream;
 		}

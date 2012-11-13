@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ps:BufferPolygonProcessRequest xmlns:ps="http://www.uncertweb.org/ProcessingService">
+  <ps:Polygon>
+  	<ps:DataReference href="http://localhost:8000/polygon.xml" mimeType="text/xml" />
+  </ps:Polygon>
+  <ps:Distance>2.5</ps:Distance>
+</ps:BufferPolygonProcessRequest>

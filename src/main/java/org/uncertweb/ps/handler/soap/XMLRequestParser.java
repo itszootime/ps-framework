@@ -117,7 +117,7 @@ public class XMLRequestParser {
 		
 		// special case for reference
 		if (content instanceof Element && ((Element)content).getName().equals("DataReference")) {			
-			return parseDataReference(element, type);
+			return parseDataReference((Element)content, type);
 		}
 		else {
 			// get xml encoding

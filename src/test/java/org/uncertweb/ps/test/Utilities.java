@@ -9,6 +9,7 @@ import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.uncertweb.ps.process.ProcessRepository;
+import org.uncertweb.ps.test.process.BufferPolygonProcess;
 import org.uncertweb.ps.test.process.HashProcess;
 import org.uncertweb.ps.test.process.SumProcess;
 
@@ -24,10 +25,12 @@ public class Utilities {
 		ProcessRepository repo = ProcessRepository.getInstance();
 		repo.addProcess(new HashProcess());
 		repo.addProcess(new SumProcess());
+		repo.addProcess(new BufferPolygonProcess());
 	}
 	
 	public static Document loadXML(String filename) throws JDOMException, IOException {
 		SAXBuilder builder = new SAXBuilder();
+		builder.setIgnoringBoundaryWhitespace(true);
 		return builder.build(Utilities.class.getClassLoader().getResourceAsStream(filename));
 	}	
 	

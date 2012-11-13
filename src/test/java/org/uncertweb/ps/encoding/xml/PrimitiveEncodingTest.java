@@ -24,7 +24,7 @@ public class PrimitiveEncodingTest {
 	private PrimitiveEncoding encoding;
 
 	@Before
-	public void setUp() {
+	public void before() {
 		encoding = new PrimitiveEncoding();
 	}
 	

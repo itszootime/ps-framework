@@ -14,7 +14,7 @@ import org.uncertweb.xml.Namespaces;
 public class XMLResponseGeneratorTest {
 
 	@BeforeClass
-	public static void setUpClass() {
+	public static void setUp() {
 		Utilities.setupProcessRepository();
 	}
 

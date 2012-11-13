@@ -1,6 +1,7 @@
 package org.uncertweb.ps.handler.soap;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.List;
 
 import org.jdom.Document;
@@ -8,6 +9,7 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
 import org.uncertweb.ps.data.Input;
 import org.uncertweb.ps.data.MultipleInput;
@@ -16,13 +18,17 @@ import org.uncertweb.ps.data.Request;
 import org.uncertweb.ps.data.RequestedOutput;
 import org.uncertweb.ps.data.SingleInput;
 import org.uncertweb.ps.test.Utilities;
+import org.uncertweb.test.HTTPServerResource;
 import org.uncertweb.test.SupAssert;
 import org.uncertweb.xml.Namespaces;
 
 public class XMLRequestParserTest {
+	
+	@Rule
+	public HTTPServerResource server = new HTTPServerResource(8000);
 
 	@BeforeClass
-	public static void setUpClass() {
+	public static void setUp() {
 		Utilities.setupProcessRepository();
 	}
 	
@@ -87,8 +93,36 @@ public class XMLRequestParserTest {
 	}
 	
 	@Test
-	public void parseWithDataReference() {
-		Assert.fail();
+	public void parseWithDataReference() throws JDOMException, IOException, RequestParseException {
+		// expose file
+		server.addFileHandler("polygon.xml");
+		
+		// parse
+		Element root = Utilities.loadXML("bufferpolygon-request.xml").getRootElement();
+		Request request = XMLRequestParser.parse(root);
+		ProcessInputs inputs = request.getInputs();
+		
+		// check process
+		Assert.assertEquals("BufferPolygonProcess", request.getProcessIdentifier());
+	}
+	
+	@Test
+	public void parseWithDataReferenceCompressed() throws JDOMException, IOException, RequestParseException {
+		// expose file
+		server.addFileHandler("polygon.zip");
+		
+		// load request and change ref url to zip
+		Element root = Utilities.loadXML("bufferpolygon-request.xml").getRootElement();
+		Element dataRef = root.getChild("Polygon", Namespaces.PS).getChild("DataReference", Namespaces.PS);
+		dataRef.setAttribute("href", "http://localhost:8000/polygon.zip");
+		dataRef.setAttribute("compressed", "true");
+		
+		// parse
+		Request request = XMLRequestParser.parse(root);
+		ProcessInputs inputs = request.getInputs();
+		
+		// check process
+		Assert.assertEquals("BufferPolygonProcess", request.getProcessIdentifier());
 	}
 
 	private void testSingleInput(ProcessInputs inputs, String identifier, Object expected) {

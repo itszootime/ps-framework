@@ -24,7 +24,7 @@ public class OMEncodingTest {
 	private OMEncoding encoding;
 
 	@Before
-	public void setUp() {
+	public void before() {
 		encoding = new OMEncoding();
 	}
 	
