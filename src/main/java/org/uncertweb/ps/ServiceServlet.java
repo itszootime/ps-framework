@@ -12,8 +12,8 @@ import org.apache.log4j.Logger;
 import org.jdom.Document;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
-import org.uncertweb.ps.handler.json.JSONRequestHandler;
-import org.uncertweb.ps.handler.soap.SOAPRequestHandler;
+import org.uncertweb.ps.handler.json.JSONHandler;
+import org.uncertweb.ps.handler.soap.SOAPHandler;
 import org.uncertweb.ps.handler.soap.ServiceDescriptionHelper;
 import org.uncertweb.util.Stopwatch;
 
@@ -105,12 +105,12 @@ public class ServiceServlet extends HttpServlet {
 				// soap 1.1
 				servletResponse.setContentType("text/xml");
 				servletResponse.addHeader("SOAPAction", "http://www.uncertweb.org/ProcessingService");
-				SOAPRequestHandler requestHandler = new SOAPRequestHandler();
+				SOAPHandler requestHandler = new SOAPHandler();
 				requestHandler.handleRequest(servletRequest.getInputStream(), servletResponse.getOutputStream());
 			}
 			else if (pathInfo.equals("/json")) {
 				servletResponse.setContentType("application/json");
-				JSONRequestHandler requestHandler = new JSONRequestHandler();
+				JSONHandler requestHandler = new JSONHandler();
 				requestHandler.handleRequest(servletRequest.getReader(), servletResponse.getWriter());
 			}
 		}

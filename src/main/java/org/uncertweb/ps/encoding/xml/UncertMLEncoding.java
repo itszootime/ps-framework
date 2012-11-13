@@ -5,6 +5,7 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jdom.Content;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
@@ -18,21 +19,21 @@ import org.uncertweb.ps.encoding.ParseException;
 
 public class UncertMLEncoding extends AbstractXMLEncoding {
 
-	public Object parse(Element element, Class<?> classOf) throws ParseException {
+	public <T> T parse(Content content, Class<T> type) throws ParseException {
 		// try to parse it
 		try {
 			Document document = new Document();
-			document.addContent(element.detach());
+			document.addContent(((Element)content).detach());
 			String uncertml = new XMLOutputter(Format.getCompactFormat().setOmitDeclaration(true)).outputString(document);
 			XMLParser parser = new XMLParser();
-			return parser.parse(uncertml);
+			return type.cast(parser.parse(uncertml));
 		}
 		catch (Exception e) {
 			throw new ParseException("Couldn't parse UncertML.", e);
 		}
 	}
 
-	public Element encode(Object object) throws EncodeException {
+	public <T> Content encode(T object) throws EncodeException {
 		try {
 			XMLEncoder encoder = new XMLEncoder();
 			String uncertml = encoder.encode((IUncertainty) object);

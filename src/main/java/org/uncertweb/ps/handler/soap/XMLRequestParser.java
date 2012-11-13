@@ -20,6 +20,7 @@ import org.uncertweb.ps.data.SingleInput;
 import org.uncertweb.ps.encoding.EncodingRepository;
 import org.uncertweb.ps.encoding.ParseException;
 import org.uncertweb.ps.encoding.xml.AbstractXMLEncoding;
+import org.uncertweb.ps.handler.RequestParseException;
 import org.uncertweb.ps.process.AbstractProcess;
 import org.uncertweb.ps.process.ProcessRepository;
 import org.uncertweb.xml.Namespaces;

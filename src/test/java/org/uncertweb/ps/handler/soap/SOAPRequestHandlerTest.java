@@ -19,7 +19,7 @@ import org.uncertweb.xml.Namespaces;
 
 public class SOAPRequestHandlerTest {
 	
-	private SOAPRequestHandler handler;
+	private SOAPHandler handler;
 
 	@BeforeClass
 	public static void setUp() {
@@ -28,7 +28,7 @@ public class SOAPRequestHandlerTest {
 	
 	@Before
 	public void before() {
-		handler = new SOAPRequestHandler();
+		handler = new SOAPHandler();
 	}
 	
 	@Test

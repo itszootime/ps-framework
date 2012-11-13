@@ -1,7 +1,6 @@
 package org.uncertweb.ps.handler.soap;
 
 import java.io.IOException;
-import java.net.URL;
 import java.util.List;
 
 import org.jdom.Document;
@@ -17,10 +16,13 @@ import org.uncertweb.ps.data.ProcessInputs;
 import org.uncertweb.ps.data.Request;
 import org.uncertweb.ps.data.RequestedOutput;
 import org.uncertweb.ps.data.SingleInput;
+import org.uncertweb.ps.handler.RequestParseException;
 import org.uncertweb.ps.test.Utilities;
 import org.uncertweb.test.HTTPServerResource;
 import org.uncertweb.test.SupAssert;
 import org.uncertweb.xml.Namespaces;
+
+import com.vividsolutions.jts.geom.Polygon;
 
 public class XMLRequestParserTest {
 	
@@ -104,6 +106,8 @@ public class XMLRequestParserTest {
 		
 		// check process
 		Assert.assertEquals("BufferPolygonProcess", request.getProcessIdentifier());
+		Polygon polygon = inputs.get("Polygon").getAsSingleInput().getObjectAs(Polygon.class);
+		Assert.assertNotNull(polygon);
 	}
 	
 	@Test
@@ -123,6 +127,8 @@ public class XMLRequestParserTest {
 		
 		// check process
 		Assert.assertEquals("BufferPolygonProcess", request.getProcessIdentifier());
+		Polygon polygon = inputs.get("Polygon").getAsSingleInput().getObjectAs(Polygon.class);
+		Assert.assertNotNull(polygon);
 	}
 
 	private void testSingleInput(ProcessInputs inputs, String identifier, Object expected) {

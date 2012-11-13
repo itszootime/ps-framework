@@ -40,9 +40,9 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 
-public class JSONRequestHandler {
+public class JSONHandler {
 
-	private final Logger logger = Logger.getLogger(JSONRequestHandler.class);
+	private final Logger logger = Logger.getLogger(JSONHandler.class);
 
 	public void handleRequest(Reader reader, Writer writer) {
 		GsonBuilder gsonBuilder = new GsonBuilder();

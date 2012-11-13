@@ -17,6 +17,7 @@ import org.uncertweb.ps.encoding.EncodeException;
 import org.uncertweb.ps.encoding.Encoding;
 import org.uncertweb.ps.encoding.EncodingRepository;
 import org.uncertweb.ps.encoding.xml.AbstractXMLEncoding;
+import org.uncertweb.ps.handler.ResponseGenerateException;
 import org.uncertweb.ps.process.AbstractProcess;
 import org.uncertweb.ps.process.ProcessRepository;
 import org.uncertweb.xml.Namespaces;

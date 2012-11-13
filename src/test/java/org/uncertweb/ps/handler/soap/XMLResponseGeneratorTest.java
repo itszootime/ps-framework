@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.uncertweb.ps.data.ProcessOutputs;
 import org.uncertweb.ps.data.Response;
 import org.uncertweb.ps.data.SingleOutput;
+import org.uncertweb.ps.handler.ResponseGenerateException;
 import org.uncertweb.ps.test.Utilities;
 import org.uncertweb.xml.Namespaces;
 

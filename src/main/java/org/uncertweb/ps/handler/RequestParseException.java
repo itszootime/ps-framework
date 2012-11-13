@@ -1,4 +1,4 @@
-package org.uncertweb.ps.handler.soap;
+package org.uncertweb.ps.handler;
 
 public class RequestParseException extends Exception {
 	

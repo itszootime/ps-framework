@@ -21,6 +21,7 @@ import org.uncertweb.ps.Config;
 import org.uncertweb.ps.data.ProcessOutputs;
 import org.uncertweb.ps.data.Request;
 import org.uncertweb.ps.data.Response;
+import org.uncertweb.ps.handler.RequestParseException;
 import org.uncertweb.ps.process.AbstractProcess;
 import org.uncertweb.ps.process.ProcessException;
 import org.uncertweb.ps.process.ProcessRepository;
@@ -31,12 +32,12 @@ import org.uncertweb.xml.SoapEnvelope;
 import org.uncertweb.xml.SoapFault;
 import org.uncertweb.xml.SoapFault.Code;
 
-public class SOAPRequestHandler {
+public class SOAPHandler {
 	
 	// TODO: more speedups needed here (ie. cache schemas)
 	private static final XMLGrammarPool POOL = new XMLGrammarPoolImpl();
 
-	private final Logger logger = Logger.getLogger(SOAPRequestHandler.class);
+	private final Logger logger = Logger.getLogger(SOAPHandler.class);
 
 	public void handleRequest(InputStream inputStream, OutputStream outputStream) {
 		// response envelope + body
