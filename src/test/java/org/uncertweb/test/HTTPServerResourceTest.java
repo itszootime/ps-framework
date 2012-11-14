@@ -18,11 +18,11 @@ public class HTTPServerResourceTest {
 	@Test
 	public void httpServerWithString() throws IOException {
 		// load from file
-		String fileContent = IOUtils.toString(this.getClass().getClassLoader().getResourceAsStream("polygon.xml"));
+		String fileContent = IOUtils.toString(this.getClass().getClassLoader().getResourceAsStream("xml/polygon.xml"));
 		
 		// load from server
-		server.addFileHandler("polygon.xml");
-		URL url = new URL("http://localhost:8000/polygon.xml");
+		server.addFileHandler("xml/polygon.xml");
+		URL url = new URL("http://localhost:8000/xml/polygon.xml");
 		URLConnection conn = url.openConnection();
 		String serverContent = IOUtils.toString(conn.getInputStream());
 		
@@ -33,11 +33,11 @@ public class HTTPServerResourceTest {
 	@Test
 	public void httpServerWithBinary() throws IOException {
 		// load from file
-		byte[] fileContent = IOUtils.toByteArray(this.getClass().getClassLoader().getResourceAsStream("polygon.zip"));
+		byte[] fileContent = IOUtils.toByteArray(this.getClass().getClassLoader().getResourceAsStream("xml/polygon.zip"));
 		
 		// load from server
-		server.addFileHandler("polygon.zip");
-		URL url = new URL("http://localhost:8000/polygon.zip");
+		server.addFileHandler("xml/polygon.zip");
+		URL url = new URL("http://localhost:8000/xml/polygon.zip");
 		URLConnection conn = url.openConnection();
 		byte[] serverContent = IOUtils.toByteArray(conn.getInputStream());
 		

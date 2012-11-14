@@ -22,28 +22,28 @@ public class DataReferenceParserTest {
 	
 	@Test
 	public void parseCompressed() throws ParseException {
-		URL url = this.getClass().getClassLoader().getResource("polygon.zip");
+		URL url = this.getClass().getClassLoader().getResource("xml/polygon.zip");
 		Polygon polygon = parser.parse(url, Polygon.class, true);
 		Assert.assertNotNull(polygon);
 	}
 	
 	@Test
 	public void parse() throws ParseException {
-		URL url = this.getClass().getClassLoader().getResource("polygon.xml");
+		URL url = this.getClass().getClassLoader().getResource("xml/polygon.xml");
 		Polygon polygon = parser.parse(url, Polygon.class);
 		Assert.assertNotNull(polygon);
 	}
 	
 	@Test
 	public void parseWithMime() throws ParseException {
-		URL url = this.getClass().getClassLoader().getResource("polygon.xml");
+		URL url = this.getClass().getClassLoader().getResource("xml/polygon.xml");
 		Polygon polygon = parser.parse(url, Polygon.class, "text/xml");
 		Assert.assertNotNull(polygon);
 	}
 	
 	@Test
 	public void parseCompressedWithMime() throws ParseException {
-		URL url = this.getClass().getClassLoader().getResource("polygon.zip");
+		URL url = this.getClass().getClassLoader().getResource("xml/polygon.zip");
 		Polygon polygon = parser.parse(url, Polygon.class, "text/xml", true);
 		Assert.assertNotNull(polygon);
 	}

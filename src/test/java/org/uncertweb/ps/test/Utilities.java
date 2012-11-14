@@ -31,7 +31,7 @@ public class Utilities {
 	public static Document loadXML(String filename) throws JDOMException, IOException {
 		SAXBuilder builder = new SAXBuilder();
 		builder.setIgnoringBoundaryWhitespace(true);
-		return builder.build(Utilities.class.getClassLoader().getResourceAsStream(filename));
+		return builder.build(Utilities.class.getClassLoader().getResourceAsStream("xml/" + filename));
 	}	
 	
 	public static DateMidnight createDateMidnight(int year, int month, int day, String timezone) {

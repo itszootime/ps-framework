@@ -97,7 +97,7 @@ public class XMLRequestParserTest {
 	@Test
 	public void parseWithDataReference() throws JDOMException, IOException, RequestParseException {
 		// expose file
-		server.addFileHandler("polygon.xml");
+		server.addFileHandler("xml/polygon.xml");
 		
 		// parse
 		Element root = Utilities.loadXML("bufferpolygon-request.xml").getRootElement();
@@ -113,12 +113,12 @@ public class XMLRequestParserTest {
 	@Test
 	public void parseWithDataReferenceCompressed() throws JDOMException, IOException, RequestParseException {
 		// expose file
-		server.addFileHandler("polygon.zip");
+		server.addFileHandler("xml/polygon.zip");
 		
 		// load request and change ref url to zip
 		Element root = Utilities.loadXML("bufferpolygon-request.xml").getRootElement();
 		Element dataRef = root.getChild("Polygon", Namespaces.PS).getChild("DataReference", Namespaces.PS);
-		dataRef.setAttribute("href", "http://localhost:8000/polygon.zip");
+		dataRef.setAttribute("href", "http://localhost:8000/xml/polygon.zip");
 		dataRef.setAttribute("compressed", "true");
 		
 		// parse
