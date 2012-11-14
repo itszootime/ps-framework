@@ -1,9 +1,13 @@
 package org.uncertweb.ps.encoding.xml;
 
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import java.net.URI;
 import java.net.URISyntaxException;
-
-import junit.framework.Assert;
 
 import org.jdom.Content;
 import org.jdom.Text;
@@ -17,7 +21,7 @@ import org.uncertweb.ps.encoding.xml.AbstractXMLEncoding.Include;
 import org.uncertweb.ps.encoding.xml.AbstractXMLEncoding.IncludeList;
 import org.uncertweb.ps.encoding.xml.AbstractXMLEncoding.IncludeType;
 import org.uncertweb.ps.test.Utilities;
-import org.uncertweb.test.SupAssert;
+
 
 public class PrimitiveEncodingTest {
 
@@ -34,59 +38,59 @@ public class PrimitiveEncodingTest {
 				Float.class, Float[].class, DateMidnight.class, DateMidnight[].class, URI.class, URI[].class,
 				Boolean.class, Boolean[].class };
 		for (Class<?> type : types) {
-			Assert.assertTrue(encoding.isSupportedType(type));
+			assertTrue(encoding.isSupportedType(type));
 		}
 	}
 	
 	@Test
 	public void supportedMimeType() {
-		Assert.assertTrue(encoding.isSupportedMimeType("text/xml"));
+		assertTrue(encoding.isSupportedMimeType("text/xml"));
 	}
 	
 	@Test
 	public void namespace() {
-		Assert.assertEquals("http://www.w3.org/2001/XMLSchema", encoding.getNamespace());
+		assertEquals("http://www.w3.org/2001/XMLSchema", encoding.getNamespace());
 	}
 	
 	@Test
 	public void schemaLocation() {
-		Assert.assertNull(encoding.getSchemaLocation());
+		assertNull(encoding.getSchemaLocation());
 	}
 
 	@Test
 	public void parseString() throws ParseException {
 		String actual = parseFromString("one two  three", String.class);
-		Assert.assertEquals("one two  three", actual);
+		assertEquals("one two  three", actual);
 	}
 
 	@Test
 	public void parseStringArray() throws ParseException {
 		String[] actual = parseFromString("one two	three", String[].class);
-		SupAssert.assertArrayEquals(new String[] {"one", "two", "three" }, actual);
+		assertArrayEquals(new String[] {"one", "two", "three" }, actual);
 	}
 
 	@Test
 	public void parseDouble() throws ParseException {
 		Double actual = parseFromString("1.5", Double.class);
-		Assert.assertEquals(1.5d, actual);
+		assertEquals(new Double(1.5d), actual);
 	}
 
 	@Test
 	public void parseDoubleArray() throws ParseException {
 		Double[] actual = parseFromString("1.5 6.45 0.0005", Double[].class);
-		SupAssert.assertArrayEquals(new Double[] { 1.5, 6.45, 0.0005d }, actual);
+		assertArrayEquals(new Double[] { 1.5, 6.45, 0.0005d }, actual);
 	}
 
 	@Test
 	public void parseBoolean() throws ParseException {
 		Boolean actual = parseFromString("false", Boolean.class);
-		Assert.assertFalse(actual);
+		assertFalse(actual);
 	}
 
 	@Test
 	public void parseBooleanArray() throws ParseException {
 		Boolean[] actual = parseFromString("false true 0 1", Boolean[].class);
-		SupAssert.assertArrayEquals(new Boolean[] { false, true, false, true }, actual);
+		assertArrayEquals(new Boolean[] { false, true, false, true }, actual);
 	}
 	
 	@Test
@@ -102,25 +106,25 @@ public class PrimitiveEncodingTest {
 	@Test
 	public void parseInteger() throws ParseException {
 		Integer actual = parseFromString("55", Integer.class);
-		Assert.assertEquals(new Integer(55), actual);
+		assertEquals(new Integer(55), actual);
 	}
 
 	@Test
 	public void parseIntegerArray() throws ParseException {
 		Integer[] actual = parseFromString("1 4 5", Integer[].class);
-		SupAssert.assertArrayEquals(new Integer[] { 1, 4, 5 }, actual);
+		assertArrayEquals(new Integer[] { 1, 4, 5 }, actual);
 	}
 
 	@Test
 	public void parseDate() throws ParseException {
 		DateMidnight actual = parseFromString("2012-05-19", DateMidnight.class);
-		Assert.assertEquals(Utilities.createDateMidnight(2012, 5, 19, DateTimeZone.getDefault().getID()), actual);
+		assertEquals(Utilities.createDateMidnight(2012, 5, 19, DateTimeZone.getDefault().getID()), actual);
 	}
 
 	@Test
 	public void parseDateArray() throws ParseException {
 		DateMidnight[] actual = parseFromString("2012-12-25 2012-05-19+06:00 2012-05-19-06:00 2013-01-01Z", DateMidnight[].class);
-		SupAssert.assertArrayEquals(new DateMidnight[] {
+		assertArrayEquals(new DateMidnight[] {
 				Utilities.createDateMidnight(2012, 12, 25, DateTimeZone.getDefault().getID()),
 				Utilities.createDateMidnight(2012, 5, 19, "+06:00"),
 				Utilities.createDateMidnight(2012, 5, 19, "-06:00"),
@@ -141,20 +145,21 @@ public class PrimitiveEncodingTest {
 	@Test
 	public void parseFloat() throws ParseException {
 		Float data = parseFromString("0.1", Float.class);
-		Assert.assertEquals(0.1f, data);
+		assertEquals(new Float(0.1f), data);
 	}
 
 	@Test
 	public void parseFloatArray() throws ParseException {
 		Float[] actual = parseFromString("0.1 0.4 0.6", Float[].class);
-		SupAssert.assertArrayEquals(new Float[] { 0.1f, 0.4f, 0.6f }, actual);
+		Float[] expected = new Float[] { 0.1f, 0.4f, 0.6f };
+		assertArrayEquals(expected, actual);
 	}
 
 	@Test
 	public void parseURI() throws ParseException {
 		URI data = parseFromString("http://www.google.com:80/", URI.class);
 		try {
-			Assert.assertEquals(new URI("http://www.google.com:80/"), data);
+			assertEquals(new URI("http://www.google.com:80/"), data);
 		}
 		catch (URISyntaxException e) { }
 	}
@@ -164,7 +169,7 @@ public class PrimitiveEncodingTest {
 		String text = "http://www.google.com:80/ http://www.uncertweb.org";
 		URI[] actual = parseFromString(text, URI[].class);
 		try {
-			SupAssert.assertArrayEquals(new URI[] {
+			assertArrayEquals(new URI[] {
 					new URI("http://www.google.com:80/"),
 					new URI("http://www.uncertweb.org")
 			}, actual);
@@ -261,20 +266,20 @@ public class PrimitiveEncodingTest {
 	}
 
 	private void testTextContent(Content content, String expected) {
-		Assert.assertTrue(content instanceof Text);
+		assertTrue(content instanceof Text);
 		Text text = (Text)content;
-		Assert.assertEquals(expected, text.getText());
+		assertEquals(expected, text.getText());
 	}
 	
 	private void testInclude(Class<?> type, String expected) {
 		Include include = encoding.getInclude(type);
 		if (type.isArray()) {
-			Assert.assertTrue(include instanceof IncludeList);
+			assertTrue(include instanceof IncludeList);
 		}
 		else {
-			Assert.assertTrue(include instanceof IncludeType);
+			assertTrue(include instanceof IncludeType);
 		}
-		Assert.assertEquals(expected, include.getName());
+		assertEquals(expected, include.getName());
 	}
 
 	private <T> T parseFromString(String text, Class<T> target) throws ParseException {

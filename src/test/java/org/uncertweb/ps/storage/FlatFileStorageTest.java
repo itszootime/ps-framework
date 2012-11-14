@@ -1,16 +1,21 @@
 package org.uncertweb.ps.storage;
 
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertTrue;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.rules.TemporaryFolder;
-import org.uncertweb.test.SupAssert;
 
 public class FlatFileStorageTest {
 	
@@ -33,15 +38,15 @@ public class FlatFileStorageTest {
 	public void put() throws StorageException, IOException {
 		// put
 		String id = storage.put("i am a string in a file!".getBytes(), "text/plain", "some_user");
-		Assert.assertNotNull(id);
+		assertNotNull(id);
 		
 		// check file
 		Path stored = base.resolve(id);
-		Assert.assertTrue(Files.isRegularFile(stored));
-		Assert.assertTrue(Files.size(stored) > 0);
+		assertTrue(Files.isRegularFile(stored));
+		assertTrue(Files.size(stored) > 0);
 		Path entry = base.resolve(id + ".entry");
-		Assert.assertTrue(Files.isRegularFile(entry));
-		Assert.assertTrue(Files.size(entry) > 0);
+		assertTrue(Files.isRegularFile(entry));
+		assertTrue(Files.size(entry) > 0);
 	}
 	
 	@Test
@@ -52,11 +57,11 @@ public class FlatFileStorageTest {
 		
 		// now get
 		StorageEntry entry = storage.get(id);
-		Assert.assertNotNull(entry);
-		SupAssert.assertArrayEquals(content, entry.getContent());
-		Assert.assertEquals("text/plain", entry.getMimeType());
-		Assert.assertEquals("some_user", entry.getStoredBy());
-		Assert.assertNotNull(entry.getStoredAt());
+		assertNotNull(entry);
+		assertArrayEquals(content, entry.getContent());
+		assertEquals("text/plain", entry.getMimeType());
+		assertEquals("some_user", entry.getStoredBy());
+		assertNotNull(entry.getStoredAt());
 	}
 	
 	@Test
@@ -68,18 +73,18 @@ public class FlatFileStorageTest {
 		boolean removed = storage.remove(id);
 		
 		// check file
-		Assert.assertTrue(removed);
+		assertTrue(removed);
 		Path stored = base.resolve(id);
-		Assert.assertFalse(Files.exists(stored));
+		assertFalse(Files.exists(stored));
 		Path entry = base.resolve(id + ".entry");
-		Assert.assertFalse(Files.exists(entry));
+		assertFalse(Files.exists(entry));
 	}
 	
 	@Test
 	public void ids() throws StorageException {
 		String id1 = storage.put("i am a string in a file!".getBytes(), "text/plain", "some_user");
 		String id2 = storage.put("i am a string in a file!".getBytes(), "text/plain", "another_user");
-		Assert.assertNotSame(id1, id2);
+		assertNotSame(id1, id2);
 	}
 
 }

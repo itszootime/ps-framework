@@ -13,19 +13,5 @@ public class SupAssert {
 		Assert.assertEquals(expectedDay, actualDate.getDayOfMonth());
 		Assert.assertEquals(expectedTimeZoneId, actualDate.getZone().getID());
 	}
-	
-	public static void assertArrayEquals(Object[] expected, Object[] actual) {
-		Assert.assertEquals(expected.length, actual.length);
-		for (int i = 0; i < expected.length; i++) {
-			Assert.assertEquals(expected[i], actual[i]);
-		}
-	}
-	
-	public static void assertArrayEquals(byte[] expected, byte[] actual) {
-		Assert.assertEquals(expected.length, actual.length);
-		for (int i = 0; i < expected.length; i++) {
-			Assert.assertEquals(expected[i], actual[i]);
-		}
-	}
 
 }

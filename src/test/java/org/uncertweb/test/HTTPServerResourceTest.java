@@ -1,10 +1,11 @@
 package org.uncertweb.test;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
-
-import junit.framework.Assert;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.Rule;
@@ -27,7 +28,7 @@ public class HTTPServerResourceTest {
 		String serverContent = IOUtils.toString(conn.getInputStream());
 		
 		// check
-		Assert.assertEquals(fileContent, serverContent);
+		assertThat(serverContent, equalTo(fileContent));
 	}
 	
 	@Test
@@ -42,7 +43,7 @@ public class HTTPServerResourceTest {
 		byte[] serverContent = IOUtils.toByteArray(conn.getInputStream());
 		
 		// check
-		SupAssert.assertArrayEquals(fileContent, serverContent);
+		assertThat(serverContent, equalTo(fileContent));
 	}
 	
 }
