@@ -2,5 +2,5 @@
 .project
 .classpath
 .settings
-src/test/java/org/uncertweb/ps/wip
+wip
 target
