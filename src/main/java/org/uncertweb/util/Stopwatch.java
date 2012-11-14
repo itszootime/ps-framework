@@ -1,6 +1,7 @@
 package org.uncertweb.util;
 
 
+
 public class Stopwatch {
 
 	private long start;
@@ -10,11 +11,12 @@ public class Stopwatch {
 	}
 	
 	public String getElapsedTime() {
-		return ((System.nanoTime() - start) / 1000000000.0) + "s";
+		long duration = System.currentTimeMillis() - start;
+		return DurationFormatter.format(duration);
 	}
 	
 	public void reset() {
-		start = System.nanoTime();
+		start = System.currentTimeMillis();
 	}
 	
 }
