@@ -14,7 +14,7 @@ import org.jdom.input.SAXBuilder;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.uncertweb.ps.test.Utilities;
+import org.uncertweb.ps.test.TestUtilities;
 import org.uncertweb.xml.Namespaces;
 
 public class SOAPRequestHandlerTest {
@@ -23,7 +23,7 @@ public class SOAPRequestHandlerTest {
 
 	@BeforeClass
 	public static void setUp() {
-		Utilities.setupProcessRepository();
+		TestUtilities.setupProcessRepository();
 	}
 	
 	@Before
