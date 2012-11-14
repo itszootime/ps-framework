@@ -24,7 +24,7 @@ import org.uncertweb.ps.data.RequestedOutput;
 import org.uncertweb.ps.data.SingleInput;
 import org.uncertweb.ps.handler.RequestParseException;
 import org.uncertweb.ps.test.TestUtilities;
-import org.uncertweb.test.HTTPServerResource;
+import org.uncertweb.test.HTTPServer;
 import org.uncertweb.xml.Namespaces;
 
 import com.vividsolutions.jts.geom.Polygon;
@@ -32,7 +32,7 @@ import com.vividsolutions.jts.geom.Polygon;
 public class XMLRequestParserTest {
 	
 	@Rule
-	public HTTPServerResource server = new HTTPServerResource(8000);
+	public HTTPServer server = new HTTPServer(8000);
 
 	@BeforeClass
 	public static void setUp() {

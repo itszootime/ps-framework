@@ -12,12 +12,12 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
-public class HTTPServerResource extends ExternalResource {
+public class HTTPServer extends ExternalResource {
 
 	private final InetSocketAddress address;
 	private HttpServer server;
 
-	public HTTPServerResource(int port) {
+	public HTTPServer(int port) {
 		address = new InetSocketAddress(port);
 	}
 

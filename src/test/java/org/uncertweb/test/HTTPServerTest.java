@@ -11,10 +11,10 @@ import org.apache.commons.io.IOUtils;
 import org.junit.Rule;
 import org.junit.Test;
 
-public class HTTPServerResourceTest {
+public class HTTPServerTest {
 
 	@Rule
-	public HTTPServerResource server = new HTTPServerResource(8000);
+	public HTTPServer server = new HTTPServer(8000);
 
 	@Test
 	public void httpServerWithString() throws IOException {
