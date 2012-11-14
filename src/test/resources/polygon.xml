@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<gml:Polygon xmlns:gml="http://www.opengis.net/gml/3.2" gml:id="polygon" srsName="http://www.opengis.net/def/crs/EPSG/0/27700">
-  <gml:exterior>
-    <gml:LinearRing>
-      <gml:posList>484785.1145019531 461039.23876953125 485274.5947265625 461019.3949584961 485446.57421875 460562.98779296875 485096.0007324219 460483.61267089844 484785.1145019531
-        461039.23876953125</gml:posList>
-    </gml:LinearRing>
-  </gml:exterior>
-</gml:Polygon>

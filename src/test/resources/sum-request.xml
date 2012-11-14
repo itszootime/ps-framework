@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<ps:SumProcessRequest xmlns:ps="http://www.uncertweb.org/ProcessingService">
-  <ps:A>4.002</ps:A>
-  <ps:B>1000</ps:B>
-  <ps:B>2000</ps:B>
-  <ps:B>3000</ps:B>
-</ps:SumProcessRequest>
