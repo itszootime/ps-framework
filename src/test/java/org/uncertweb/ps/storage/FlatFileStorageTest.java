@@ -18,7 +18,7 @@ import org.junit.rules.TemporaryFolder;
 
 public class FlatFileStorageTest {
 	
-	private static final String testString = "i am a string in a file!";
+	private static final String TEST_STRING = "i am a string in a file!";
 	
 	@Rule
 	public TemporaryFolder storageFolder = new TemporaryFolder();
@@ -78,7 +78,7 @@ public class FlatFileStorageTest {
 	@Test
 	public void getReturnsEntryWithContent() throws StorageException {
 		StorageEntry entry = putAndGetTestString();
-		byte[] content = testString.getBytes();
+		byte[] content = TEST_STRING.getBytes();
 		assertThat(entry.getContent(), equalTo(content));
 	}
 		
@@ -124,11 +124,11 @@ public class FlatFileStorageTest {
 	}
 	
 	private String putTestString() throws StorageException {
-		return storage.put(testString.getBytes(), "text/plain", "some_user");
+		return storage.put(TEST_STRING.getBytes(), "text/plain", "some_user");
 	}
 	
 	private StorageEntry putAndGetTestString() throws StorageException {
-		String id = storage.put(testString.getBytes(), "text/plain", "some_user");
+		String id = storage.put(TEST_STRING.getBytes(), "text/plain", "some_user");
 		return storage.get(id);
 	}
 
