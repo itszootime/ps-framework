@@ -1,11 +1,10 @@
 package org.uncertweb.ps.storage;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.notNullValue;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -18,6 +17,8 @@ import org.junit.rules.ExpectedException;
 import org.junit.rules.TemporaryFolder;
 
 public class FlatFileStorageTest {
+	
+	private static final String testString = "i am a string in a file!";
 	
 	@Rule
 	public TemporaryFolder storageFolder = new TemporaryFolder();
@@ -35,56 +36,100 @@ public class FlatFileStorageTest {
 	}
 
 	@Test
-	public void put() throws StorageException, IOException {
-		// put
-		String id = storage.put("i am a string in a file!".getBytes(), "text/plain", "some_user");
-		assertNotNull(id);
-		
-		// check file
+	public void putReturnsId() throws StorageException, IOException {
+		String id = putTestString();
+		assertThat(id, notNullValue());
+	}
+	
+	@Test
+	public void putCreatesFile() throws StorageException, IOException {
+		String id = putTestString();
 		Path stored = base.resolve(id);
-		assertTrue(Files.isRegularFile(stored));
-		assertTrue(Files.size(stored) > 0);
-		Path entry = base.resolve(id + ".entry");
-		assertTrue(Files.isRegularFile(entry));
-		assertTrue(Files.size(entry) > 0);
+		assertThat(Files.isRegularFile(stored), equalTo(true));
 	}
 	
 	@Test
-	public void get() throws StorageException {
-		// put first
-		byte[] content = "i am a string in a file!".getBytes();
-		String id = storage.put(content, "text/plain", "some_user");
-		
-		// now get
-		StorageEntry entry = storage.get(id);
-		assertNotNull(entry);
-		assertArrayEquals(content, entry.getContent());
-		assertEquals("text/plain", entry.getMimeType());
-		assertEquals("some_user", entry.getStoredBy());
-		assertNotNull(entry.getStoredAt());
-	}
-	
-	@Test
-	public void remove() throws StorageException {
-		// put
-		String id = storage.put("i am a string in a file!".getBytes(), "text/plain", "some_user");
-		
-		// remove
-		boolean removed = storage.remove(id);
-		
-		// check file
-		assertTrue(removed);
+	public void putCreatesNonEmptyFile() throws StorageException, IOException {
+		String id = putTestString();
 		Path stored = base.resolve(id);
-		assertFalse(Files.exists(stored));
-		Path entry = base.resolve(id + ".entry");
-		assertFalse(Files.exists(entry));
+		assertThat(Files.size(stored), greaterThan(0l));
 	}
 	
 	@Test
-	public void ids() throws StorageException {
-		String id1 = storage.put("i am a string in a file!".getBytes(), "text/plain", "some_user");
-		String id2 = storage.put("i am a string in a file!".getBytes(), "text/plain", "another_user");
-		assertNotSame(id1, id2);
+	public void putCreatesEntryFile() throws StorageException {
+		String id = putTestString();
+		Path entry = base.resolve(id + ".entry");
+		assertThat(Files.isRegularFile(entry), equalTo(true));
+	}
+	
+	@Test
+	public void putCreatesNonEmptyEntryFile() throws StorageException, IOException {
+		String id = putTestString();
+		Path entry = base.resolve(id + ".entry");
+		assertThat(Files.size(entry), greaterThan(0l));
+	}
+	
+	@Test
+	public void getReturnsEntry() throws StorageException {
+		StorageEntry entry = putAndGetTestString();
+		assertThat(entry, notNullValue());
+	}
+	
+	@Test
+	public void getReturnsEntryWithContent() throws StorageException {
+		StorageEntry entry = putAndGetTestString();
+		byte[] content = testString.getBytes();
+		assertThat(entry.getContent(), equalTo(content));
+	}
+		
+	@Test
+	public void getReturnsEntryWithMimeType() throws StorageException {
+		StorageEntry entry = putAndGetTestString();
+		assertThat(entry.getMimeType(), equalTo("text/plain"));
+	}
+	
+	@Test
+	public void getReturnsEntryWithStoredBy() throws StorageException {
+		StorageEntry entry = putAndGetTestString();
+		assertThat(entry.getStoredBy(), equalTo("some_user"));
+	}
+	
+	@Test
+	public void getReturnsEntryWithStoredAt() throws StorageException {
+		StorageEntry entry = putAndGetTestString();
+		assertThat(entry.getStoredAt(), notNullValue());
+	}
+	
+	@Test
+	public void removeRemovesFile() throws StorageException {
+		String id = putTestString();
+		storage.remove(id);
+		Path stored = base.resolve(id);
+		assertThat(Files.exists(stored), equalTo(false));
+	}
+	
+	@Test
+	public void removeRemovesEntryFile() throws StorageException {
+		String id = putTestString();
+		storage.remove(id);
+		Path entry = base.resolve(id + ".entry");
+		assertThat(Files.exists(entry), equalTo(false));
+	}
+	
+	@Test
+	public void putReturnsUniqueIds() throws StorageException {
+		String firstId = putTestString();
+		String secondId = putTestString();
+		assertThat(firstId, not(equalTo(secondId)));
+	}
+	
+	private String putTestString() throws StorageException {
+		return storage.put(testString.getBytes(), "text/plain", "some_user");
+	}
+	
+	private StorageEntry putAndGetTestString() throws StorageException {
+		String id = storage.put(testString.getBytes(), "text/plain", "some_user");
+		return storage.get(id);
 	}
 
 }
