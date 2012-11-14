@@ -30,7 +30,7 @@ public class DataReferenceParser {
 			throw new ParseException("Unsupported MIME type " + mimeType + ".");
 		}
 		else {
-			logger.debug("Using " + encoding.getClass().getSimpleName() + " for " + mimeType + ".");
+			logger.debug("Using " + encoding.getClass().getSimpleName() + " encoding class for " + mimeType + "...");
 			
 			try (InputStream inputStream = url.openStream()) {
 				// check if there's any compression
@@ -42,7 +42,7 @@ public class DataReferenceParser {
 				// parse
 				Stopwatch timer = new Stopwatch();				
 				T object = encoding.parse(finalStream, type);
-				logger.debug("Took " + timer.getElapsedTime() + " to parse referenced data.");
+				logger.info("Took " + timer.getElapsedTime() + " to parse referenced data.");
 
 				return object;
 			}
