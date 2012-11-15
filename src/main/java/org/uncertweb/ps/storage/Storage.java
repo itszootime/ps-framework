@@ -10,6 +10,7 @@ public abstract class Storage {
 	
 	public static Storage getInstance() {
 		// return whatever is configured for storage
+		// or write to current dir if no other settings
 		Path base = FileSystems.getDefault().getPath(Config.getInstance().getStorageProperty("baseFolder"));
 		return new FlatFileStorage(base);
 	}
