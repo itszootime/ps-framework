@@ -2,40 +2,53 @@ package org.uncertweb.ps.test;
 
 import java.nio.file.Path;
 
-import org.junit.rules.ExternalResource;
+import org.junit.rules.TemporaryFolder;
 import org.uncertweb.ps.Config;
 import org.uncertweb.ps.process.ProcessRepository;
 import org.uncertweb.ps.test.process.BufferPolygonProcess;
 import org.uncertweb.ps.test.process.HashProcess;
 import org.uncertweb.ps.test.process.SumProcess;
 
-public class ConfiguredService extends ExternalResource {
-	
-	// TODO: resource which spoofs configured service:
-	// - sets up process repo with extra classes
-	// - creates temp folder
-	// - inits file storage for temp folder
-	// - sets server host:port in config
+/**
+ * Resource to spoof a configured service.
+ * 
+ * @author Richard Jones
+ *
+ */
+public class ConfiguredService extends TemporaryFolder {
 	
 	private String baseURL;
 	private Path storageRoot;
 	
-	public static void setupProcessRepository() {
-		// add processes
+	public ConfiguredService() {
+		super();
+	}
+	
+	@Override
+	public void before() throws Throwable {
+		super.before();
+		
+		// - sets up process repo with extra classes
 		ProcessRepository repo = ProcessRepository.getInstance();
 		repo.addProcess(new HashProcess());
 		repo.addProcess(new SumProcess());
 		repo.addProcess(new BufferPolygonProcess());
+		
+		// - creates temp folder		
+		storageRoot = this.newFolder().toPath();
+		
+		// - inits file storage for temp folder
+		Config config = Config.getInstance();
+		config.setStorageProperty("baseFolder", storageRoot.toString());
+		
+		// - sets server host:port in config
+		baseURL = "http://localhost:9090/ps";
+		config.setServerProperty("baseURL", baseURL);
 	}
 	
-	public static void setupServerConfig() {
-		Config cfg = Config.getInstance();
-		cfg.setServerProperty("baseURL", BASE_URL);
-	}
-	
-	public static void setupStorageConfig(Path base) {
-		Config cfg = Config.getInstance();
-		cfg.setStorageProperty("baseFolder", base.toString());
+	@Override
+	public void after() {
+		super.after();
 	}
 	
 	public String getBaseURL() {

@@ -121,7 +121,7 @@ public class XMLRequestParserTest {
 		// load request and change ref url to zip
 		Element root = TestUtilities.loadXML("bufferpolygon-request.xml").getRootElement();
 		Element dataRef = root.getChild("Polygon", Namespaces.PS).getChild("DataReference", Namespaces.PS);
-		dataRef.setAttribute("href", "http://localhost:8000/xml/polygon.zip");
+		dataRef.setAttribute("href", "http://localhost:8000/xml/polygon.xml");
 		dataRef.setAttribute("mimeType", "text/xml");
 		
 		// parse
