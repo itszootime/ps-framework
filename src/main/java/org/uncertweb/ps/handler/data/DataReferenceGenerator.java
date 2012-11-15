@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.net.URL;
 
 import org.uncertweb.ps.Config;
+import org.uncertweb.ps.data.DataReference;
 import org.uncertweb.ps.encoding.EncodeException;
 import org.uncertweb.ps.encoding.Encoding;
 import org.uncertweb.ps.encoding.EncodingRepository;
@@ -13,7 +14,7 @@ import org.uncertweb.ps.storage.StorageException;
 
 public class DataReferenceGenerator {
 	
-	public <T> URL generate(T object) throws EncodeException, StorageException {
+	public <T> DataReference generate(T object) throws EncodeException, StorageException {
 		// find encoding
 		Class<?> type = object.getClass();
 		EncodingRepository repo = EncodingRepository.getInstance();
@@ -29,15 +30,16 @@ public class DataReferenceGenerator {
 				try (ByteArrayOutputStream byteStream = new ByteArrayOutputStream()) {
 					// encode
 					encoding.encode(object, byteStream);
+					String mimeType = encoding.getDefaultMimeType();
 					byte[] content = byteStream.toByteArray();
 				
 					// store
 					Storage storage = Storage.getInstance();
-					String id = storage.put(content, encoding.getDefaultMimeType(), "ps-framework");
+					String id = storage.put(content, mimeType, "ps-framework");
 					
 					// generate url
 					String baseURL = Config.getInstance().getServerProperty("baseURL") + "/data/";
-					return new URL(baseURL + id);
+					return new DataReference(new URL(baseURL + id), mimeType);
 				}
 				catch (IOException e) {
 					throw new EncodeException("Couldn't write data to stream.", e);

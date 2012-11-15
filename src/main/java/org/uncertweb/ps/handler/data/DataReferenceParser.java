@@ -9,6 +9,7 @@ import java.util.zip.ZipInputStream;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
+import org.uncertweb.ps.data.DataReference;
 import org.uncertweb.ps.encoding.Encoding;
 import org.uncertweb.ps.encoding.EncodingRepository;
 import org.uncertweb.ps.encoding.ParseException;
@@ -17,12 +18,23 @@ import org.uncertweb.util.Stopwatch;
 public class DataReferenceParser {
 
 	private static final Logger logger = Logger.getLogger(DataReferenceParser.class);
-
-	public <T> T parse(URL url, Class<T> type) throws ParseException {
-		return this.parse(url, type, false);
+	
+	public <T> T parse(DataReference ref, Class<T> type) throws ParseException {
+		// get parse parameters
+		URL url = ref.getURL();
+		String mimeType = ref.getMimeType();
+		boolean compressed = ref.isCompressed();
+		
+		// select appropriate method
+		if (mimeType == null) {
+			return parse(url, type, compressed);
+		}
+		else {
+			return parse(url, type, mimeType, compressed);
+		}
 	}
 
-	public <T> T parse(URL url, Class<T> type, boolean compressed) throws ParseException {
+	private <T> T parse(URL url, Class<T> type, boolean compressed) throws ParseException {
 		// get repo and encodings
 		EncodingRepository encodingRepo = EncodingRepository.getInstance();
 		Encoding[] encodings = new Encoding[] {
@@ -63,11 +75,7 @@ public class DataReferenceParser {
 		throw new ParseException("Couldn't parse " + type.getSimpleName() + " with any encoding class.");
 	}
 
-	public <T> T parse(URL url, Class<T> type, String mimeType) throws ParseException {
-		return this.parse(url, type, mimeType, false);
-	}
-
-	public <T> T parse(URL url, Class<T> type, String mimeType, boolean compressed) throws ParseException {
+	private <T> T parse(URL url, Class<T> type, String mimeType, boolean compressed) throws ParseException {
 		// get repo and encoding
 		EncodingRepository encodingRepo = EncodingRepository.getInstance();
 		Encoding encoding = encodingRepo.getEncoding(type, mimeType);

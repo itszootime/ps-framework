@@ -7,6 +7,7 @@ import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.uncertweb.ps.data.DataReference;
 import org.uncertweb.ps.encoding.ParseException;
 
 import com.vividsolutions.jts.geom.Polygon;
@@ -22,29 +23,29 @@ public class DataReferenceParserTest {
 	
 	@Test
 	public void parseCompressed() throws ParseException {
-		URL url = this.getClass().getClassLoader().getResource("xml/polygon.zip");
-		Polygon polygon = parser.parse(url, Polygon.class, true);
+		DataReference ref = new DataReference(this.getClass().getClassLoader().getResource("xml/polygon.zip"), true);
+		Polygon polygon = parser.parse(ref, Polygon.class);
 		Assert.assertNotNull(polygon);
 	}
 	
 	@Test
 	public void parse() throws ParseException {
-		URL url = this.getClass().getClassLoader().getResource("xml/polygon.xml");
-		Polygon polygon = parser.parse(url, Polygon.class);
+		DataReference ref = new DataReference(this.getClass().getClassLoader().getResource("xml/polygon.xml"));
+		Polygon polygon = parser.parse(ref, Polygon.class);
 		Assert.assertNotNull(polygon);
 	}
 	
 	@Test
 	public void parseWithMime() throws ParseException {
-		URL url = this.getClass().getClassLoader().getResource("xml/polygon.xml");
-		Polygon polygon = parser.parse(url, Polygon.class, "text/xml");
+		DataReference ref = new DataReference(this.getClass().getClassLoader().getResource("xml/polygon.xml"), "text/xml");
+		Polygon polygon = parser.parse(ref, Polygon.class);
 		Assert.assertNotNull(polygon);
 	}
 	
 	@Test
 	public void parseCompressedWithMime() throws ParseException {
-		URL url = this.getClass().getClassLoader().getResource("xml/polygon.zip");
-		Polygon polygon = parser.parse(url, Polygon.class, "text/xml", true);
+		DataReference ref = new DataReference(this.getClass().getClassLoader().getResource("xml/polygon.zip"), "text/xml", true);
+		Polygon polygon = parser.parse(ref, Polygon.class);
 		Assert.assertNotNull(polygon);
 	}
 	
@@ -52,8 +53,8 @@ public class DataReferenceParserTest {
 	public void parseNotFound() {
 		ParseException exception = null;
 		try {
-			URL url = new URL("http://www.uncertweb.org/no/files/here/polygon.xml");
-			parser.parse(url, Polygon.class, "text/xml");
+			DataReference ref = new DataReference(new URL("http://www.uncertweb.org/no/files/here/polygon.xml"), "text/xml");
+			parser.parse(ref, Polygon.class);
 		}
 		catch (MalformedURLException e) {
 			// nothing wrong with that
