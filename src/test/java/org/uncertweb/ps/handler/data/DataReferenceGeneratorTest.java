@@ -45,7 +45,7 @@ public class DataReferenceGeneratorTest {
 	}
 	
 	@Test
-	public void generateReturnsCompressed() throws EncodeException, StorageException {
+	public void generateReturnsCompressedFalse() throws EncodeException, StorageException {
 		DataReference ref = generateTestDataReference();
 		assertThat(ref.isCompressed(), equalTo(false));
 	}
