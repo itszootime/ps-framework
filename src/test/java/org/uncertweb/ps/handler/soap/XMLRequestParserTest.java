@@ -114,6 +114,27 @@ public class XMLRequestParserTest {
 	}
 	
 	@Test
+	public void parseWithDataReferenceMimeType() throws JDOMException, IOException, RequestParseException {
+		// expose file
+		server.addFileHandler("xml/polygon.xml");
+		
+		// load request and change ref url to zip
+		Element root = TestUtilities.loadXML("bufferpolygon-request.xml").getRootElement();
+		Element dataRef = root.getChild("Polygon", Namespaces.PS).getChild("DataReference", Namespaces.PS);
+		dataRef.setAttribute("href", "http://localhost:8000/xml/polygon.zip");
+		dataRef.setAttribute("mimeType", "text/xml");
+		
+		// parse
+		Request request = XMLRequestParser.parse(root);
+		ProcessInputs inputs = request.getInputs();
+		
+		// check process
+		assertEquals("BufferPolygonProcess", request.getProcessIdentifier());
+		Polygon polygon = inputs.get("Polygon").getAsSingleInput().getObjectAs(Polygon.class);
+		assertNotNull(polygon);
+	}
+	
+	@Test
 	public void parseWithDataReferenceCompressed() throws JDOMException, IOException, RequestParseException {
 		// expose file
 		server.addFileHandler("xml/polygon.zip");
@@ -122,6 +143,28 @@ public class XMLRequestParserTest {
 		Element root = TestUtilities.loadXML("bufferpolygon-request.xml").getRootElement();
 		Element dataRef = root.getChild("Polygon", Namespaces.PS).getChild("DataReference", Namespaces.PS);
 		dataRef.setAttribute("href", "http://localhost:8000/xml/polygon.zip");
+		dataRef.setAttribute("compressed", "true");
+		
+		// parse
+		Request request = XMLRequestParser.parse(root);
+		ProcessInputs inputs = request.getInputs();
+		
+		// check process
+		assertEquals("BufferPolygonProcess", request.getProcessIdentifier());
+		Polygon polygon = inputs.get("Polygon").getAsSingleInput().getObjectAs(Polygon.class);
+		assertNotNull(polygon);
+	}
+	
+	@Test
+	public void parseWithDataReferenceMimeTypeCompressed() throws JDOMException, IOException, RequestParseException {
+		// expose file
+		server.addFileHandler("xml/polygon.zip");
+		
+		// load request and change ref url to zip
+		Element root = TestUtilities.loadXML("bufferpolygon-request.xml").getRootElement();
+		Element dataRef = root.getChild("Polygon", Namespaces.PS).getChild("DataReference", Namespaces.PS);
+		dataRef.setAttribute("href", "http://localhost:8000/xml/polygon.zip");
+		dataRef.setAttribute("mimeType", "text/xml");
 		dataRef.setAttribute("compressed", "true");
 		
 		// parse

@@ -10,6 +10,7 @@ import org.jdom.Attribute;
 import org.jdom.Content;
 import org.jdom.Element;
 import org.uncertweb.ps.data.DataDescription;
+import org.uncertweb.ps.data.DataReference;
 import org.uncertweb.ps.data.Input;
 import org.uncertweb.ps.data.MultipleInput;
 import org.uncertweb.ps.data.ProcessInputs;
@@ -148,7 +149,8 @@ public class XMLRequestParser {
 		// parse
 		DataReferenceParser refParser = new DataReferenceParser();
 		try {
-			return refParser.parse(new URL(href), type, mimeType, compressed);
+			DataReference ref = new DataReference(new URL(href), mimeType, compressed);
+			return refParser.parse(ref, type);
 		}
 		catch (MalformedURLException e) {
 			throw new RequestParseException("Malformed data reference URL.", e);
