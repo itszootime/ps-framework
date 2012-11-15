@@ -20,7 +20,7 @@ import org.uncertweb.ps.encoding.ParseException;
 import org.uncertweb.ps.encoding.xml.AbstractXMLEncoding.Include;
 import org.uncertweb.ps.encoding.xml.AbstractXMLEncoding.IncludeList;
 import org.uncertweb.ps.encoding.xml.AbstractXMLEncoding.IncludeType;
-import org.uncertweb.ps.test.TestUtilities;
+import org.uncertweb.test.util.TestUtils;
 
 
 public class PrimitiveEncodingTest {
@@ -124,17 +124,17 @@ public class PrimitiveEncodingTest {
 	@Test
 	public void parseDate() throws ParseException {
 		DateMidnight actual = parseFromString("2012-05-19", DateMidnight.class);
-		assertEquals(TestUtilities.createDateMidnight(2012, 5, 19, DateTimeZone.getDefault().getID()), actual);
+		assertEquals(TestUtils.createDateMidnight(2012, 5, 19, DateTimeZone.getDefault().getID()), actual);
 	}
 
 	@Test
 	public void parseDateArray() throws ParseException {
 		DateMidnight[] actual = parseFromString("2012-12-25 2012-05-19+06:00 2012-05-19-06:00 2013-01-01Z", DateMidnight[].class);
 		assertArrayEquals(new DateMidnight[] {
-				TestUtilities.createDateMidnight(2012, 12, 25, DateTimeZone.getDefault().getID()),
-				TestUtilities.createDateMidnight(2012, 5, 19, "+06:00"),
-				TestUtilities.createDateMidnight(2012, 5, 19, "-06:00"),
-				TestUtilities.createDateMidnight(2013, 1, 1, "UTC")
+				TestUtils.createDateMidnight(2012, 12, 25, DateTimeZone.getDefault().getID()),
+				TestUtils.createDateMidnight(2012, 5, 19, "+06:00"),
+				TestUtils.createDateMidnight(2012, 5, 19, "-06:00"),
+				TestUtils.createDateMidnight(2013, 1, 1, "UTC")
 		}, actual);		
 	}
 	
@@ -231,15 +231,15 @@ public class PrimitiveEncodingTest {
 
 	@Test
 	public void encodeDate() throws EncodeException {
-		Content content = encoding.encode(TestUtilities.createDateMidnight(2012, 5, 19, "+01:00"));
+		Content content = encoding.encode(TestUtils.createDateMidnight(2012, 5, 19, "+01:00"));
 		testTextContent(content, "2012-05-19+01:00");
 	}
 	
 	@Test
 	public void encodeDateArray() throws EncodeException {
 		Content content = encoding.encode(new DateMidnight[] {
-				TestUtilities.createDateMidnight(2012, 5, 19, "+06:00"),
-				TestUtilities.createDateMidnight(2012, 5, 19, "-06:00")
+				TestUtils.createDateMidnight(2012, 5, 19, "+06:00"),
+				TestUtils.createDateMidnight(2012, 5, 19, "-06:00")
 		});
 		testTextContent(content, "2012-05-19+06:00 2012-05-19-06:00");
 	}

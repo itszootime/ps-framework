@@ -1,4 +1,4 @@
-package org.uncertweb.ps.test;
+package org.uncertweb.test.util;
 
 import java.io.IOException;
 
@@ -9,12 +9,18 @@ import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 
-public class TestUtilities {
+/**
+ * These were originally created for testing, but they are probably useful elsewhere too.
+ * 
+ * @author Richard Jones
+ *
+ */
+public class TestUtils {
 	
-	public static Document loadXML(String filename) throws JDOMException, IOException {
+	public static Document loadXML(String path) throws JDOMException, IOException {
 		SAXBuilder builder = new SAXBuilder();
 		builder.setIgnoringBoundaryWhitespace(true);
-		return builder.build(TestUtilities.class.getClassLoader().getResourceAsStream("xml/" + filename));
+		return builder.build(TestUtils.class.getClassLoader().getResourceAsStream(path));
 	}	
 	
 	public static DateMidnight createDateMidnight(int year, int month, int day, String timezone) {
