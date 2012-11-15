@@ -6,8 +6,8 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.jdom.Content;
 import org.jdom.Element;
-import org.uncertweb.ps.Config;
 import org.uncertweb.ps.data.DataDescription;
+import org.uncertweb.ps.data.DataReference;
 import org.uncertweb.ps.data.Output;
 import org.uncertweb.ps.data.ProcessOutputs;
 import org.uncertweb.ps.data.RequestedOutput;
@@ -125,12 +125,12 @@ public class XMLResponseGenerator {
 
 	private static Content generateReferenceData(Object object, Class<?> type) throws EncodeException, StorageException {
 		// generate data
-		String href = new DataReferenceGenerator().generate(object).toString();
+		DataReference ref = new DataReferenceGenerator().generate(object);
 
 		// add reference url to response
 		Element referenceElement = new Element("DataReference", Namespaces.PS);
-		referenceElement.setAttribute("href", href);
-		referenceElement.setAttribute("mimeType", "unknown");
+		referenceElement.setAttribute("href", ref.getURL().toString());
+		referenceElement.setAttribute("mimeType", ref.getMimeType());
 		return referenceElement;
 	}
 
