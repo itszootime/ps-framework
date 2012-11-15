@@ -49,27 +49,31 @@ public class SOAPHandler {
 		try {
 			// validate
 			// create builder
-			SAXBuilder builder = new SAXBuilder("org.apache.xerces.parsers.SAXParser", true);
+			SAXBuilder builder = new SAXBuilder();
+//			SAXBuilder builder = new SAXBuilder("org.apache.xerces.parsers.SAXParser", true);
+//			
+//			// schema locations map
+			// validating the schema will ensure all required inputs are there, and the process name is correct
 			
-			// schema locations map
-			Map<String, String> schemaMap = new HashMap<String, String>();
-			schemaMap.put("http://www.w3.org/XML/1998/namespace", this.getClass().getClassLoader().getResource("schemas/xml.xsd").toString());
-			schemaMap.put("http://www.w3.org/1999/xlink", this.getClass().getClassLoader().getResource("schemas/xlink.xsd").toString());
-			schemaMap.put("http://schemas.xmlsoap.org/soap/envelope/", this.getClass().getClassLoader().getResource("schemas/envelope.xsd").toString());
-			schemaMap.put("http://www.uncertweb.org/ProcessingService", Config.getInstance().getServerProperty("baseURL") + "/service?schema");
 			
-			// set validation properties
-			String schemaLocation = new String();
-			for (Map.Entry<String, String> entry : schemaMap.entrySet()) {
-				schemaLocation += " " + entry.getKey() + " " + entry.getValue();
-			}
-			builder.setFeature("http://apache.org/xml/features/validation/schema", true);
-			builder.setProperty("http://apache.org/xml/properties/schema/external-schemaLocation", schemaLocation.toString().trim());
-			builder.setProperty("http://apache.org/xml/properties/internal/grammar-pool", POOL);
-			
-			// set validation
-			ValidationErrorHandler handler = new ValidationErrorHandler();
-			builder.setErrorHandler(handler);
+//			Map<String, String> schemaMap = new HashMap<String, String>();
+//			schemaMap.put("http://www.w3.org/XML/1998/namespace", this.getClass().getClassLoader().getResource("schemas/xml.xsd").toString());
+//			schemaMap.put("http://www.w3.org/1999/xlink", this.getClass().getClassLoader().getResource("schemas/xlink.xsd").toString());
+//			schemaMap.put("http://schemas.xmlsoap.org/soap/envelope/", this.getClass().getClassLoader().getResource("schemas/envelope.xsd").toString());
+//			schemaMap.put("http://www.uncertweb.org/ProcessingService", Config.getInstance().getServerProperty("baseURL") + "/service?schema");
+//			
+//			// set validation properties
+//			String schemaLocation = new String();
+//			for (Map.Entry<String, String> entry : schemaMap.entrySet()) {
+//				schemaLocation += " " + entry.getKey() + " " + entry.getValue();
+//			}
+//			builder.setFeature("http://apache.org/xml/features/validation/schema", true);
+//			builder.setProperty("http://apache.org/xml/properties/schema/external-schemaLocation", schemaLocation.toString().trim());
+//			builder.setProperty("http://apache.org/xml/properties/internal/grammar-pool", POOL);
+//			
+//			// set validation
+//			ValidationErrorHandler handler = new ValidationErrorHandler();
+//			builder.setErrorHandler(handler);
 
 			// build
 			logger.debug("Building request document...");
@@ -78,9 +82,9 @@ public class SOAPHandler {
 			logger.debug("Built document in " + stopwatch.getElapsedTime() + ".");
 
 			// check if validated ok
-			if (!handler.getResult().isValid()) {
-				throw new ClientException("Request document failed schema validation.", handler.getResult().getPrettierResult());
-			}
+//			if (!handler.getResult().isValid()) {
+//				throw new ClientException("Request document failed schema validation.", handler.getResult().getPrettierResult());
+//			}
 			
 			// get request element
 			List<?> bodyChildren = reqSoapDocument.getRootElement().getChild("Body", Namespaces.SOAPENV).getChildren();
@@ -131,11 +135,11 @@ public class SOAPHandler {
 			responseBody.removeContent();
 			responseBody.addContent(new SoapFault(Code.Server, "Couldn't read request."));
 		}
-		catch (ClientException e) {
-			logger.error("Client exception.", e);
-			responseBody.removeContent();
-			responseBody.addContent(new SoapFault(Code.Client, e.getMessage(), e.getDetail()));
-		}
+//		catch (ClientException e) {
+//			logger.error("Client exception.", e);
+//			responseBody.removeContent();
+//			responseBody.addContent(new SoapFault(Code.Client, e.getMessage(), e.getDetail()));
+//		}
 //		catch (ServiceException e) {
 //			logger.error("Service exception.", e);
 //			responseBody.removeContent();

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+  <soapenv:Header />
+  <soapenv:Body>
+    <ps:SumProcessRequest xmlns:ps="http://www.uncertweb.org/ProcessingService">
+      <ps:A>hehe</ps:A>
+      <ps:B>haha</ps:B>
+    </ps:SumProcessRequest>
+  </soapenv:Body>
+</soapenv:Envelope>
