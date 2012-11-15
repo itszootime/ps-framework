@@ -1,5 +1,6 @@
 package org.uncertweb.ps.encoding.xml;
 
+import static org.junit.Assert.assertEquals;
 import junit.framework.Assert;
 
 import org.junit.Before;
@@ -34,6 +35,11 @@ public class GMLEncodingTest {
 	@Test
 	public void supportedMimeType() {
 		Assert.assertTrue(encoding.isSupportedMimeType("text/xml"));
+	}
+	
+	@Test
+	public void defaultMimeType() {
+		assertEquals("text/xml", encoding.getDefaultMimeType());
 	}
 	
 }

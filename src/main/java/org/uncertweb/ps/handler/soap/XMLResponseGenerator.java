@@ -20,12 +20,13 @@ import org.uncertweb.ps.handler.ResponseGenerateException;
 import org.uncertweb.ps.handler.data.DataReferenceGenerator;
 import org.uncertweb.ps.process.AbstractProcess;
 import org.uncertweb.ps.process.ProcessRepository;
+import org.uncertweb.ps.storage.StorageException;
 import org.uncertweb.xml.Namespaces;
 
 public class XMLResponseGenerator {
 
 	private static final Logger logger = Logger.getLogger(XMLResponseGenerator.class);
-	
+
 	public static Element generate(Response response) throws ResponseGenerateException {
 		return generate(response, null);
 	}
@@ -78,7 +79,7 @@ public class XMLResponseGenerator {
 						// base element
 						Element outputElement = new Element(outputIdentifier, Namespaces.PS);
 						responseElement.addContent(outputElement);
-						
+
 						// generate
 						Content dataContent = generateData(o, dataDescription.getType(), reference);
 						outputElement.addContent(dataContent);
@@ -108,7 +109,12 @@ public class XMLResponseGenerator {
 		else {
 			Content content;
 			if (reference || xmlEncoding == null) {
-				content = generateReferenceData(object, type);
+				try {
+					content = generateReferenceData(object, type);
+				}
+				catch (StorageException e) {
+					throw new ResponseGenerateException("Couldn't store data for reference.", e);
+				}
 			}
 			else {
 				content = generateInlineData(object, type);
@@ -117,19 +123,13 @@ public class XMLResponseGenerator {
 		}
 	}
 
-	private static Content generateReferenceData(Object object, Class<?> type) throws EncodeException {
+	private static Content generateReferenceData(Object object, Class<?> type) throws EncodeException, StorageException {
 		// generate data
-		Config config = Config.getInstance();
-		String basePath = config.getServerProperty("basePath");
-		String baseURL = config.getServerProperty("baseURL");
-
 		String href = new DataReferenceGenerator().generate(object).toString();
 
 		// add reference url to response
-		// FIXME: mimeType, compression
-		// TODO: simple by reference?
 		Element referenceElement = new Element("DataReference", Namespaces.PS);
-		referenceElement.setAttribute("href", "http://not/implemented/yet");
+		referenceElement.setAttribute("href", href);
 		referenceElement.setAttribute("mimeType", "unknown");
 		return referenceElement;
 	}
@@ -138,5 +138,5 @@ public class XMLResponseGenerator {
 		AbstractXMLEncoding encoding = EncodingRepository.getInstance().getXMLEncoding(dataClass);
 		return encoding.encode(object).detach();
 	}
-	
+
 }

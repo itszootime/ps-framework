@@ -9,5 +9,6 @@ public interface Encoding {
 	public abstract <T> void encode(T object, OutputStream outputStream) throws EncodeException;
 	public abstract boolean isSupportedType(Class<?> type);
 	public abstract boolean isSupportedMimeType(String mimeType);
+	public abstract String getDefaultMimeType();
 	
 }

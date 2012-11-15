@@ -73,7 +73,7 @@ public class FlatFileStorage extends Storage {
 			md5 = entryObject.get("checksum").getAsString();
 		}
 		catch (IOException e) {
-			throw new StorageException("Couldn't read storage entry file.", e);
+			throw new StorageException("Couldn't read storage entry file, is the ID valid?", e);
 		}
 
 		// get content

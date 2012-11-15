@@ -26,6 +26,10 @@ public class ServiceServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private final Logger logger = Logger.getLogger(ServiceServlet.class);
 	
+	// FIXME: servlet should validate all this is done:
+	// - file storage can be initialised
+	// - host:port set in config
+	
 	/**
 	 * GET method should:
 	 * 

@@ -43,8 +43,9 @@ public class PrimitiveEncodingTest {
 	}
 	
 	@Test
-	public void supportedMimeType() {
+	public void supportedMimeTypes() {
 		assertTrue(encoding.isSupportedMimeType("text/xml"));
+		assertTrue(encoding.isSupportedMimeType("text/plain"));
 	}
 	
 	@Test
@@ -55,6 +56,11 @@ public class PrimitiveEncodingTest {
 	@Test
 	public void schemaLocation() {
 		assertNull(encoding.getSchemaLocation());
+	}
+	
+	@Test
+	public void defaultMimeType() {
+		assertEquals("text/plain", encoding.getDefaultMimeType());
 	}
 
 	@Test

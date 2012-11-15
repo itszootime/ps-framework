@@ -1,82 +1,52 @@
 package org.uncertweb.ps.handler.data;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.net.URL;
+
+import org.uncertweb.ps.Config;
+import org.uncertweb.ps.encoding.EncodeException;
+import org.uncertweb.ps.encoding.Encoding;
+import org.uncertweb.ps.encoding.EncodingRepository;
+import org.uncertweb.ps.storage.Storage;
+import org.uncertweb.ps.storage.StorageException;
 
 public class DataReferenceGenerator {
 	
-	public <T> URL generate(T object, boolean compressed) {
-		return null;
+	public <T> URL generate(T object) throws EncodeException, StorageException {
+		// find encoding
+		Class<?> type = object.getClass();
+		EncodingRepository repo = EncodingRepository.getInstance();
+		Encoding[] encodings = new Encoding[] {
+				repo.getBinaryEncoding(type),
+				repo.getXMLEncoding(type),
+				repo.getJSONEncoding(type)
+		};
+		
+		// encode
+		for (Encoding encoding : encodings) {
+			if (encoding != null) {
+				try (ByteArrayOutputStream byteStream = new ByteArrayOutputStream()) {
+					// encode
+					encoding.encode(object, byteStream);
+					byte[] content = byteStream.toByteArray();
+				
+					// store
+					Storage storage = Storage.getInstance();
+					String id = storage.put(content, encoding.getDefaultMimeType(), "ps-framework");
+					
+					// generate url
+					String baseURL = Config.getInstance().getServerProperty("baseURL") + "/data/";
+					return new URL(baseURL + id);
+				}
+				catch (IOException e) {
+					throw new EncodeException("Couldn't write data to stream.", e);
+				}
+			}
+		}
+		
+		// couldn't find encoding
+		throw new EncodeException("No suitable encoding found for " + type.getSimpleName() + ".");
 	}
-
-//	public static URL generateXMLDataReference(Object data, DataDescription dataDescription, String basePath, String baseURL) throws IOException, EncodeException {
-//		URL dataURL;
-//		if (dataDescription.isRaw()) {
-//			dataURL = (URL) data; 
-//		}
-//		else {
-//			// FIXME: not secure, no storage of mime type, this method isn't reliable either
-//			// get path to save
-//			String id = String.valueOf(System.currentTimeMillis());
-//			String filename = "out_" + id;
-//			File dataDir = new File(basePath + System.getProperty("file.separator") + "WEB-INF" + System.getProperty("file.separator")); // + "data");
-//			System.out.println(dataDir.toString());
-//			if (!dataDir.isDirectory()) {
-//				dataDir.mkdir();
-//			}
-//
-//			// generate to file
-//			// FIXME: what about xml simple types
-//
-//			// find encoding
-//			EncodingRepository repository = EncodingRepository.getInstance();
-//			Encoding encoding = repository.getXMLEncoding(dataDescription.getType());
-//			if (encoding == null) {
-//				encoding = repository.getBinaryEncoding(dataDescription.getType());
-//			}
-//
-//			// if we've got encoding, go
-//			if (encoding != null) {
-//				FileOutputStream fos = new FileOutputStream(new File(dataDir, filename));
-//				encoding.encode(data, fos);
-//				fos.close();
-//			}
-//			else {
-//				throw new EncodeException("Couldn't find encoding for " + dataDescription.getType().getSimpleName());
-//			}			
-//
-//			// set url
-//			dataURL = new URL(baseURL + "/data?id=" + id);
-//		}
-//		return dataURL;		
-//	}
-//
-//	public static URL generateJSONDataReference(JsonElement element, String basePath, String baseURL) throws IOException, EncodeException {
-//		URL dataURL;
-//
-//		// FIXME: hacky, skipping isRaw
-//
-//		// FIXME: not secure, no storage of mime type, this method isn't reliable either
-//		// get path to save
-//		String id = String.valueOf(System.currentTimeMillis());
-//		String filename = "out_" + id;
-//		File dataDir = new File(basePath + System.getProperty("file.separator") + "WEB-INF" + System.getProperty("file.separator")); // + "data");
-//		System.out.println(dataDir.toString());
-//		if (!dataDir.isDirectory()) {
-//			dataDir.mkdir();
-//		}
-//
-//		// generate to file			
-//		// find encoding
-//		OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(new File(dataDir, filename)));
-//		new GsonBuilder().create().toJson(element, osw);
-//		osw.close();
-//
-//		// FIXME: need binary too
-//
-//
-//		// set url
-//		dataURL = new URL(baseURL + "/data?id=" + id);
-//		return dataURL;		
-//	}
 	
 }

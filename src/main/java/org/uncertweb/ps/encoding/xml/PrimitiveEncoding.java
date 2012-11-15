@@ -116,7 +116,18 @@ public class PrimitiveEncoding extends AbstractXMLEncoding {
 			return type.cast(objects.get(0));
 		}
 	}
-
+	
+	@Override
+	public boolean isSupportedMimeType(String mimeType) {
+		return super.isSupportedMimeType(mimeType) || mimeType.equals(getDefaultMimeType());
+	}
+	
+	@Override
+	public String getDefaultMimeType() {
+		return "text/plain";
+	}
+	
+	@Override
 	public <T> Text encode(T object) throws EncodeException {
 		Class<?> type = object.getClass();
 		StringBuilder string = new StringBuilder();

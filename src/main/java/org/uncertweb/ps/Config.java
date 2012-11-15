@@ -22,6 +22,7 @@ public class Config {
 	private List<String> processClasses;
 	private Map<String, List<String>> gsonTypeAdapterClasses;
 	private Map<String, String> serverProperties;
+	private Map<String, String> storageProperties;
 	private Map<String, String> additionalProperties;	
 
 	private final Logger logger = Logger.getLogger(Config.class);
@@ -32,6 +33,7 @@ public class Config {
 		processClasses = new ArrayList<String>();
 		gsonTypeAdapterClasses = new HashMap<String, List<String>>();
 		serverProperties = new HashMap<String, String>();
+		storageProperties = new HashMap<String, String>();
 		additionalProperties = new HashMap<String, String>();
 		
 		// parse config file
@@ -120,6 +122,14 @@ public class Config {
 
 	public String getServerProperty(String key) {
 		return serverProperties.get(key);
+	}
+	
+	public String setStorageProperty(String key, String value) {
+		return storageProperties.put(key, value);
+	}
+	
+	public String getStorageProperty(String key) {
+		return storageProperties.get(key);
 	}
 
 	public static Config getInstance() {

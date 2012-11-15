@@ -39,7 +39,7 @@ public class NetCDFEncoding extends AbstractBinaryEncoding {
 			// FIXME: need better use of temporary files
 			String filename = "temp" + System.currentTimeMillis();
 			FileWriter.writeToFile(file, filename);
-			
+
 			// now back to stream
 			FileInputStream fis = new FileInputStream(filename);
 			byte[] buffer = new byte[1024];
@@ -47,7 +47,7 @@ public class NetCDFEncoding extends AbstractBinaryEncoding {
 			while ((n = fis.read(buffer)) != -1) {
 				outputStream.write(buffer, 0, n);
 			}
-			
+
 			// remove file
 			new File(filename).delete();
 		}
@@ -57,7 +57,11 @@ public class NetCDFEncoding extends AbstractBinaryEncoding {
 	}
 
 	public boolean isSupportedMimeType(String mimeType) {
-		return mimeType.equals("application/x-netcdf");
+		return mimeType.equals(getDefaultMimeType());
+	}
+
+	public String getDefaultMimeType() {
+		return "application/x-netcdf";
 	}
 
 }

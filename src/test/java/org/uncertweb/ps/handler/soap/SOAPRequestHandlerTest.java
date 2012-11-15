@@ -12,19 +12,17 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.junit.Before;
-import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
-import org.uncertweb.ps.test.TestUtilities;
+import org.uncertweb.ps.test.ConfiguredService;
 import org.uncertweb.xml.Namespaces;
 
 public class SOAPRequestHandlerTest {
 	
+	@Rule
+	public ConfiguredService service = new ConfiguredService();
+	
 	private SOAPHandler handler;
-
-	@BeforeClass
-	public static void setUp() {
-		TestUtilities.setupProcessRepository();
-	}
 	
 	@Before
 	public void before() {

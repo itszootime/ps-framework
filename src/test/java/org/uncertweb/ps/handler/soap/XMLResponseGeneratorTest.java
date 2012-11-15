@@ -1,28 +1,26 @@
 package org.uncertweb.ps.handler.soap;
 
+import java.io.IOException;
+
 import junit.framework.Assert;
 
 import org.jdom.Element;
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 import org.uncertweb.ps.data.ProcessOutputs;
 import org.uncertweb.ps.data.Response;
 import org.uncertweb.ps.data.SingleOutput;
 import org.uncertweb.ps.handler.ResponseGenerateException;
-import org.uncertweb.ps.test.Utilities;
+import org.uncertweb.ps.test.ConfiguredService;
 import org.uncertweb.xml.Namespaces;
+
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.GeometryFactory;
 
 public class XMLResponseGeneratorTest {
 	
 	@Rule
-	public TemporaryFolder storageFolder = new TemporaryFolder();
-
-	@BeforeClass
-	public static void setUp() {
-		Utilities.setupProcessRepository();
-	}
+	public ConfiguredService service = new ConfiguredService();
 
 	@Test
 	public void generateWithPrimitive() throws ResponseGenerateException {
@@ -51,8 +49,22 @@ public class XMLResponseGeneratorTest {
 	}
 	
 	@Test
-	public void generateWithDataReference() throws ResponseGenerateException {
-		new FlatFileStorage(storageFolder.);
+	public void generateDataReferenceSensibleURL() throws ResponseGenerateException, IOException {
+		// setup
+		String expectedBaseURL = service.getBaseURL() + "/data/";
+		
+		// create some outputs
+		ProcessOutputs outputs = new ProcessOutputs();
+		outputs.add(new SingleOutput("BufferedPolygon", new GeometryFactory().createPoint(new Coordinate(-2.63, 51.16))));
+		Assert.fail();
+	}
+	
+	@Test
+	public void generateDataReferenceMimeType() throws ResponseGenerateException, IOException {
+		// create some outputs
+		ProcessOutputs outputs = new ProcessOutputs();
+		outputs.add(new SingleOutput("Result", 101.05));
+		Assert.fail();
 	}
 
 }

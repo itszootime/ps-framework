@@ -13,7 +13,6 @@ import java.util.List;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.uncertweb.ps.data.Input;
@@ -23,6 +22,7 @@ import org.uncertweb.ps.data.Request;
 import org.uncertweb.ps.data.RequestedOutput;
 import org.uncertweb.ps.data.SingleInput;
 import org.uncertweb.ps.handler.RequestParseException;
+import org.uncertweb.ps.test.ConfiguredService;
 import org.uncertweb.ps.test.TestUtilities;
 import org.uncertweb.test.HTTPServer;
 import org.uncertweb.xml.Namespaces;
@@ -32,12 +32,10 @@ import com.vividsolutions.jts.geom.Polygon;
 public class XMLRequestParserTest {
 	
 	@Rule
+	public ConfiguredService service = new ConfiguredService();
+	
+	@Rule
 	public HTTPServer server = new HTTPServer(8000);
-
-	@BeforeClass
-	public static void setUp() {
-		TestUtilities.setupProcessRepository();
-	}
 	
 	@Test
 	public void parseWithPrimitiveMultiple() throws JDOMException, IOException, RequestParseException {

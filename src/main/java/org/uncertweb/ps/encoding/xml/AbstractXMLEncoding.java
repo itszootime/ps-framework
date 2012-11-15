@@ -46,6 +46,10 @@ public abstract class AbstractXMLEncoding implements Encoding {
 	public boolean isSupportedMimeType(String mimeType) {
 		return mimeType.equals("text/xml");
 	}
+	
+	public String getDefaultMimeType() {
+		return "text/xml";
+	}
 
 	public abstract String getNamespace();
 	public abstract String getSchemaLocation();	
