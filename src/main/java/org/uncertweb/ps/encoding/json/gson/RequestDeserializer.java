@@ -2,6 +2,7 @@ package org.uncertweb.ps.encoding.json.gson;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -9,13 +10,14 @@ import java.util.Map.Entry;
 import org.uncertweb.api.om.io.JSONObservationParser;
 import org.uncertweb.api.om.observation.AbstractObservation;
 import org.uncertweb.api.om.observation.collections.IObservationCollection;
-import org.uncertweb.ps.DataReferenceHelper;
 import org.uncertweb.ps.data.DataDescription;
+import org.uncertweb.ps.data.DataReference;
 import org.uncertweb.ps.data.MultipleInput;
 import org.uncertweb.ps.data.Request;
 import org.uncertweb.ps.data.RequestedOutput;
 import org.uncertweb.ps.data.SingleInput;
 import org.uncertweb.ps.encoding.ParseException;
+import org.uncertweb.ps.handler.data.DataReferenceParser;
 import org.uncertweb.ps.process.AbstractProcess;
 import org.uncertweb.ps.process.ProcessRepository;
 
@@ -138,7 +140,14 @@ public class RequestDeserializer implements JsonDeserializer<Request> {
 			if (dataReference.has("compressed")) {
 				compression = dataReference.get("compressed").getAsBoolean();
 			}
-			return DataReferenceHelper.parseDataReference(dataReference.get("href").getAsString(), dataReference.get("mimeType").getAsString(), compression, dataDescription);
+			
+			// create url from string
+			URL dataURL = new URL(dataReference.get("href").getAsString());
+			
+			// parse data reference
+			DataReference ref = new DataReference(dataURL, dataReference.get("mimeType").getAsString(), compression);
+			DataReferenceParser parser = new DataReferenceParser();
+			return parser.parse(ref, dataDescription.getClass());
 		}
 		else if (isOM(dataDescription.getType())) { // FIXME: bit of a workaround
 			JSONObservationParser parser = new JSONObservationParser();

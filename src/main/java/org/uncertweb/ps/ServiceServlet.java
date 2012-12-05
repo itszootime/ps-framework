@@ -12,6 +12,7 @@ import org.apache.log4j.Logger;
 import org.jdom.Document;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
+import org.uncertweb.ps.handler.json.JSONDescriptionHelper;
 import org.uncertweb.ps.handler.json.JSONHandler;
 import org.uncertweb.ps.handler.soap.SOAPHandler;
 import org.uncertweb.ps.handler.soap.SchemaGenerator;
@@ -65,7 +66,7 @@ public class ServiceServlet extends HttpServlet {
 			}
 			else if (queryString.equals("jsondesc")) {
 				// generate a json description
-				JsonElement element = SchemaGenerator.generateJsonDescription();
+				JsonElement element = JSONDescriptionHelper.generateJsonDescription();
 				
 				// output document
 				servletResponse.setContentType("application/json");

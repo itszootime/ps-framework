@@ -12,8 +12,8 @@ import org.apache.log4j.Logger;
 import org.uncertml.distribution.multivariate.DirichletDistribution;
 import org.uncertml.statistic.DiscreteProbability;
 import org.uncertweb.ps.Config;
-import org.uncertweb.ps.DataReferenceHelper;
 import org.uncertweb.ps.ServiceException;
+import org.uncertweb.ps.data.DataReference;
 import org.uncertweb.ps.data.Output;
 import org.uncertweb.ps.data.ProcessOutputs;
 import org.uncertweb.ps.data.Request;
@@ -29,9 +29,11 @@ import org.uncertweb.ps.encoding.json.gson.ServiceExceptionSerializer;
 import org.uncertweb.ps.encoding.json.gson.URLDeserializer;
 import org.uncertweb.ps.encoding.json.gson.UncertaintyDeserializer;
 import org.uncertweb.ps.encoding.json.gson.UncertaintySerializer;
+import org.uncertweb.ps.handler.data.DataReferenceGenerator;
 import org.uncertweb.ps.process.AbstractProcess;
 import org.uncertweb.ps.process.ProcessException;
 import org.uncertweb.ps.process.ProcessRepository;
+import org.uncertweb.ps.storage.StorageException;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -191,6 +193,10 @@ public class JSONHandler {
 			logger.error("Couldn't generate data reference.", e);
 			gson.toJson(new ServiceException("Couldn't generate data reference."), writer);
 		}
+		catch (StorageException e) {
+			logger.error("Couldn't store reference data.", e);
+			gson.toJson(new ServiceException("Couldn't store reference data."), writer);
+		}
 
 		try {
 			writer.close();
@@ -200,13 +206,17 @@ public class JSONHandler {
 		}
 	}
 	
-	private JsonObject generateReferenceObject(JsonElement element, String basePath, String baseURL) throws IOException, EncodeException {
-		URL url = DataReferenceHelper.generateJSONDataReference(element, basePath, baseURL);
+	private JsonObject generateReferenceObject(JsonElement element, String basePath, String baseURL) throws IOException, EncodeException, StorageException {
+		// generate reference
+		DataReferenceGenerator generator = new DataReferenceGenerator();
+		DataReference ref = generator.generate(element);
+		
+		// return as object
 		JsonObject refObj = new JsonObject();
 		JsonObject innerRefObj = new JsonObject();
 		refObj.add("DataReference", innerRefObj);
-		innerRefObj.addProperty("href", url.toString());
-		innerRefObj.addProperty("mimeType", "application/json");
+		innerRefObj.addProperty("href", ref.getURL().toString());
+		innerRefObj.addProperty("mimeType", ref.getMimeType());
 		return refObj;
 	}
 
