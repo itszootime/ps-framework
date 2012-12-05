@@ -16,6 +16,7 @@ import org.uncertweb.ps.handler.json.JSONDescriptionHelper;
 import org.uncertweb.ps.handler.json.JSONHandler;
 import org.uncertweb.ps.handler.soap.SOAPHandler;
 import org.uncertweb.ps.handler.soap.SchemaGenerator;
+import org.uncertweb.ps.handler.soap.WSDLGenerator;
 import org.uncertweb.util.Stopwatch;
 
 import com.google.gson.Gson;
@@ -48,7 +49,7 @@ public class ServiceServlet extends HttpServlet {
 		if (queryString != null) {
 			if (servletRequest.getQueryString().equals("wsdl")) {
 				// generate wsdl
-				Document document = SchemaGenerator.generateWSDL("http://" + servletRequest.getServerName() + ":" + servletRequest.getServerPort() + servletRequest.getContextPath() + "/service");
+				Document document = new WSDLGenerator().generateDocument("http://" + servletRequest.getServerName() + ":" + servletRequest.getServerPort() + servletRequest.getContextPath() + "/service");
 
 				// output document
 				servletResponse.setContentType("text/xml");
@@ -57,7 +58,7 @@ public class ServiceServlet extends HttpServlet {
 			}
 			else if (queryString.equals("schema")) {
 				// generate schema
-				Document document = SchemaGenerator.generateSchema();
+				Document document = new SchemaGenerator().generateDocument();
 
 				// output document
 				servletResponse.setContentType("text/xml");

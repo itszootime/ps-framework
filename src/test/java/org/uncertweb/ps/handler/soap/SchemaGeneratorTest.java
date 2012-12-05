@@ -9,6 +9,7 @@ import org.uncertweb.xml.Namespaces;
 
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.MatcherAssert.*;
+import static org.junit.Assert.fail;
 
 public class SchemaGeneratorTest {
 	
@@ -21,6 +22,11 @@ public class SchemaGeneratorTest {
 	public void before() {
 		SchemaGenerator generator = new SchemaGenerator();
 		schema = generator.generateDocument().getRootElement();
+	}
+	
+	@Test
+	public void valid() {
+		fail();
 	}
 	
 	@Test
@@ -40,7 +46,7 @@ public class SchemaGeneratorTest {
 	}
 
 	public void imports() {
-		
+		// check import elements exist
 	}
 	
 	public void processNames() {
