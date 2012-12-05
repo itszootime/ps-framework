@@ -51,7 +51,7 @@ public class SOAPHandlerTest {
 	}
 	
 	@Test
-	public void returnsFault() throws JDOMException, IOException {
+	public void returnsFaultForWrongDataTypes() throws JDOMException, IOException {
 		Element envelope = handleTestSumInvalidRequest();
 		Element body = envelope.getChild("Body", Namespaces.SOAPENV);
 		Element fault = body.getChild("Fault", Namespaces.SOAPENV);

@@ -14,7 +14,7 @@ import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 import org.uncertweb.ps.handler.json.JSONHandler;
 import org.uncertweb.ps.handler.soap.SOAPHandler;
-import org.uncertweb.ps.handler.soap.ServiceDescriptionHelper;
+import org.uncertweb.ps.handler.soap.SchemaGenerator;
 import org.uncertweb.util.Stopwatch;
 
 import com.google.gson.Gson;
@@ -47,7 +47,7 @@ public class ServiceServlet extends HttpServlet {
 		if (queryString != null) {
 			if (servletRequest.getQueryString().equals("wsdl")) {
 				// generate wsdl
-				Document document = ServiceDescriptionHelper.generateWSDL("http://" + servletRequest.getServerName() + ":" + servletRequest.getServerPort() + servletRequest.getContextPath() + "/service");
+				Document document = SchemaGenerator.generateWSDL("http://" + servletRequest.getServerName() + ":" + servletRequest.getServerPort() + servletRequest.getContextPath() + "/service");
 
 				// output document
 				servletResponse.setContentType("text/xml");
@@ -56,7 +56,7 @@ public class ServiceServlet extends HttpServlet {
 			}
 			else if (queryString.equals("schema")) {
 				// generate schema
-				Document document = ServiceDescriptionHelper.generateSchema();
+				Document document = SchemaGenerator.generateSchema();
 
 				// output document
 				servletResponse.setContentType("text/xml");
@@ -65,7 +65,7 @@ public class ServiceServlet extends HttpServlet {
 			}
 			else if (queryString.equals("jsondesc")) {
 				// generate a json description
-				JsonElement element = ServiceDescriptionHelper.generateJsonDescription();
+				JsonElement element = SchemaGenerator.generateJsonDescription();
 				
 				// output document
 				servletResponse.setContentType("application/json");
