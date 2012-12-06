@@ -27,4 +27,32 @@ public class WSDLGeneratorTest {
 		fail();
 	}
 	
+	public void rootElement() {
+		
+	}
+	
+	public void types() {
+		
+	}
+	
+	public void messages() {
+		
+	}
+	
+	public void portType() {
+		
+	}
+	
+	public void portTypeOperations() {
+		
+	}
+	
+	public void bindingOperations() {
+		
+	}
+	
+	public void service() {
+		
+	}
+	
 }
