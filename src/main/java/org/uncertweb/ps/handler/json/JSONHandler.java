@@ -22,14 +22,14 @@ import org.uncertweb.ps.data.Response;
 import org.uncertweb.ps.encoding.EncodeException;
 import org.uncertweb.ps.encoding.json.gson.GeometryDeserializer;
 import org.uncertweb.ps.encoding.json.gson.GeometrySerializer;
-import org.uncertweb.ps.encoding.json.gson.ProcessExceptionSerializer;
-import org.uncertweb.ps.encoding.json.gson.RequestDeserializer;
-import org.uncertweb.ps.encoding.json.gson.ResponseSerializer;
-import org.uncertweb.ps.encoding.json.gson.ServiceExceptionSerializer;
 import org.uncertweb.ps.encoding.json.gson.URLDeserializer;
 import org.uncertweb.ps.encoding.json.gson.UncertaintyDeserializer;
 import org.uncertweb.ps.encoding.json.gson.UncertaintySerializer;
 import org.uncertweb.ps.handler.data.DataReferenceGenerator;
+import org.uncertweb.ps.handler.json.gson.ProcessExceptionSerializer;
+import org.uncertweb.ps.handler.json.gson.RequestDeserializer;
+import org.uncertweb.ps.handler.json.gson.ResponseSerializer;
+import org.uncertweb.ps.handler.json.gson.ServiceExceptionSerializer;
 import org.uncertweb.ps.process.AbstractProcess;
 import org.uncertweb.ps.process.ProcessException;
 import org.uncertweb.ps.process.ProcessRepository;
@@ -47,49 +47,7 @@ public class JSONHandler {
 	private final Logger logger = Logger.getLogger(JSONHandler.class);
 
 	public void handleRequest(Reader reader, Writer writer) {
-		GsonBuilder gsonBuilder = new GsonBuilder();
-		gsonBuilder.disableHtmlEscaping();
-		gsonBuilder.registerTypeAdapter(Request.class, new RequestDeserializer());
-		gsonBuilder.registerTypeAdapter(Response.class, new ResponseSerializer());
-		gsonBuilder.registerTypeAdapter(ServiceException.class, new ServiceExceptionSerializer());
-		gsonBuilder.registerTypeAdapter(ProcessException.class, new ProcessExceptionSerializer());
 
-		// some built in support here, should be much more!
-		gsonBuilder.registerTypeAdapter(URL.class, new URLDeserializer());
-		gsonBuilder.registerTypeAdapter(Point.class, new GeometryDeserializer());
-		gsonBuilder.registerTypeAdapter(Point.class, new GeometrySerializer());	
-		gsonBuilder.registerTypeAdapter(DirichletDistribution.class, new UncertaintyDeserializer());
-		gsonBuilder.registerTypeAdapter(DirichletDistribution.class, new UncertaintySerializer());
-		gsonBuilder.registerTypeAdapter(DiscreteProbability.class, new UncertaintyDeserializer());
-		gsonBuilder.registerTypeAdapter(DiscreteProbability.class, new UncertaintySerializer());
-
-		// register additional ones in config
-		for (Entry<String, List<String>> entry : Config.getInstance().getGsonTypeAdapterClasses().entrySet()) {
-			try {
-				Class<?> type = Class.forName(entry.getKey());
-				for (String adapterString : entry.getValue()) {
-					try {
-						Object typeAdapter = Class.forName(adapterString).newInstance();
-						gsonBuilder.registerTypeAdapter(type, typeAdapter);
-						logger.info("Loaded Gson type adapter " + adapterString + " for type " + entry.getKey() + ".");
-					}
-					catch (ClassNotFoundException e) {
-						logger.error("Couldn't find Gson type adapter " + adapterString + ", skipping.");
-					}
-					catch (InstantiationException e) {
-						logger.error("Couldn't instantiate Gson type adapter " + adapterString + ", skipping.");
-					}
-					catch (IllegalAccessException e) {
-						logger.error("Couldn't access Gson type adapter " + adapterString + ", skipping.");
-					}
-				}
-			}
-			catch (ClassNotFoundException e) {
-				logger.error("Couldn't find type " + entry.getKey() + ", skipping adding Gson type adapter.");
-			}
-		}		
-
-		Gson gson = gsonBuilder.create();
 
 		/*
 		StringWriter w = new StringWriter();

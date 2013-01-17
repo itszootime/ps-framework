@@ -10,6 +10,7 @@ import org.junit.Test;
 import org.uncertweb.ps.data.Input;
 import org.uncertweb.ps.data.Request;
 import org.uncertweb.ps.data.SingleInput;
+import org.uncertweb.ps.handler.json.gson.RequestDeserializer;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

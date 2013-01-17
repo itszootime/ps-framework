@@ -21,7 +21,7 @@ import org.uncertweb.ps.process.AbstractProcess;
 import org.uncertweb.ps.process.ProcessRepository;
 import org.uncertweb.xml.Namespaces;
 
-public class SchemaGenerator {
+public class XMLSchemaGenerator {
 
 	// FIXME: would be good to cache
 	
@@ -29,7 +29,7 @@ public class SchemaGenerator {
 	private ProcessRepository processRepo;
 	private EncodingRepository encodingRepo;
 		
-	public SchemaGenerator() {
+	public XMLSchemaGenerator() {
 		processRepo = ProcessRepository.getInstance();
 		encodingRepo = EncodingRepository.getInstance();
 	}

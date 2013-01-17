@@ -15,7 +15,7 @@ import org.jdom.output.XMLOutputter;
 import org.uncertweb.ps.handler.json.JSONDescriptionHelper;
 import org.uncertweb.ps.handler.json.JSONHandler;
 import org.uncertweb.ps.handler.soap.SOAPHandler;
-import org.uncertweb.ps.handler.soap.SchemaGenerator;
+import org.uncertweb.ps.handler.soap.XMLSchemaGenerator;
 import org.uncertweb.ps.handler.soap.WSDLGenerator;
 import org.uncertweb.util.Stopwatch;
 
@@ -58,7 +58,7 @@ public class ServiceServlet extends HttpServlet {
 			}
 			else if (queryString.equals("schema")) {
 				// generate schema
-				Document document = new SchemaGenerator().generateDocument();
+				Document document = new XMLSchemaGenerator().generateDocument();
 
 				// output document
 				servletResponse.setContentType("text/xml");

@@ -11,7 +11,7 @@ import static org.hamcrest.Matchers.*;
 import static org.hamcrest.MatcherAssert.*;
 import static org.junit.Assert.fail;
 
-public class SchemaGeneratorTest {
+public class XMLSchemaGeneratorTest {
 	
 	@Rule
 	public ConfiguredService service = new ConfiguredService();
@@ -20,7 +20,7 @@ public class SchemaGeneratorTest {
 	
 	@Before
 	public void before() {
-		SchemaGenerator generator = new SchemaGenerator();
+		XMLSchemaGenerator generator = new XMLSchemaGenerator();
 		schema = generator.generateDocument().getRootElement();
 	}
 	
