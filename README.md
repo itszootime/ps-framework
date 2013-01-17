@@ -26,7 +26,7 @@ The framework dependency can then be added.
   <dependency>
       <groupId>org.uncertweb</groupId>
       <artifactId>ps-framework</artifactId>
-      <version>0.2.5-SNAPSHOT</version>
+      <version>0.2.6-SNAPSHOT</version>
   </dependency>
 </dependencies>
 ```
