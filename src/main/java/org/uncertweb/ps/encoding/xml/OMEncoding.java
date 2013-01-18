@@ -10,8 +10,8 @@ import org.jdom.Namespace;
 import org.jdom.filter.Filter;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.XMLOutputter;
+import org.uncertweb.api.om.io.StaxObservationParser;
 import org.uncertweb.api.om.io.XBObservationEncoder;
-import org.uncertweb.api.om.io.XBObservationParser;
 import org.uncertweb.api.om.observation.AbstractObservation;
 import org.uncertweb.api.om.observation.collections.IObservationCollection;
 import org.uncertweb.ps.encoding.EncodeException;
@@ -59,7 +59,7 @@ public class OMEncoding extends AbstractXMLEncoding {
 			
 			// convert to string for external parsing
 			String om = new XMLOutputter().outputString(element);
-			XBObservationParser parser = new XBObservationParser();			
+			StaxObservationParser parser = new StaxObservationParser();			
 			if (element.getName().endsWith("Collection")) {
 				return type.cast(parser.parseObservationCollection(om));
 			}
