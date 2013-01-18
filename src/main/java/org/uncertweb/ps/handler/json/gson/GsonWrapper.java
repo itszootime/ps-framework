@@ -14,7 +14,7 @@ import org.uncertweb.ps.data.Response;
 import org.uncertweb.ps.encoding.json.gson.GeometryDeserializer;
 import org.uncertweb.ps.encoding.json.gson.GeometrySerializer;
 import org.uncertweb.ps.encoding.json.gson.URLDeserializer;
-import org.uncertweb.ps.encoding.json.gson.UncertaintyDeserializer;
+import org.uncertweb.ps.encoding.json.gson.UncertaintyAdapter;
 import org.uncertweb.ps.encoding.json.gson.UncertaintySerializer;
 import org.uncertweb.ps.process.ProcessException;
 
@@ -44,9 +44,9 @@ public class GsonWrapper {
 		gsonBuilder.registerTypeAdapter(URL.class, new URLDeserializer());
 		gsonBuilder.registerTypeAdapter(Point.class, new GeometryDeserializer());
 		gsonBuilder.registerTypeAdapter(Point.class, new GeometrySerializer());	
-		gsonBuilder.registerTypeAdapter(DirichletDistribution.class, new UncertaintyDeserializer());
+		gsonBuilder.registerTypeAdapter(DirichletDistribution.class, new UncertaintyAdapter());
 		gsonBuilder.registerTypeAdapter(DirichletDistribution.class, new UncertaintySerializer());
-		gsonBuilder.registerTypeAdapter(DiscreteProbability.class, new UncertaintyDeserializer());
+		gsonBuilder.registerTypeAdapter(DiscreteProbability.class, new UncertaintyAdapter());
 		gsonBuilder.registerTypeAdapter(DiscreteProbability.class, new UncertaintySerializer());
 
 		// register additional ones in config

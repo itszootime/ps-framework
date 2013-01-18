@@ -54,7 +54,7 @@ public class RequestDeserializer implements JsonDeserializer<Request> {
 				// data could be array or single object
 				ArrayList<Object> objects = new ArrayList<Object>();
 
-				// get encoding
+				// parse data
 				try {
 					if (inputElement.isJsonArray()) {
 						try {
@@ -86,7 +86,7 @@ public class RequestDeserializer implements JsonDeserializer<Request> {
 				}
 			}
 		}
-		
+
 		// check for requested outputs
 		if (object.has("RequestedOutputs")) {
 			List<RequestedOutput> reqOutputs = request.getRequestedOutputs();
@@ -132,7 +132,7 @@ public class RequestDeserializer implements JsonDeserializer<Request> {
 	 * @throws ParseException
 	 * @throws IOException
 	 */
-	private Object parseDataElement(JsonElement dataElement, DataDescription dataDescription, JsonDeserializationContext context) throws ParseException, IOException {
+	private Object parseDataElement(JsonElement dataElement, DataDescription dataDescription, JsonDeserializationContext context) throws ParseException, IOException {		
 		if (dataElement.isJsonObject() && dataElement.getAsJsonObject().has("DataReference")) {
 			JsonObject dataReference = dataElement.getAsJsonObject().get("DataReference").getAsJsonObject();
 			// TODO: exceptions required if href and mimeType not set, compression is optional
@@ -140,26 +140,30 @@ public class RequestDeserializer implements JsonDeserializer<Request> {
 			if (dataReference.has("compressed")) {
 				compression = dataReference.get("compressed").getAsBoolean();
 			}
-			
+
 			// create url from string
 			URL dataURL = new URL(dataReference.get("href").getAsString());
-			
+
 			// parse data reference
 			DataReference ref = new DataReference(dataURL, dataReference.get("mimeType").getAsString(), compression);
 			DataReferenceParser parser = new DataReferenceParser();
 			return parser.parse(ref, dataDescription.getClass());
 		}
-		else if (isOM(dataDescription.getType())) { // FIXME: bit of a workaround
-			JSONObservationParser parser = new JSONObservationParser();
-			try {
-				return parser.parse(dataElement.toString());
-			}
-			catch (Exception e) {
-				throw new ParseException("Couldn't parse O&M JSON.", e);
-			}
-		}
 		else {
-			return context.deserialize(dataElement, dataDescription.getType());
+			// try instances of AbstractJSONEncoding?
+			// then fallback to gson context?
+			if (isOM(dataDescription.getType())) { // FIXME: bit of a workaround
+				JSONObservationParser parser = new JSONObservationParser();
+				try {
+					return parser.parse(dataElement.toString());
+				}
+				catch (Exception e) {
+					throw new ParseException("Couldn't parse O&M JSON.", e);
+				}
+			}
+			else {
+				return context.deserialize(dataElement, dataDescription.getType());
+			}
 		}
 	}
 

@@ -14,6 +14,7 @@ import org.uncertweb.ps.storage.StorageException;
 
 public class DataReferenceGenerator {
 	
+	// FIXME: need a priority flag! (e.g. XML, JSON)
 	public <T> DataReference generate(T object) throws EncodeException, StorageException {
 		// find encoding
 		Class<?> type = object.getClass();

@@ -23,7 +23,7 @@ import org.uncertweb.ps.encoding.EncodeException;
 import org.uncertweb.ps.encoding.json.gson.GeometryDeserializer;
 import org.uncertweb.ps.encoding.json.gson.GeometrySerializer;
 import org.uncertweb.ps.encoding.json.gson.URLDeserializer;
-import org.uncertweb.ps.encoding.json.gson.UncertaintyDeserializer;
+import org.uncertweb.ps.encoding.json.gson.UncertaintyAdapter;
 import org.uncertweb.ps.encoding.json.gson.UncertaintySerializer;
 import org.uncertweb.ps.handler.data.DataReferenceGenerator;
 import org.uncertweb.ps.handler.json.gson.ProcessExceptionSerializer;
