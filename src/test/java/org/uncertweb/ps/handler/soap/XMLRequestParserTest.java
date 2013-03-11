@@ -37,9 +37,13 @@ public class XMLRequestParserTest {
 	@Rule
 	public HTTPServer server = new HTTPServer(8000);
 	
+	protected Document buildDocument(String path) throws JDOMException, IOException {
+		return TestUtils.loadXML(path);
+	}
+	
 	@Test
 	public void parseWithPrimitiveMultiple() throws JDOMException, IOException, RequestParseException {
-		Document document = TestUtils.loadXML("xml/sum-request.xml");
+		Document document = buildDocument("xml/sum-request.xml");
 		Request request = XMLRequestParser.parse(document.getRootElement());
 		ProcessInputs inputs = request.getInputs();
 
@@ -59,7 +63,7 @@ public class XMLRequestParserTest {
 
 	@Test
 	public void parseWithRequestedOutputs() throws JDOMException, IOException, RequestParseException {
-		Document document = TestUtils.loadXML("xml/hash-request.xml");
+		Document document = buildDocument("xml/hash-request.xml");
 		Request request = XMLRequestParser.parse(document.getRootElement());
 		ProcessInputs inputs = request.getInputs();
 
@@ -80,7 +84,7 @@ public class XMLRequestParserTest {
 	
 	@Test
 	public void parseWithRequestedOutputsEmpty() throws JDOMException, IOException, RequestParseException {
-		Element root = TestUtils.loadXML("xml/hash-request.xml").getRootElement();
+		Element root = buildDocument("xml/hash-request.xml").getRootElement();
 		root.getChild("RequestedOutputs", Namespaces.PS).removeContent();
 		Request request = XMLRequestParser.parse(root);
 		ProcessInputs inputs = request.getInputs();
@@ -103,7 +107,7 @@ public class XMLRequestParserTest {
 		server.addFileHandler("xml/polygon.xml");
 		
 		// parse
-		Element root = TestUtils.loadXML("xml/bufferpolygon-request.xml").getRootElement();
+		Element root = buildDocument("xml/bufferpolygon-request.xml").getRootElement();
 		Request request = XMLRequestParser.parse(root);
 		ProcessInputs inputs = request.getInputs();
 		
@@ -119,7 +123,7 @@ public class XMLRequestParserTest {
 		server.addFileHandler("xml/polygon.xml");
 		
 		// load request and change ref url to zip
-		Element root = TestUtils.loadXML("xml/bufferpolygon-request.xml").getRootElement();
+		Element root = buildDocument("xml/bufferpolygon-request.xml").getRootElement();
 		Element dataRef = root.getChild("Polygon", Namespaces.PS).getChild("DataReference", Namespaces.PS);
 		dataRef.setAttribute("href", "http://localhost:8000/xml/polygon.xml");
 		dataRef.setAttribute("mimeType", "text/xml");
@@ -140,7 +144,7 @@ public class XMLRequestParserTest {
 		server.addFileHandler("xml/polygon.zip");
 		
 		// load request and change ref url to zip
-		Element root = TestUtils.loadXML("xml/bufferpolygon-request.xml").getRootElement();
+		Element root = buildDocument("xml/bufferpolygon-request.xml").getRootElement();
 		Element dataRef = root.getChild("Polygon", Namespaces.PS).getChild("DataReference", Namespaces.PS);
 		dataRef.setAttribute("href", "http://localhost:8000/xml/polygon.zip");
 		dataRef.setAttribute("compressed", "true");
@@ -161,7 +165,7 @@ public class XMLRequestParserTest {
 		server.addFileHandler("xml/polygon.zip");
 		
 		// load request and change ref url to zip
-		Element root = TestUtils.loadXML("xml/bufferpolygon-request.xml").getRootElement();
+		Element root = buildDocument("xml/bufferpolygon-request.xml").getRootElement();
 		Element dataRef = root.getChild("Polygon", Namespaces.PS).getChild("DataReference", Namespaces.PS);
 		dataRef.setAttribute("href", "http://localhost:8000/xml/polygon.zip");
 		dataRef.setAttribute("mimeType", "text/xml");
