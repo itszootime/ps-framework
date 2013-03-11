@@ -3,21 +3,15 @@ package org.uncertweb.ps.handler.soap;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.apache.xerces.util.XMLGrammarPoolImpl;
-import org.apache.xerces.xni.grammars.XMLGrammarPool;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
-import org.jdom.input.SAXBuilder;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 import org.uncertweb.ps.ClientException;
-import org.uncertweb.ps.Config;
 import org.uncertweb.ps.data.ProcessOutputs;
 import org.uncertweb.ps.data.Request;
 import org.uncertweb.ps.data.Response;
@@ -34,9 +28,6 @@ import org.uncertweb.xml.SoapFault;
 import org.uncertweb.xml.SoapFault.Code;
 
 public class SOAPHandler {
-	
-	// TODO: more speedups needed here (ie. cache schemas)
-	private static final XMLGrammarPool POOL = new XMLGrammarPoolImpl();
 
 	private final Logger logger = Logger.getLogger(SOAPHandler.class);
 
@@ -47,61 +38,35 @@ public class SOAPHandler {
 		responseEnvelope.addContent(responseBody);
 
 		try {
-			// validate
-			// create builder
-			SAXBuilder builder = new SAXBuilder();
-//			SAXBuilder builder = new SAXBuilder("org.apache.xerces.parsers.SAXParser", true);
-//			
-//			// schema locations map
-			// validating the schema will ensure all required inputs are there, and the process name is correct
-			
-			
-//			Map<String, String> schemaMap = new HashMap<String, String>();
-//			schemaMap.put("http://www.w3.org/XML/1998/namespace", this.getClass().getClassLoader().getResource("schemas/xml.xsd").toString());
-//			schemaMap.put("http://www.w3.org/1999/xlink", this.getClass().getClassLoader().getResource("schemas/xlink.xsd").toString());
-//			schemaMap.put("http://schemas.xmlsoap.org/soap/envelope/", this.getClass().getClassLoader().getResource("schemas/envelope.xsd").toString());
-//			schemaMap.put("http://www.uncertweb.org/ProcessingService", Config.getInstance().getServerProperty("baseURL") + "/service?schema");
-//			
-//			// set validation properties
-//			String schemaLocation = new String();
-//			for (Map.Entry<String, String> entry : schemaMap.entrySet()) {
-//				schemaLocation += " " + entry.getKey() + " " + entry.getValue();
-//			}
-//			builder.setFeature("http://apache.org/xml/features/validation/schema", true);
-//			builder.setProperty("http://apache.org/xml/properties/schema/external-schemaLocation", schemaLocation.toString().trim());
-//			builder.setProperty("http://apache.org/xml/properties/internal/grammar-pool", POOL);
-//			
-//			// set validation
-//			ValidationErrorHandler handler = new ValidationErrorHandler();
-//			builder.setErrorHandler(handler);
-
-			// build
+			// build request document
 			logger.debug("Building request document...");
 			Stopwatch stopwatch = new Stopwatch();	
+			DocumentBuilder builder = new DocumentBuilder();
 			Document reqSoapDocument = builder.build(inputStream);
 			logger.debug("Built document in " + stopwatch.getElapsedTime() + ".");
 
 			// check if validated ok
-//			if (!handler.getResult().isValid()) {
-//				throw new ClientException("Request document failed schema validation.", handler.getResult().getPrettierResult());
-//			}
-			
+			ValidationResult validationResult = builder.getValidationResult();
+			if (!validationResult.isValid()) {
+				throw new ClientException("Request document failed schema validation.", validationResult.getPrettierResult());
+			}
+
 			// get request element
 			List<?> bodyChildren = reqSoapDocument.getRootElement().getChild("Body", Namespaces.SOAPENV).getChildren();
 			Element requestElement = (Element) bodyChildren.get(0);
-			
+
 			// build a request
 			Request request = XMLRequestParser.parse(requestElement);
-			
+
 			// find process
 			AbstractProcess process = ProcessRepository.getInstance().getProcess(request.getProcessIdentifier());
-			
+
 			// run process		
 			ProcessOutputs outputs = process.run(request.getInputs());
-			
+
 			// build response
 			Response response = new Response(process.getIdentifier(), outputs);
-			
+
 			// generate response element
 			Element responseElement = XMLResponseGenerator.generate(response, request.getRequestedOutputs());
 			responseBody.addContent(responseElement);
@@ -130,63 +95,8 @@ public class SOAPHandler {
 				//throw new ServiceException("Couldn't validate response document.", e.getClass().getSimpleName() + ": " + e.getMessage());
 			}*/
 		}
-		catch (IOException e) {
-			logger.error("Couldn't read request from stream.", e);
-			responseBody.removeContent();
-			responseBody.addContent(new SoapFault(Code.Server, "Couldn't read request."));
-		}
-//		catch (ClientException e) {
-//			logger.error("Client exception.", e);
-//			responseBody.removeContent();
-//			responseBody.addContent(new SoapFault(Code.Client, e.getMessage(), e.getDetail()));
-//		}
-//		catch (ServiceException e) {
-//			logger.error("Service exception.", e);
-//			responseBody.removeContent();
-//			responseBody.addContent(new SoapFault(Code.Server, e.getMessage(), e.getDetail()));
-//		}
-		catch (ProcessException e) {
-			logger.error("Failed to execute process.", e);
-			responseBody.removeContent();
-			String message = "Failed to execute process";
-			if (e.getMessage() != null) {
-				message += ": " + e.getMessage();
-			}
-			else {
-				message += ".";
-			}
-			SoapFault fault = new SoapFault(Code.Server, message);
-			if (e.getCause() != null) {
-				fault.setDetail(e.getCause().getMessage());
-			}
-			responseBody.addContent(fault);
-		}
-		catch (JDOMException e) {
-			logger.error("Problem reading/generating request/response.", e);
-			responseBody.removeContent();
-			responseBody.addContent(new SoapFault(Code.Server, "Problem reading/generating request/response."));
-		}
-		catch (RuntimeException e) {
-			logger.error("Failed to handle request.", e);
-			responseBody.removeContent();
-			String message = "Failed to handle request.";
-			if (e.getMessage() != null) {
-				message += ": " + e.getMessage();
-			}
-			else {
-				message += ".";
-			}
-			responseBody.addContent(new SoapFault(Code.Server, message));
-		}
-		catch (RequestParseException e) {
-			logger.error("Couldn't parse request.", e);
-			responseBody.removeContent();
-			responseBody.addContent(new SoapFault(Code.Server, "Couldn't parse request."));
-		}
-		catch (ResponseGenerateException e) {
-			logger.error("Couldn't generate response.", e);
-			responseBody.removeContent();
-			responseBody.addContent(new SoapFault(Code.Server, "Couldn't generate response."));
+		catch (Exception e) {
+			handleException(e, responseBody);
 		}
 
 		// output
@@ -204,6 +114,67 @@ public class SOAPHandler {
 			catch (IOException e) {
 				// not much else we can do here
 			}
+		}
+	}
+
+	private void handleException(Exception e, SoapBody responseBody) {
+		if (e instanceof IOException) {
+			logger.error("Couldn't read request from stream.", e);
+			responseBody.removeContent();
+			responseBody.addContent(new SoapFault(Code.Server, "Couldn't read request."));
+		}
+		else if (e instanceof ClientException) {
+			logger.error("Client exception.", e);
+			responseBody.removeContent();
+			responseBody.addContent(new SoapFault(Code.Client, e.getMessage(), ((ClientException)e).getDetail()));
+		}
+		//		} else if (e instanceof ServiceException e) {
+		//			logger.error("Service exception.", e);
+		//			responseBody.removeContent();
+		//			responseBody.addContent(new SoapFault(Code.Server, e.getMessage(), e.getDetail()));
+		//		}
+		else if (e instanceof ProcessException) {
+			logger.error("Failed to execute process.", e);
+			responseBody.removeContent();
+			String message = "Failed to execute process";
+			if (e.getMessage() != null) {
+				message += ": " + e.getMessage();
+			}
+			else {
+				message += ".";
+			}
+			SoapFault fault = new SoapFault(Code.Server, message);
+			if (e.getCause() != null) {
+				fault.setDetail(e.getCause().getMessage());
+			}
+			responseBody.addContent(fault);
+		}
+		else if (e instanceof JDOMException) {
+			logger.error("Problem reading/generating request/response.", e);
+			responseBody.removeContent();
+			responseBody.addContent(new SoapFault(Code.Server, "Problem reading/generating request/response."));
+		}
+		else if (e instanceof RuntimeException) {
+			logger.error("Failed to handle request.", e);
+			responseBody.removeContent();
+			String message = "Failed to handle request.";
+			if (e.getMessage() != null) {
+				message += ": " + e.getMessage();
+			}
+			else {
+				message += ".";
+			}
+			responseBody.addContent(new SoapFault(Code.Server, message));
+		}
+		else if (e instanceof RequestParseException) {
+			logger.error("Couldn't parse request.", e);
+			responseBody.removeContent();
+			responseBody.addContent(new SoapFault(Code.Server, "Couldn't parse request."));
+		}
+		else if (e instanceof ResponseGenerateException) {
+			logger.error("Couldn't generate response.", e);
+			responseBody.removeContent();
+			responseBody.addContent(new SoapFault(Code.Server, "Couldn't generate response."));
 		}
 	}
 

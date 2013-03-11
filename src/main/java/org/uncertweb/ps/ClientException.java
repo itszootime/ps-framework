@@ -1,6 +1,6 @@
 package org.uncertweb.ps;
 
-public class ClientException extends Throwable {
+public class ClientException extends Exception {
 	
 	private static final long serialVersionUID = 1L;
 	private String detail;

@@ -1,5 +1,9 @@
 package org.uncertweb.ps.handler.soap;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.notNullValue;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -14,8 +18,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.uncertweb.ps.test.ConfiguredService;
 import org.uncertweb.xml.Namespaces;
-import static org.hamcrest.Matchers.*;
-import static org.hamcrest.MatcherAssert.*;
 public class SOAPHandlerTest {
 	
 	@Rule
@@ -51,6 +53,14 @@ public class SOAPHandlerTest {
 	}
 	
 	@Test
+	public void returnsFaultForInvalidDocument() throws JDOMException, IOException {
+		Element envelope = handleTestBufferPolygonInvalidRequest();
+		Element body = envelope.getChild("Body", Namespaces.SOAPENV);
+		Element fault = body.getChild("Fault", Namespaces.SOAPENV);
+		assertThat(fault, notNullValue());
+	}
+	
+	@Test
 	public void returnsFaultForWrongDataTypes() throws JDOMException, IOException {
 		Element envelope = handleTestSumInvalidRequest();
 		Element body = envelope.getChild("Body", Namespaces.SOAPENV);
@@ -60,6 +70,10 @@ public class SOAPHandlerTest {
 	
 	private Element handleTestSumRequest() throws JDOMException, IOException {
 		return handleTestRequest("xml/sum-soaprequest.xml");
+	}
+	
+	private Element handleTestBufferPolygonInvalidRequest() throws JDOMException, IOException {
+		return handleTestRequest("xml/bufferpolygon-invalid-soaprequest.xml");
 	}
 	
 	private Element handleTestSumInvalidRequest() throws JDOMException, IOException {
