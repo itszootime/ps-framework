@@ -1,6 +1,6 @@
 package org.uncertweb.ps;
 
-public class ServiceException extends Throwable {
+public class ServiceException extends Exception {
 	
 	private static final long serialVersionUID = 1L;
 	private String detail;

@@ -12,6 +12,7 @@ import org.jdom.JDOMException;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 import org.uncertweb.ps.ClientException;
+import org.uncertweb.ps.ServiceException;
 import org.uncertweb.ps.data.ProcessOutputs;
 import org.uncertweb.ps.data.Request;
 import org.uncertweb.ps.data.Response;
@@ -127,12 +128,11 @@ public class SOAPHandler {
 			logger.error("Client exception.", e);
 			responseBody.removeContent();
 			responseBody.addContent(new SoapFault(Code.Client, e.getMessage(), ((ClientException)e).getDetail()));
+		} else if (e instanceof ServiceException) {
+			logger.error("Service exception.", e);
+			responseBody.removeContent();
+			responseBody.addContent(new SoapFault(Code.Server, e.getMessage(), ((ServiceException)e).getDetail()));
 		}
-		//		} else if (e instanceof ServiceException e) {
-		//			logger.error("Service exception.", e);
-		//			responseBody.removeContent();
-		//			responseBody.addContent(new SoapFault(Code.Server, e.getMessage(), e.getDetail()));
-		//		}
 		else if (e instanceof ProcessException) {
 			logger.error("Failed to execute process.", e);
 			responseBody.removeContent();
