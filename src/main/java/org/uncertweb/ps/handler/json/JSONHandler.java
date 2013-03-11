@@ -47,23 +47,6 @@ public class JSONHandler {
 	private final Logger logger = Logger.getLogger(JSONHandler.class);
 
 	public void handleRequest(Reader reader, Writer writer) {
-
-
-		/*
-		StringWriter w = new StringWriter();
-		int read;
-		char[] buf = new char[1024];
-		try {
-			while ((read = reader.read(buf, 0, buf.length)) != -1) {
-				w.write(buf, 0, read);
-			}
-		}
-		catch (IOException e) {
-
-		}
-		System.out.println(w);
-		*/
-
 		try {
 			// parse request
 			logger.debug("Building object from request...");

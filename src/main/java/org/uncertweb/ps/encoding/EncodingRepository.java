@@ -7,6 +7,7 @@ import org.apache.log4j.Logger;
 import org.uncertweb.ps.Config;
 import org.uncertweb.ps.encoding.binary.AbstractBinaryEncoding;
 import org.uncertweb.ps.encoding.json.AbstractJSONEncoding;
+import org.uncertweb.ps.encoding.json.GeoJSONEncoding;
 import org.uncertweb.ps.encoding.xml.AbstractXMLEncoding;
 import org.uncertweb.ps.encoding.xml.GMLEncoding;
 import org.uncertweb.ps.encoding.xml.OMEncoding;
@@ -28,6 +29,7 @@ public class EncodingRepository {
 		encodings.add(new GMLEncoding());
 		encodings.add(new OMEncoding());
 		encodings.add(new UncertMLEncoding());
+		encodings.add(new GeoJSONEncoding());
 		
 		// add from user config
 		// inserting at index 0 means they will be preferred over built-in encodings

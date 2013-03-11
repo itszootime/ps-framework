@@ -54,6 +54,10 @@ public abstract class AbstractJSONEncoding implements Encoding {
 		return mimeType.equals("application/json");
 	}
 	
+	public String getDefaultMimeType() {
+		return "application/json";
+	}
+	
 	public abstract boolean isSupportedType(Class<?> type);
 
 }
