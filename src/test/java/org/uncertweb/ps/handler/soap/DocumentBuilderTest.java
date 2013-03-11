@@ -52,12 +52,4 @@ public class DocumentBuilderTest {
 		assertThat(result.isValid(), equalTo(false));
 	}
 	
-	@Test
-	public void buildStripsWhitespace() throws JDOMException, IOException {
-		Document document = builder.build(this.getClass().getClassLoader().getResourceAsStream("xml/bufferpolygon-request.xml"));
-		Element polygon = document.getRootElement().getChild("Polygon", Namespaces.PS);
-		assertThat(polygon, notNullValue());
-		assertThat(polygon.getContentSize(), equalTo(1));
-	}
-	
 }

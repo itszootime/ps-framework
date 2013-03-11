@@ -26,6 +26,7 @@ public class DocumentBuilder {
 	public DocumentBuilder() {
 		// might need to use something else for large documents here?
 		builder = new SAXBuilder("org.apache.xerces.parsers.SAXParser", true);
+		builder.setIgnoringElementContentWhitespace(true);
 		
 		// get schema locations
 		String sls = getSchemaLocationString();

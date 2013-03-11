@@ -115,7 +115,16 @@ public class XMLRequestParser {
 
 	private static <T> T parseData(Element element, Class<T> type) throws ParseException, RequestParseException {
 		// get the content
+		// workaround for whitespace
 		Content content = element.getContent(0);
+		if (element.getContentSize() > 1) {
+			for (Object object : element.getContent()) {
+				if (object instanceof Element) {
+					content = (Element)object;
+					break;
+				}
+			}
+		}
 		
 		// special case for reference
 		if (content instanceof Element && ((Element)content).getName().equals("DataReference")) {			
