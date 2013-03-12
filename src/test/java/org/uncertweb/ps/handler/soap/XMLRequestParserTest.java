@@ -97,6 +97,18 @@ public class XMLRequestParserTest {
 	}
 	
 	@Test
+	public void parseWithComplex() throws IOException, JDOMException, RequestParseException {
+		Element root = buildDocument("xml/bufferpolygon-request-inline.xml").getRootElement();
+		Request request = XMLRequestParser.parse(root);
+		ProcessInputs inputs = request.getInputs();
+		
+		// check process
+		assertEquals("BufferPolygonProcess", request.getProcessIdentifier());
+		Polygon polygon = inputs.get("Polygon").getAsSingleInput().getObjectAs(Polygon.class);
+		assertNotNull(polygon);
+	}
+	
+	@Test
 	public void parseWithDataReference() throws JDOMException, IOException, RequestParseException {
 		// parse
 		Element root = buildDocument("xml/bufferpolygon-request.xml").getRootElement();

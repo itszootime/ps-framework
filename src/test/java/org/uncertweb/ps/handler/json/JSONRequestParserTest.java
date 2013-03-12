@@ -91,8 +91,20 @@ public class JSONRequestParserTest {
 	}
 	
 	@Test
+	public void parseWithComplex() throws IOException, RequestParseException {
+		JsonObject object = TestUtils.loadJSON("json/bufferpolygon-request-inline.json");
+		Request request = JSONRequestParser.parse(object);
+		ProcessInputs inputs = request.getInputs();
+		
+		// check process
+		assertEquals("BufferPolygonProcess", request.getProcessIdentifier());
+		Polygon polygon = inputs.get("Polygon").getAsSingleInput().getObjectAs(Polygon.class);
+		assertNotNull(polygon);
+	}
+	
+	@Test
 	public void parseWithDataReference() throws JDOMException, IOException, RequestParseException {
-		JsonObject object = TestUtils.loadJSON("json/bufferpolygon-request.json"); // should assume json encoded ref
+		JsonObject object = TestUtils.loadJSON("json/bufferpolygon-request.json");
 		Request request = JSONRequestParser.parse(object);
 		ProcessInputs inputs = request.getInputs();
 		
@@ -121,7 +133,7 @@ public class JSONRequestParserTest {
 	
 	@Test
 	public void parseWithDataReferenceCompressed() throws JDOMException, IOException, RequestParseException {
-		JsonObject object = TestUtils.loadJSON("json/bufferpolygon-request.json"); // should assume json encoded ref
+		JsonObject object = TestUtils.loadJSON("json/bufferpolygon-request.json");
 		JsonObject dataRef = object.get("BufferPolygonProcessRequest").getAsJsonObject().get("Polygon").getAsJsonObject().get("DataReference").getAsJsonObject();
 		dataRef.addProperty("href", "http://localhost:8000/json/polygon.zip");
 		dataRef.addProperty("compressed", "true");
