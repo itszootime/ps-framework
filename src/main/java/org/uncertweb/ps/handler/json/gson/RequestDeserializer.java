@@ -118,9 +118,13 @@ public class RequestDeserializer implements JsonDeserializer<Request> {
 			URL dataURL = new URL(dataReference.get("href").getAsString());
 
 			// parse data reference
-			DataReference ref = new DataReference(dataURL, dataReference.get("mimeType").getAsString(), compression);
+			String mimeType = null;
+			if (dataReference.has("mimeType")) {
+				mimeType = dataReference.get("mimeType").getAsString();
+			}
+			DataReference ref = new DataReference(dataURL, mimeType, compression);
 			DataReferenceParser parser = new DataReferenceParser();
-			return parser.parse(ref, dataDescription.getClass());
+			return parser.parse(ref, dataDescription.getType());
 		}
 		else {
 			// consult factory

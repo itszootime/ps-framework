@@ -105,7 +105,7 @@ public class JSONRequestParserTest {
 	@Test
 	public void parseWithDataReferenceMimeType() throws JDOMException, IOException, RequestParseException {
 		JsonObject object = TestUtils.loadJSON("json/bufferpolygon-request.json");
-		JsonObject dataRef = object.get("BufferPolygonRequest").getAsJsonObject().get("Polygon").getAsJsonObject().get("DataReference").getAsJsonObject();
+		JsonObject dataRef = object.get("BufferPolygonProcessRequest").getAsJsonObject().get("Polygon").getAsJsonObject().get("DataReference").getAsJsonObject();
 		dataRef.addProperty("href", "http://localhost:8000/xml/polygon.xml");
 		dataRef.addProperty("mimeType", "text/xml");
 		
@@ -122,8 +122,8 @@ public class JSONRequestParserTest {
 	@Test
 	public void parseWithDataReferenceCompressed() throws JDOMException, IOException, RequestParseException {
 		JsonObject object = TestUtils.loadJSON("json/bufferpolygon-request.json"); // should assume json encoded ref
-		JsonObject dataRef = object.get("BufferPolygonRequest").getAsJsonObject().get("Polygon").getAsJsonObject().get("DataReference").getAsJsonObject();
-		dataRef.addProperty("href", "http://localhost:8000/xml/polygon.zip");
+		JsonObject dataRef = object.get("BufferPolygonProcessRequest").getAsJsonObject().get("Polygon").getAsJsonObject().get("DataReference").getAsJsonObject();
+		dataRef.addProperty("href", "http://localhost:8000/json/polygon.zip");
 		dataRef.addProperty("compressed", "true");
 		
 		// parse
@@ -139,7 +139,7 @@ public class JSONRequestParserTest {
 	@Test
 	public void parseWithDataReferenceMimeTypeCompressed() throws JDOMException, IOException, RequestParseException {
 		JsonObject object = TestUtils.loadJSON("json/bufferpolygon-request.json"); // should assume json encoded ref
-		JsonObject dataRef = object.get("BufferPolygonRequest").getAsJsonObject().get("Polygon").getAsJsonObject().get("DataReference").getAsJsonObject();
+		JsonObject dataRef = object.get("BufferPolygonProcessRequest").getAsJsonObject().get("Polygon").getAsJsonObject().get("DataReference").getAsJsonObject();
 		dataRef.addProperty("href", "http://localhost:8000/xml/polygon.zip");
 		dataRef.addProperty("compressed", "true");
 		dataRef.addProperty("mimeType", "text/xml");
