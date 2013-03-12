@@ -1,11 +1,9 @@
 package org.uncertweb.ps.handler.json;
 
-import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.util.List;
@@ -13,12 +11,9 @@ import java.util.List;
 import org.jdom.JDOMException;
 import org.junit.Rule;
 import org.junit.Test;
-import org.uncertweb.ps.data.Input;
-import org.uncertweb.ps.data.MultipleInput;
 import org.uncertweb.ps.data.ProcessInputs;
 import org.uncertweb.ps.data.Request;
 import org.uncertweb.ps.data.RequestedOutput;
-import org.uncertweb.ps.data.SingleInput;
 import org.uncertweb.ps.handler.RequestParseException;
 import org.uncertweb.ps.test.ConfiguredService;
 import org.uncertweb.test.HTTPFileServer;
@@ -45,8 +40,8 @@ public class JSONRequestParserTest {
 		assertEquals("SumProcess", request.getProcessIdentifier());
 
 		// check inputs
-		testSingleInput(inputs, "A", new Double(4.002));
-		testMultipleInput(inputs, "B", new Double[] {
+		TestUtils.testSingleInput(inputs, "A", new Double(4.002));
+		TestUtils.testMultipleInput(inputs, "B", new Double[] {
 				1000d, 2000d, 3000d
 		});
 		
@@ -65,7 +60,7 @@ public class JSONRequestParserTest {
 		assertEquals("HashProcess", request.getProcessIdentifier());
 
 		// check inputs
-		testSingleInput(inputs, "String", "i am a string to be hashed");
+		TestUtils.testSingleInput(inputs, "String", "i am a string to be hashed");
 		
 		// check requested outputs
 		List<RequestedOutput> requestedOutputs = request.getRequestedOutputs();
@@ -87,7 +82,7 @@ public class JSONRequestParserTest {
 		assertEquals("HashProcess", request.getProcessIdentifier());
 
 		// check inputs
-		testSingleInput(inputs, "String", "i am a string to be hashed");
+		TestUtils.testSingleInput(inputs, "String", "i am a string to be hashed");
 		
 		// check requested outputs
 		List<RequestedOutput> requestedOutputs = request.getRequestedOutputs();
@@ -157,27 +152,6 @@ public class JSONRequestParserTest {
 		assertEquals("BufferPolygonProcess", request.getProcessIdentifier());
 		Polygon polygon = inputs.get("Polygon").getAsSingleInput().getObjectAs(Polygon.class);
 		assertNotNull(polygon);
-	}
-
-	/**
-	 * Code below is duplicated in XMLRequestParser
-	 */
-	private void testSingleInput(ProcessInputs inputs, String identifier, Object expected) {
-		Input input = inputs.get(identifier); 
-		assertNotNull(input);
-		assertEquals(identifier, input.getIdentifier());
-		assertTrue(input instanceof SingleInput);
-		Object actual = input.getAsSingleInput().getObjectAs(Object.class);
-		assertEquals(expected, actual);
-	}
-
-	private void testMultipleInput(ProcessInputs inputs, String identifier, Object[] expected) {
-		Input input = inputs.get(identifier);
-		assertNotNull(input);
-		assertEquals(identifier, input.getIdentifier());
-		assertTrue(input instanceof MultipleInput);
-		Object[] actual = input.getAsMultipleInput().getObjectsAs(Object.class).toArray(new Object[0]);
-		assertArrayEquals(expected, actual);
 	}
 	
 }
