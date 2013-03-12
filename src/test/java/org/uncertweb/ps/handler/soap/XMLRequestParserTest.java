@@ -23,7 +23,7 @@ import org.uncertweb.ps.data.RequestedOutput;
 import org.uncertweb.ps.data.SingleInput;
 import org.uncertweb.ps.handler.RequestParseException;
 import org.uncertweb.ps.test.ConfiguredService;
-import org.uncertweb.test.HTTPServer;
+import org.uncertweb.test.HTTPFileServer;
 import org.uncertweb.test.util.TestUtils;
 import org.uncertweb.xml.Namespaces;
 
@@ -35,7 +35,7 @@ public class XMLRequestParserTest {
 	public ConfiguredService service = new ConfiguredService();
 	
 	@Rule
-	public HTTPServer server = new HTTPServer(8000);
+	public HTTPFileServer server = new HTTPFileServer(8000);
 	
 	protected Document buildDocument(String path) throws JDOMException, IOException {
 		return TestUtils.loadXML(path);
@@ -103,9 +103,6 @@ public class XMLRequestParserTest {
 	
 	@Test
 	public void parseWithDataReference() throws JDOMException, IOException, RequestParseException {
-		// expose file
-		server.addFileHandler("xml/polygon.xml");
-		
 		// parse
 		Element root = buildDocument("xml/bufferpolygon-request.xml").getRootElement();
 		Request request = XMLRequestParser.parse(root);
@@ -119,9 +116,6 @@ public class XMLRequestParserTest {
 	
 	@Test
 	public void parseWithDataReferenceMimeType() throws JDOMException, IOException, RequestParseException {
-		// expose file
-		server.addFileHandler("xml/polygon.xml");
-		
 		// load request and change ref url to zip
 		Element root = buildDocument("xml/bufferpolygon-request.xml").getRootElement();
 		Element dataRef = root.getChild("Polygon", Namespaces.PS).getChild("DataReference", Namespaces.PS);
@@ -140,9 +134,6 @@ public class XMLRequestParserTest {
 	
 	@Test
 	public void parseWithDataReferenceCompressed() throws JDOMException, IOException, RequestParseException {
-		// expose file
-		server.addFileHandler("xml/polygon.zip");
-		
 		// load request and change ref url to zip
 		Element root = buildDocument("xml/bufferpolygon-request.xml").getRootElement();
 		Element dataRef = root.getChild("Polygon", Namespaces.PS).getChild("DataReference", Namespaces.PS);
@@ -161,9 +152,6 @@ public class XMLRequestParserTest {
 	
 	@Test
 	public void parseWithDataReferenceMimeTypeCompressed() throws JDOMException, IOException, RequestParseException {
-		// expose file
-		server.addFileHandler("xml/polygon.zip");
-		
 		// load request and change ref url to zip
 		Element root = buildDocument("xml/bufferpolygon-request.xml").getRootElement();
 		Element dataRef = root.getChild("Polygon", Namespaces.PS).getChild("DataReference", Namespaces.PS);

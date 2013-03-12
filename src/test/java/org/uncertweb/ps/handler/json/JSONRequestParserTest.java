@@ -24,7 +24,7 @@ import org.uncertweb.ps.data.SingleInput;
 import org.uncertweb.ps.handler.RequestParseException;
 import org.uncertweb.ps.handler.soap.XMLRequestParser;
 import org.uncertweb.ps.test.ConfiguredService;
-import org.uncertweb.test.HTTPServer;
+import org.uncertweb.test.HTTPFileServer;
 import org.uncertweb.test.util.TestUtils;
 import org.uncertweb.xml.Namespaces;
 
@@ -37,7 +37,7 @@ public class JSONRequestParserTest {
 	public ConfiguredService service = new ConfiguredService();
 	
 	@Rule
-	public HTTPServer server = new HTTPServer(8000);
+	public HTTPFileServer server = new HTTPFileServer(8000);
 	
 	@Test
 	public void parseWithPrimitiveMultiple() throws JDOMException, IOException, RequestParseException {

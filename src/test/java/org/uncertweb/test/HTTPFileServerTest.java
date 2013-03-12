@@ -11,10 +11,10 @@ import org.apache.commons.io.IOUtils;
 import org.junit.Rule;
 import org.junit.Test;
 
-public class HTTPServerTest {
+public class HTTPFileServerTest {
 
 	@Rule
-	public HTTPServer server = new HTTPServer(8000);
+	public HTTPFileServer server = new HTTPFileServer(8000);
 
 	@Test
 	public void httpServerWithString() throws IOException {
@@ -22,7 +22,6 @@ public class HTTPServerTest {
 		String fileContent = IOUtils.toString(this.getClass().getClassLoader().getResourceAsStream("xml/polygon.xml"));
 		
 		// load from server
-		server.addFileHandler("xml/polygon.xml");
 		URL url = new URL("http://localhost:8000/xml/polygon.xml");
 		URLConnection conn = url.openConnection();
 		String serverContent = IOUtils.toString(conn.getInputStream());
@@ -37,7 +36,6 @@ public class HTTPServerTest {
 		byte[] fileContent = IOUtils.toByteArray(this.getClass().getClassLoader().getResourceAsStream("xml/polygon.zip"));
 		
 		// load from server
-		server.addFileHandler("xml/polygon.zip");
 		URL url = new URL("http://localhost:8000/xml/polygon.zip");
 		URLConnection conn = url.openConnection();
 		byte[] serverContent = IOUtils.toByteArray(conn.getInputStream());
