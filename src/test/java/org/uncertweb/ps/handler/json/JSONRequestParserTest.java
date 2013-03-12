@@ -19,7 +19,6 @@ import org.uncertweb.ps.test.ConfiguredService;
 import org.uncertweb.test.HTTPFileServer;
 import org.uncertweb.test.util.TestUtils;
 
-import com.google.gson.JsonObject;
 import com.vividsolutions.jts.geom.Polygon;
 
 public class JSONRequestParserTest {
@@ -32,8 +31,7 @@ public class JSONRequestParserTest {
 	
 	@Test
 	public void parseWithPrimitiveMultiple() throws JDOMException, IOException, RequestParseException {
-		JsonObject object = TestUtils.loadJSON("json/sum-request.json");
-		Request request = JSONRequestParser.parse(object);
+		Request request = JSONRequestParser.parse(TestUtils.streamFor("json/sum-request.json"));
 		ProcessInputs inputs = request.getInputs();
 
 		// check process
@@ -52,8 +50,7 @@ public class JSONRequestParserTest {
 
 	@Test
 	public void parseWithRequestedOutputs() throws JDOMException, IOException, RequestParseException {
-		JsonObject object = TestUtils.loadJSON("json/hash-request.json");
-		Request request = JSONRequestParser.parse(object);
+		Request request = JSONRequestParser.parse(TestUtils.streamFor("json/hash-request.json"));
 		ProcessInputs inputs = request.getInputs();
 
 		// check process
@@ -73,9 +70,7 @@ public class JSONRequestParserTest {
 	
 	@Test
 	public void parseWithRequestedOutputsEmpty() throws JDOMException, IOException, RequestParseException {
-		JsonObject object = TestUtils.loadJSON("json/hash-request.json");
-		object.get("HashProcessRequest").getAsJsonObject().add("RequestedOutputs", new JsonObject());
-		Request request = JSONRequestParser.parse(object);
+		Request request = JSONRequestParser.parse(TestUtils.streamFor("json/hash-request-req-out-empty.json"));
 		ProcessInputs inputs = request.getInputs();
 
 		// check process
@@ -92,8 +87,7 @@ public class JSONRequestParserTest {
 	
 	@Test
 	public void parseWithComplex() throws IOException, RequestParseException {
-		JsonObject object = TestUtils.loadJSON("json/bufferpolygon-request-inline.json");
-		Request request = JSONRequestParser.parse(object);
+		Request request = JSONRequestParser.parse(TestUtils.streamFor("json/bufferpolygon-request-inline.json"));
 		ProcessInputs inputs = request.getInputs();
 		
 		// check process
@@ -104,8 +98,7 @@ public class JSONRequestParserTest {
 	
 	@Test
 	public void parseWithDataReference() throws JDOMException, IOException, RequestParseException {
-		JsonObject object = TestUtils.loadJSON("json/bufferpolygon-request.json");
-		Request request = JSONRequestParser.parse(object);
+		Request request = JSONRequestParser.parse(TestUtils.streamFor("json/bufferpolygon-request.json"));
 		ProcessInputs inputs = request.getInputs();
 		
 		// check process
@@ -116,13 +109,7 @@ public class JSONRequestParserTest {
 	
 	@Test
 	public void parseWithDataReferenceMimeType() throws JDOMException, IOException, RequestParseException {
-		JsonObject object = TestUtils.loadJSON("json/bufferpolygon-request.json");
-		JsonObject dataRef = object.get("BufferPolygonProcessRequest").getAsJsonObject().get("Polygon").getAsJsonObject().get("DataReference").getAsJsonObject();
-		dataRef.addProperty("href", "http://localhost:8000/xml/polygon.xml");
-		dataRef.addProperty("mimeType", "text/xml");
-		
-		// parse
-		Request request = JSONRequestParser.parse(object);
+		Request request = JSONRequestParser.parse(TestUtils.streamFor("json/bufferpolygon-request-ref-mime.json"));
 		ProcessInputs inputs = request.getInputs();
 		
 		// check process
@@ -133,13 +120,7 @@ public class JSONRequestParserTest {
 	
 	@Test
 	public void parseWithDataReferenceCompressed() throws JDOMException, IOException, RequestParseException {
-		JsonObject object = TestUtils.loadJSON("json/bufferpolygon-request.json");
-		JsonObject dataRef = object.get("BufferPolygonProcessRequest").getAsJsonObject().get("Polygon").getAsJsonObject().get("DataReference").getAsJsonObject();
-		dataRef.addProperty("href", "http://localhost:8000/json/polygon.zip");
-		dataRef.addProperty("compressed", "true");
-		
-		// parse
-		Request request = JSONRequestParser.parse(object);
+		Request request = JSONRequestParser.parse(TestUtils.streamFor("json/bufferpolygon-request-ref-comp.json"));
 		ProcessInputs inputs = request.getInputs();
 		
 		// check process
@@ -150,14 +131,7 @@ public class JSONRequestParserTest {
 	
 	@Test
 	public void parseWithDataReferenceMimeTypeCompressed() throws JDOMException, IOException, RequestParseException {
-		JsonObject object = TestUtils.loadJSON("json/bufferpolygon-request.json"); // should assume json encoded ref
-		JsonObject dataRef = object.get("BufferPolygonProcessRequest").getAsJsonObject().get("Polygon").getAsJsonObject().get("DataReference").getAsJsonObject();
-		dataRef.addProperty("href", "http://localhost:8000/xml/polygon.zip");
-		dataRef.addProperty("compressed", "true");
-		dataRef.addProperty("mimeType", "text/xml");
-		
-		// parse
-		Request request = JSONRequestParser.parse(object);
+		Request request = JSONRequestParser.parse(TestUtils.streamFor("json/bufferpolygon-request-ref-comp-mime.json"));
 		ProcessInputs inputs = request.getInputs();
 		
 		// check process

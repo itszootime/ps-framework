@@ -1,0 +1,5 @@
+{ "BufferPolygonProcessRequest": {
+  "Polygon": {
+    "DataReference": { "href": "http://localhost:8000/json/polygon.zip", "compressed": true }
+  },
+  "Distance": 2.5 } }

@@ -45,6 +45,10 @@ public class TestUtils {
 		}
 	}
 	
+	public static InputStream streamFor(String path) {
+		return TestUtils.class.getClassLoader().getResourceAsStream(path);
+	}
+	
 	public static DateMidnight createDateMidnight(int year, int month, int day, String timezone) {
 		return new DateMidnight(new DateTime(year, month, day, 0, 0, 0, 0, DateTimeZone.forID(timezone)));
 	}

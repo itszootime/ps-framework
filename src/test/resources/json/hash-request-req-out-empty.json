@@ -1,0 +1,4 @@
+{ "HashProcessRequest": {
+  "String": "i am a string to be hashed",
+  "RequestedOutputs": { }
+  } }

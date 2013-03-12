@@ -1,0 +1,5 @@
+{ "BufferPolygonProcessRequest": {
+  "Polygon": {
+    "DataReference": { "href": "http://localhost:8000/xml/polygon.xml", "mimeType": "text/xml" }
+  },
+  "Distance": 2.5 } }

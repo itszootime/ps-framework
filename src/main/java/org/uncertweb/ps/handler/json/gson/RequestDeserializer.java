@@ -13,7 +13,9 @@ import org.uncertweb.ps.data.MultipleInput;
 import org.uncertweb.ps.data.Request;
 import org.uncertweb.ps.data.RequestedOutput;
 import org.uncertweb.ps.data.SingleInput;
+import org.uncertweb.ps.encoding.EncodingRepository;
 import org.uncertweb.ps.encoding.ParseException;
+import org.uncertweb.ps.encoding.json.AbstractJSONEncoding;
 import org.uncertweb.ps.handler.data.DataReferenceParser;
 import org.uncertweb.ps.process.AbstractProcess;
 import org.uncertweb.ps.process.ProcessRepository;
@@ -106,6 +108,7 @@ public class RequestDeserializer implements JsonDeserializer<Request> {
 	}
 	
 	private Object parseDataElement(JsonElement dataElement, DataDescription dataDescription, JsonDeserializationContext context) throws ParseException, IOException {		
+		Class<?> type = dataDescription.getType();
 		if (dataElement.isJsonObject() && dataElement.getAsJsonObject().has("DataReference")) {
 			JsonObject dataReference = dataElement.getAsJsonObject().get("DataReference").getAsJsonObject();
 			// TODO: exceptions required if href and mimeType not set, compression is optional
@@ -124,12 +127,26 @@ public class RequestDeserializer implements JsonDeserializer<Request> {
 			}
 			DataReference ref = new DataReference(dataURL, mimeType, compression);
 			DataReferenceParser parser = new DataReferenceParser();
-			return parser.parse(ref, dataDescription.getType());
+			return parser.parse(ref, type);
 		}
 		else {
-			// consult factory
+			// look in the factory first
+			AbstractJSONEncoding encoding = EncodingRepository.getInstance().getJSONEncoding(type);
+			if (encoding != null) {
+				// convert to string and parse
+				String json = dataElement.toString();
+				return encoding.parse(json, type);
+			}
+			else {
+				// try and parse with gson
+				try {
+					return context.deserialize(dataElement, type);
+				}
+				catch (JsonParseException e) {
+					throw new ParseException("Couldn't automatically parse " + type.getSimpleName() + " type.");
+				}
+			}
 			
-			return context.deserialize(dataElement, dataDescription.getType());
 		}
 	}
 
