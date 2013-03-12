@@ -9,7 +9,7 @@ import com.google.gson.JsonObject;
 public class JSONRequestParser {
 
 	public static Request parse(JsonObject object) {
-		// delegate to gson
+		// delegate to gson for
 		Gson gson = new GsonBuilder().create();
 		return gson.fromJson(object, Request.class);
 	}

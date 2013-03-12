@@ -1,8 +1,8 @@
 package org.uncertweb.test.util;
 
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 import org.jdom.Document;
 import org.jdom.JDOMException;
@@ -30,8 +30,9 @@ public class TestUtils {
 	
 	public static JsonObject loadJSON(String path) throws IOException {
 		JsonParser parser = new JsonParser();
-		try (FileReader fr = new FileReader(new File(path))) {
-			return (JsonObject)parser.parse(fr);
+		InputStream is = TestUtils.class.getClassLoader().getResourceAsStream(path);
+		try (InputStreamReader isr = new InputStreamReader(is)) {
+			return (JsonObject)parser.parse(isr);
 		}
 	}
 	
