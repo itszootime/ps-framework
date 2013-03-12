@@ -25,8 +25,6 @@ public class ServiceExceptionSerializer implements JsonSerializer<ServiceExcepti
 		exception.add("detail", new JsonPrimitive(src.getDetail()));
 		
 		return root;
-	}
-	
-	
+	}	
 
 }

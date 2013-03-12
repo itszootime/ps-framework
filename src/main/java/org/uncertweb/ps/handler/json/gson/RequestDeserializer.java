@@ -7,9 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 
-import org.uncertweb.api.om.io.JSONObservationParser;
-import org.uncertweb.api.om.observation.AbstractObservation;
-import org.uncertweb.api.om.observation.collections.IObservationCollection;
 import org.uncertweb.ps.data.DataDescription;
 import org.uncertweb.ps.data.DataReference;
 import org.uncertweb.ps.data.MultipleInput;
@@ -101,37 +98,13 @@ public class RequestDeserializer implements JsonDeserializer<Request> {
 				reqOutputs.add(new RequestedOutput(outputIdentifier, asReference));
 			}
 		}
+		else {
+			request.setRequestedOutputs(null);
+		}
 
 		return request;
 	}
-
-	/**
-	 * This needs to be fixed!
-	 * 
-	 * 
-	 * The class should find an appropriate parser for the data type,
-	 * then pass the string to that parser. Like the XML parser system.
-	 * 
-	 * This would lose the benefit of having a shared deserialization context.
-	 * e.g. if I have UncertML in O&M, my O&M parser cannot simply refer the UncertML to
-	 * the context. It'd have to explicitly parse it.
-	 * 
-	 * Might not be that much of an issue. Classes could use Gson underlying if they wanted too,
-	 * then register type adapters themselves. Keeps things decoupled from Gson for parsing.
-	 * 
-	 * Maybe there a way to pass the deserialization context too. Is this useful?
-	 *  
-	 * If we can't find a parser, maybe give Gson a go at doing it automatically? But catch
-	 * the exceptions properly.
-	 * 
-	 * 
-	 * @param dataElement
-	 * @param dataDescription
-	 * @param context
-	 * @return
-	 * @throws ParseException
-	 * @throws IOException
-	 */
+	
 	private Object parseDataElement(JsonElement dataElement, DataDescription dataDescription, JsonDeserializationContext context) throws ParseException, IOException {		
 		if (dataElement.isJsonObject() && dataElement.getAsJsonObject().has("DataReference")) {
 			JsonObject dataReference = dataElement.getAsJsonObject().get("DataReference").getAsJsonObject();
@@ -150,34 +123,10 @@ public class RequestDeserializer implements JsonDeserializer<Request> {
 			return parser.parse(ref, dataDescription.getClass());
 		}
 		else {
-			// try instances of AbstractJSONEncoding?
-			// then fallback to gson context?
-			if (isOM(dataDescription.getType())) { // FIXME: bit of a workaround
-				JSONObservationParser parser = new JSONObservationParser();
-				try {
-					return parser.parse(dataElement.toString());
-				}
-				catch (Exception e) {
-					throw new ParseException("Couldn't parse O&M JSON.", e);
-				}
-			}
-			else {
-				return context.deserialize(dataElement, dataDescription.getType());
-			}
+			// consult factory
+			
+			return context.deserialize(dataElement, dataDescription.getType());
 		}
-	}
-
-	private boolean isOM(Class<?> classOf) {
-		for (Class<?> interf : classOf.getInterfaces()) {
-			if (interf.equals(IObservationCollection.class)) {
-				return true;
-			}
-		}
-		Class<?> superClass = classOf.getSuperclass();
-		if (superClass != null) {
-			return superClass.equals(AbstractObservation.class);
-		}
-		return false;
 	}
 
 }

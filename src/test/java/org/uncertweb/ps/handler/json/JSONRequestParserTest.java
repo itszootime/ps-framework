@@ -10,8 +10,6 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.util.List;
 
-import org.jdom.Document;
-import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.junit.Rule;
 import org.junit.Test;
@@ -22,12 +20,11 @@ import org.uncertweb.ps.data.Request;
 import org.uncertweb.ps.data.RequestedOutput;
 import org.uncertweb.ps.data.SingleInput;
 import org.uncertweb.ps.handler.RequestParseException;
-import org.uncertweb.ps.handler.soap.XMLRequestParser;
 import org.uncertweb.ps.test.ConfiguredService;
 import org.uncertweb.test.HTTPFileServer;
 import org.uncertweb.test.util.TestUtils;
-import org.uncertweb.xml.Namespaces;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.vividsolutions.jts.geom.Polygon;
 
@@ -59,125 +56,109 @@ public class JSONRequestParserTest {
 		assertNull(requestedOutputs);
 	}
 
-//	@Test
-//	public void parseWithRequestedOutputs() throws JDOMException, IOException, RequestParseException {
-//		JsonElement element = TestUtils.loadJSON("json/hash-request.json");
-//		Request request = XMLRequestParser.parse(document.getRootElement());
-//		ProcessInputs inputs = request.getInputs();
-//
-//		// check process
-//		assertEquals("HashProcess", request.getProcessIdentifier());
-//
-//		// check inputs
-//		testSingleInput(inputs, "String", "i am a string to be hashed");
-//		
-//		// check requested outputs
-//		List<RequestedOutput> requestedOutputs = request.getRequestedOutputs();
-//		assertNotNull(requestedOutputs);
-//		assertEquals(1, requestedOutputs.size());
-//		RequestedOutput sha1Output = requestedOutputs.get(0);
-//		assertEquals("SHA1", sha1Output.getName());
-//		assertFalse(sha1Output.isReference());
-//	}
-//	
-//	@Test
-//	public void parseWithRequestedOutputsEmpty() throws JDOMException, IOException, RequestParseException {
-//		Element root = TestUtils.loadJSON("json/hash-request.json").getRootElement();
-//		root.getChild("RequestedOutputs", Namespaces.PS).removeContent();
-//		Request request = XMLRequestParser.parse(root);
-//		ProcessInputs inputs = request.getInputs();
-//
-//		// check process
-//		assertEquals("HashProcess", request.getProcessIdentifier());
-//
-//		// check inputs
-//		testSingleInput(inputs, "String", "i am a string to be hashed");
-//		
-//		// check requested outputs
-//		List<RequestedOutput> requestedOutputs = request.getRequestedOutputs();
-//		assertNotNull(requestedOutputs);
-//		assertEquals(0, requestedOutputs.size());
-//	}
-//	
-//	@Test
-//	public void parseWithDataReference() throws JDOMException, IOException, RequestParseException {
-//		// expose file
-//		server.addFileHandler("json/polygon.json");
-//		
-//		// parse
-//		Element root = TestUtils.loadXML("json/bufferpolygon-request.json").getRootElement();
-//		Request request = XMLRequestParser.parse(root);
-//		ProcessInputs inputs = request.getInputs();
-//		
-//		// check process
-//		assertEquals("BufferPolygonProcess", request.getProcessIdentifier());
-//		Polygon polygon = inputs.get("Polygon").getAsSingleInput().getObjectAs(Polygon.class);
-//		assertNotNull(polygon);
-//	}
-//	
-//	@Test
-//	public void parseWithDataReferenceMimeType() throws JDOMException, IOException, RequestParseException {
-//		// expose file
-//		server.addFileHandler("xml/polygon.xml");
-//		
-//		// load request and change ref url to zip
-//		Element root = TestUtils.loadXML("xml/bufferpolygon-request.xml").getRootElement();
-//		Element dataRef = root.getChild("Polygon", Namespaces.PS).getChild("DataReference", Namespaces.PS);
-//		dataRef.setAttribute("href", "http://localhost:8000/xml/polygon.xml");
-//		dataRef.setAttribute("mimeType", "text/xml");
-//		
-//		// parse
-//		Request request = XMLRequestParser.parse(root);
-//		ProcessInputs inputs = request.getInputs();
-//		
-//		// check process
-//		assertEquals("BufferPolygonProcess", request.getProcessIdentifier());
-//		Polygon polygon = inputs.get("Polygon").getAsSingleInput().getObjectAs(Polygon.class);
-//		assertNotNull(polygon);
-//	}
-//	
-//	@Test
-//	public void parseWithDataReferenceCompressed() throws JDOMException, IOException, RequestParseException {
-//		// expose file
-//		server.addFileHandler("xml/polygon.zip");
-//		
-//		// load request and change ref url to zip
-//		Element root = TestUtils.loadXML("xml/bufferpolygon-request.xml").getRootElement();
-//		Element dataRef = root.getChild("Polygon", Namespaces.PS).getChild("DataReference", Namespaces.PS);
-//		dataRef.setAttribute("href", "http://localhost:8000/xml/polygon.zip");
-//		dataRef.setAttribute("compressed", "true");
-//		
-//		// parse
-//		Request request = XMLRequestParser.parse(root);
-//		ProcessInputs inputs = request.getInputs();
-//		
-//		// check process
-//		assertEquals("BufferPolygonProcess", request.getProcessIdentifier());
-//		Polygon polygon = inputs.get("Polygon").getAsSingleInput().getObjectAs(Polygon.class);
-//		assertNotNull(polygon);
-//	}
-//	
-//	@Test
-//	public void parseWithDataReferenceMimeTypeCompressed() throws JDOMException, IOException, RequestParseException {
-//		// expose file
-//		server.addFileHandler("xml/polygon.zip");
-//		
-//		// load request and change ref url to zip
-//		Element root = TestUtils.loadXML("xml/bufferpolygon-request.xml").getRootElement();
-//		Element dataRef = root.getChild("Polygon", Namespaces.PS).getChild("DataReference", Namespaces.PS);
-//		dataRef.setAttribute("href", "http://localhost:8000/xml/polygon.zip");
-//		dataRef.setAttribute("mimeType", "text/xml");
-//		dataRef.setAttribute("compressed", "true");
-//		
-//		// parse
-//		Request request = XMLRequestParser.parse(root);
-//		ProcessInputs inputs = request.getInputs();
-//		
-//		// check process
-//		assertEquals("BufferPolygonProcess", request.getProcessIdentifier());
-//		Polygon polygon = inputs.get("Polygon").getAsSingleInput().getObjectAs(Polygon.class);
-//		assertNotNull(polygon);
-//	}
+	@Test
+	public void parseWithRequestedOutputs() throws JDOMException, IOException, RequestParseException {
+		JsonObject object = TestUtils.loadJSON("json/hash-request.json");
+		Request request = JSONRequestParser.parse(object);
+		ProcessInputs inputs = request.getInputs();
+
+		// check process
+		assertEquals("HashProcess", request.getProcessIdentifier());
+
+		// check inputs
+		testSingleInput(inputs, "String", "i am a string to be hashed");
+		
+		// check requested outputs
+		List<RequestedOutput> requestedOutputs = request.getRequestedOutputs();
+		assertNotNull(requestedOutputs);
+		assertEquals(1, requestedOutputs.size());
+		RequestedOutput sha1Output = requestedOutputs.get(0);
+		assertEquals("SHA1", sha1Output.getName());
+		assertFalse(sha1Output.isReference());
+	}
+	
+	@Test
+	public void parseWithRequestedOutputsEmpty() throws JDOMException, IOException, RequestParseException {
+		JsonObject object = TestUtils.loadJSON("json/hash-request.json");
+		object.get("HashProcessRequest").getAsJsonObject().add("RequestedOutputs", new JsonArray());
+		Request request = JSONRequestParser.parse(object);
+		ProcessInputs inputs = request.getInputs();
+
+		// check process
+		assertEquals("HashProcess", request.getProcessIdentifier());
+
+		// check inputs
+		testSingleInput(inputs, "String", "i am a string to be hashed");
+		
+		// check requested outputs
+		List<RequestedOutput> requestedOutputs = request.getRequestedOutputs();
+		assertNotNull(requestedOutputs);
+		assertEquals(0, requestedOutputs.size());
+	}
+	
+	@Test
+	public void parseWithDataReference() throws JDOMException, IOException, RequestParseException {
+		JsonObject object = TestUtils.loadJSON("json/bufferpolygon-request.json"); // should assume json encoded ref
+		Request request = JSONRequestParser.parse(object);
+		ProcessInputs inputs = request.getInputs();
+		
+		// check process
+		assertEquals("BufferPolygonProcess", request.getProcessIdentifier());
+		Polygon polygon = inputs.get("Polygon").getAsSingleInput().getObjectAs(Polygon.class);
+		assertNotNull(polygon);
+	}
+	
+	@Test
+	public void parseWithDataReferenceMimeType() throws JDOMException, IOException, RequestParseException {
+		JsonObject object = TestUtils.loadJSON("json/bufferpolygon-request.json");
+		JsonObject dataRef = object.get("BufferPolygonRequest").getAsJsonObject().get("Polygon").getAsJsonObject().get("DataReference").getAsJsonObject();
+		dataRef.addProperty("href", "http://localhost:8000/xml/polygon.xml");
+		dataRef.addProperty("mimeType", "text/xml");
+		
+		// parse
+		Request request = JSONRequestParser.parse(object);
+		ProcessInputs inputs = request.getInputs();
+		
+		// check process
+		assertEquals("BufferPolygonProcess", request.getProcessIdentifier());
+		Polygon polygon = inputs.get("Polygon").getAsSingleInput().getObjectAs(Polygon.class);
+		assertNotNull(polygon);
+	}
+	
+	@Test
+	public void parseWithDataReferenceCompressed() throws JDOMException, IOException, RequestParseException {
+		JsonObject object = TestUtils.loadJSON("json/bufferpolygon-request.json"); // should assume json encoded ref
+		JsonObject dataRef = object.get("BufferPolygonRequest").getAsJsonObject().get("Polygon").getAsJsonObject().get("DataReference").getAsJsonObject();
+		dataRef.addProperty("href", "http://localhost:8000/xml/polygon.zip");
+		dataRef.addProperty("compressed", "true");
+		
+		// parse
+		Request request = JSONRequestParser.parse(object);
+		ProcessInputs inputs = request.getInputs();
+		
+		// check process
+		assertEquals("BufferPolygonProcess", request.getProcessIdentifier());
+		Polygon polygon = inputs.get("Polygon").getAsSingleInput().getObjectAs(Polygon.class);
+		assertNotNull(polygon);
+	}
+	
+	@Test
+	public void parseWithDataReferenceMimeTypeCompressed() throws JDOMException, IOException, RequestParseException {
+		JsonObject object = TestUtils.loadJSON("json/bufferpolygon-request.json"); // should assume json encoded ref
+		JsonObject dataRef = object.get("BufferPolygonRequest").getAsJsonObject().get("Polygon").getAsJsonObject().get("DataReference").getAsJsonObject();
+		dataRef.addProperty("href", "http://localhost:8000/xml/polygon.zip");
+		dataRef.addProperty("compressed", "true");
+		dataRef.addProperty("mimeType", "text/xml");
+		
+		// parse
+		Request request = JSONRequestParser.parse(object);
+		ProcessInputs inputs = request.getInputs();
+		
+		// check process
+		assertEquals("BufferPolygonProcess", request.getProcessIdentifier());
+		Polygon polygon = inputs.get("Polygon").getAsSingleInput().getObjectAs(Polygon.class);
+		assertNotNull(polygon);
+	}
 
 	/**
 	 * Code below is duplicated in XMLRequestParser
