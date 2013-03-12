@@ -1,14 +1,14 @@
 package org.uncertweb.ps.encoding.json;
 
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
 
 import org.uncertml.IUncertainty;
 import org.uncertml.exception.UncertaintyParserException;
 import org.uncertml.io.JSONEncoder;
 import org.uncertml.io.JSONParser;
 import org.uncertweb.ps.encoding.EncodeException;
+import org.uncertweb.ps.encoding.EncodingHelper;
 import org.uncertweb.ps.encoding.ParseException;
 
 import com.google.gson.JsonParseException;
@@ -28,30 +28,17 @@ public class UncertMLEncoding extends AbstractJSONEncoding {
 
 	@Override
 	public <T> String encode(T object) throws EncodeException {
-		// encode to json
 		JSONEncoder encoder = new JSONEncoder();
 		return encoder.encode((IUncertainty)object);
 	}
 
 	@Override
-	public boolean isSupportedType(Class<?> classOf) {
-		if (classOf instanceof Class) {
-			Class<?> typeClass = (Class<?>) classOf;
-			if (!typeClass.isInterface() && !Modifier.isAbstract(typeClass.getModifiers())) {
-				List<Class<?>> interfaces = getInterfaces(typeClass);
-				return interfaces.contains(IUncertainty.class);
-			}
+	public boolean isSupportedType(Class<?> type) {
+		if (!type.isInterface() && !Modifier.isAbstract(type.getModifiers())) {
+			Set<Class<?>> interfaces = EncodingHelper.getInterfaces(type);
+			return interfaces.contains(IUncertainty.class);
 		}
 		return false;
-	}
-
-	private List<Class<?>> getInterfaces(Class<?> clazz) {
-		ArrayList<Class<?>> interfaces = new ArrayList<Class<?>>();
-		for (Class<?> interf : clazz.getInterfaces()) {
-			interfaces.add(interf);
-			interfaces.addAll(getInterfaces(interf));
-		}
-		return interfaces;
 	}
 
 }

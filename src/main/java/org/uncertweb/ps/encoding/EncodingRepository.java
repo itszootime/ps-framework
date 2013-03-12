@@ -12,7 +12,6 @@ import org.uncertweb.ps.encoding.xml.AbstractXMLEncoding;
 import org.uncertweb.ps.encoding.xml.GMLEncoding;
 import org.uncertweb.ps.encoding.xml.OMEncoding;
 import org.uncertweb.ps.encoding.xml.PrimitiveEncoding;
-import org.uncertweb.ps.encoding.xml.UncertMLEncoding;
 
 
 public class EncodingRepository {
@@ -28,8 +27,9 @@ public class EncodingRepository {
 		encodings.add(new PrimitiveEncoding());
 		encodings.add(new GMLEncoding());
 		encodings.add(new OMEncoding());
-		encodings.add(new UncertMLEncoding());
+		encodings.add(new org.uncertweb.ps.encoding.xml.UncertMLEncoding());
 		encodings.add(new GeoJSONEncoding());
+		encodings.add(new org.uncertweb.ps.encoding.json.UncertMLEncoding());
 		
 		// add from user config
 		// inserting at index 0 means they will be preferred over built-in encodings

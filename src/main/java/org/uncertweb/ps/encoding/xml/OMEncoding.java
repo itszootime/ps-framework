@@ -33,6 +33,7 @@ public class OMEncoding extends AbstractXMLEncoding {
 		return false;
 	}
 
+	@Override
 	public <T> T parse(Content content, Class<T> type) throws ParseException {
 		try {
 			// this is a workaround for broken parser
@@ -72,6 +73,7 @@ public class OMEncoding extends AbstractXMLEncoding {
 		}
 	}
 
+	@Override
 	public <T> Content encode(T object) throws EncodeException {
 		try {
 			// generate random char
@@ -95,16 +97,19 @@ public class OMEncoding extends AbstractXMLEncoding {
 		}
 	}
 
+	@Override
 	public String getNamespace() {
 		return "http://www.opengis.net/om/2.0";
 	}
 
+	@Override
 	public String getSchemaLocation() {
 		return "http://52north.org/schema/geostatistics/uncertweb/Profiles/OM/UncertWeb_OM.xsd";
 	}
 
-	public Include getInclude(Class<?> classOf) {
-		return new IncludeRef("OM_" + classOf.getSimpleName());
+	@Override
+	public Include getInclude(Class<?> type) {
+		return new IncludeRef("OM_" + type.getSimpleName());
 	}
 
 }
