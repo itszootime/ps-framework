@@ -24,7 +24,6 @@ import org.uncertweb.ps.test.ConfiguredService;
 import org.uncertweb.test.HTTPFileServer;
 import org.uncertweb.test.util.TestUtils;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.vividsolutions.jts.geom.Polygon;
 
@@ -80,7 +79,7 @@ public class JSONRequestParserTest {
 	@Test
 	public void parseWithRequestedOutputsEmpty() throws JDOMException, IOException, RequestParseException {
 		JsonObject object = TestUtils.loadJSON("json/hash-request.json");
-		object.get("HashProcessRequest").getAsJsonObject().add("RequestedOutputs", new JsonArray());
+		object.get("HashProcessRequest").getAsJsonObject().add("RequestedOutputs", new JsonObject());
 		Request request = JSONRequestParser.parse(object);
 		ProcessInputs inputs = request.getInputs();
 

@@ -1,0 +1,5 @@
+{ "HashProcessRequest": {
+  "String": "i am a string to be hashed",
+  "RequestedOutputs": {
+    "SHA1": { "asReference": "false" }
+  } } }
