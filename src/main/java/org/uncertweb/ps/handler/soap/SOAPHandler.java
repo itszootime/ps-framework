@@ -152,6 +152,16 @@ public class SOAPHandler {
 			responseBody.removeContent();
 			responseBody.addContent(new SoapFault(Code.Server, "Problem reading/generating request/response."));
 		}
+		else if (e instanceof RequestParseException) {
+			logger.error("Couldn't parse request.", e);
+			responseBody.removeContent();
+			responseBody.addContent(new SoapFault(Code.Server, "Couldn't parse request."));
+		}
+		else if (e instanceof ResponseGenerateException) {
+			logger.error("Couldn't generate response.", e);
+			responseBody.removeContent();
+			responseBody.addContent(new SoapFault(Code.Server, "Couldn't generate response."));
+		}
 		else if (e instanceof RuntimeException) {
 			logger.error("Failed to handle request.", e);
 			responseBody.removeContent();
@@ -163,16 +173,6 @@ public class SOAPHandler {
 				message += ".";
 			}
 			responseBody.addContent(new SoapFault(Code.Server, message));
-		}
-		else if (e instanceof RequestParseException) {
-			logger.error("Couldn't parse request.", e);
-			responseBody.removeContent();
-			responseBody.addContent(new SoapFault(Code.Server, "Couldn't parse request."));
-		}
-		else if (e instanceof ResponseGenerateException) {
-			logger.error("Couldn't generate response.", e);
-			responseBody.removeContent();
-			responseBody.addContent(new SoapFault(Code.Server, "Couldn't generate response."));
 		}
 	}
 
