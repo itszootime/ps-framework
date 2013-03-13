@@ -1,16 +1,11 @@
 package org.uncertweb.ps.handler.json;
 
-import java.awt.Point;
 import java.io.IOException;
-import java.io.Reader;
-import java.io.Writer;
-import java.net.URL;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.List;
-import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
-import org.uncertml.distribution.multivariate.DirichletDistribution;
-import org.uncertml.statistic.DiscreteProbability;
 import org.uncertweb.ps.Config;
 import org.uncertweb.ps.ServiceException;
 import org.uncertweb.ps.data.DataReference;
@@ -20,23 +15,13 @@ import org.uncertweb.ps.data.Request;
 import org.uncertweb.ps.data.RequestedOutput;
 import org.uncertweb.ps.data.Response;
 import org.uncertweb.ps.encoding.EncodeException;
-import org.uncertweb.ps.encoding.json.UncertMLEncoding;
-import org.uncertweb.ps.encoding.json.gson.GeometryDeserializer;
-import org.uncertweb.ps.encoding.json.gson.GeometrySerializer;
-import org.uncertweb.ps.encoding.json.gson.URLDeserializer;
-import org.uncertweb.ps.encoding.json.gson.UncertaintySerializer;
 import org.uncertweb.ps.handler.data.DataReferenceGenerator;
-import org.uncertweb.ps.handler.json.gson.ProcessExceptionSerializer;
-import org.uncertweb.ps.handler.json.gson.RequestDeserializer;
-import org.uncertweb.ps.handler.json.gson.ResponseSerializer;
-import org.uncertweb.ps.handler.json.gson.ServiceExceptionSerializer;
 import org.uncertweb.ps.process.AbstractProcess;
 import org.uncertweb.ps.process.ProcessException;
 import org.uncertweb.ps.process.ProcessRepository;
 import org.uncertweb.ps.storage.StorageException;
+import org.uncertweb.util.Stopwatch;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -46,13 +31,13 @@ public class JSONHandler {
 
 	private final Logger logger = Logger.getLogger(JSONHandler.class);
 
-	public void handleRequest(Reader reader, Writer writer) {
+	public void handleRequest(InputStream inputStream, OutputStream outputStream) {
 		try {
 			// parse request
-			logger.debug("Building object from request...");
-			long start = System.currentTimeMillis();
-			Request request = gson.fromJson(reader, Request.class);
-			logger.debug("Built object in " + (System.currentTimeMillis() - start) / 1000.0 + "s.");
+			logger.debug("Parsing request document...");
+			Stopwatch stopwatch = new Stopwatch();	
+			Request request = JSONRequestParser.parse(inputStream);
+			logger.debug("Parsed document in " + stopwatch.getElapsedTime() + ".");
 
 			// execute request
 			AbstractProcess process = ProcessRepository.getInstance().getProcess(request.getProcessIdentifier());

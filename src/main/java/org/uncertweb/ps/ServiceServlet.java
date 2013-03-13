@@ -117,7 +117,7 @@ public class ServiceServlet extends HttpServlet {
 			else if (pathInfo.equals("/json")) {
 				servletResponse.setContentType("application/json");
 				JSONHandler requestHandler = new JSONHandler();
-				requestHandler.handleRequest(servletRequest.getReader(), servletResponse.getWriter());
+				requestHandler.handleRequest(servletRequest.getInputStream(), servletResponse.getOutputStream());
 			}
 		}
 		

@@ -40,23 +40,21 @@ public class SOAPHandler {
 
 		try {
 			// build request document
-			logger.debug("Building request document...");
+			logger.debug("Parsing request document...");
 			Stopwatch stopwatch = new Stopwatch();	
 			DocumentBuilder builder = new DocumentBuilder();
 			Document reqSoapDocument = builder.build(inputStream);
-			logger.debug("Built document in " + stopwatch.getElapsedTime() + ".");
-
-			// check if validated ok
+			logger.debug("Parsed document in " + stopwatch.getElapsedTime() + ".");
+			
+			// validate		
 			ValidationResult validationResult = builder.getValidationResult();
 			if (!validationResult.isValid()) {
 				throw new ClientException("Request document failed schema validation.", validationResult.getPrettierResult());
 			}
 
-			// get request element
+			// parse request
 			List<?> bodyChildren = reqSoapDocument.getRootElement().getChild("Body", Namespaces.SOAPENV).getChildren();
-			Element requestElement = (Element) bodyChildren.get(0);
-
-			// build a request
+			Element requestElement = (Element)bodyChildren.get(0);
 			Request request = XMLRequestParser.parse(requestElement);
 
 			// find process
