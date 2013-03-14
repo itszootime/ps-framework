@@ -8,6 +8,7 @@ import org.uncertweb.ps.handler.ResponseGenerateException;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.LinearRing;
 
 @Ignore
 public class TestData {
@@ -27,7 +28,15 @@ public class TestData {
 
 	public static Response getBufferPolygonResponse() throws ResponseGenerateException {
 		ProcessOutputs outputs = new ProcessOutputs();
-		outputs.add(new SingleOutput("BufferedPolygon", new GeometryFactory().createPoint(new Coordinate(-2.63, 51.16))));
+		GeometryFactory factory = new GeometryFactory();
+		LinearRing exterior = factory.createLinearRing(new Coordinate[] {
+			new Coordinate(100.0, 0.0), 
+			new Coordinate(101.0, 0.0),
+			new Coordinate(101.0, 1.0),
+			new Coordinate(100.0, 1.0),
+			new Coordinate(100.0, 0.0)
+		});
+		outputs.add(new SingleOutput("BufferedPolygon", new GeometryFactory().createPolygon(exterior)));
 		return new Response("BufferPolygonProcess", outputs);
 	}
 	

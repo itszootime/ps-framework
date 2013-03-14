@@ -3,19 +3,26 @@ package org.uncertweb.ps.handler.json;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import org.junit.Rule;
 import org.junit.Test;
+import org.uncertweb.ps.data.ProcessInputs;
+import org.uncertweb.ps.data.Request;
 import org.uncertweb.ps.data.Response;
+import org.uncertweb.ps.handler.RequestParseException;
 import org.uncertweb.ps.handler.ResponseGenerateException;
 import org.uncertweb.ps.test.ConfiguredService;
 import org.uncertweb.test.util.TestData;
+import org.uncertweb.test.util.TestUtils;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.vividsolutions.jts.geom.Polygon;
 
 public class JSONResponseGeneratorTest {
 
@@ -45,6 +52,7 @@ public class JSONResponseGeneratorTest {
 		assertThat(response.has("SumProcessResponse"), equalTo(true));
 	}
 
+
 	//	@Test
 	//	public void generateElementNamespace() throws ResponseGenerateException {
 	//		// generate
@@ -73,6 +81,20 @@ public class JSONResponseGeneratorTest {
 	//		Element resultElement = responseElement.getChild("Result", Namespaces.PS);
 	//		assertThat(resultElement.getText(), equalTo("101.05"));
 	//	}
+	
+	
+	@Test
+	public void generateWithComplex() throws IOException, RequestParseException {
+		Request request = JSONRequestParser.parse(TestUtils.streamFor("json/bufferpolygon-request-inline.json"));
+		ProcessInputs inputs = request.getInputs();
+		
+		// check process
+		assertEquals("BufferPolygonProcess", request.getProcessIdentifier());
+		Polygon polygon = inputs.get("Polygon").getAsSingleInput().getObjectAs(Polygon.class);
+		assertNotNull(polygon);
+	}
+	
+	
 	//	
 	//	@Test
 	//	public void generateRequestedOutputsEmpty() throws ResponseGenerateException {

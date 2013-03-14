@@ -8,6 +8,7 @@ import static org.hamcrest.Matchers.startsWith;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 
 import org.jdom.Element;
 import org.junit.Rule;
@@ -48,7 +49,7 @@ public class XMLResponseGeneratorTest {
 		// check
 		assertThat(responseElement.getNamespace(), equalTo(Namespaces.PS));
 	}
-	
+
 	@Test
 	public void generateOutputNotNull() throws ResponseGenerateException {
 		// generate
@@ -58,7 +59,7 @@ public class XMLResponseGeneratorTest {
 		Element resultElement = responseElement.getChild("Result", Namespaces.PS);
 		assertThat(resultElement, notNullValue());
 	}
-	
+
 	@Test
 	public void generateOutputValue() throws ResponseGenerateException {
 		// generate
@@ -67,13 +68,25 @@ public class XMLResponseGeneratorTest {
 		// check
 		Element resultElement = responseElement.getChild("Result", Namespaces.PS);
 		assertThat(resultElement.getText(), equalTo("101.05"));
+	}	
+
+	@Test
+	public void generateWithComplex() throws ResponseGenerateException {
+		// generate
+		Element responseElement = XMLResponseGenerator.generate(TestData.getBufferPolygonResponse());
+
+		// check
+		Element resultElement = responseElement.getChild("BufferedPolygon", Namespaces.PS);
+		List<?> children = resultElement.getChildren();
+		assertThat(children.size(), equalTo(1));
+		assertThat(((Element)children.get(0)).getName(), equalTo("Polygon"));
 	}
-	
+
 	@Test
 	public void generateRequestedOutputsEmpty() throws ResponseGenerateException {
 		// generate
 		Element responseElement = XMLResponseGenerator.generate(TestData.getHashResponse(), Arrays.asList(new RequestedOutput[0]));
-		
+
 		// check
 		int resultElementCount = responseElement.getChildren().size();
 		assertThat(resultElementCount, equalTo(0));
@@ -85,19 +98,19 @@ public class XMLResponseGeneratorTest {
 		Element responseElement = XMLResponseGenerator.generate(TestData.getHashResponse(), Arrays.asList(new RequestedOutput[] {
 				new RequestedOutput("SHA1", false)
 		}));;
-		
+
 		// check
 		int resultElementCount = responseElement.getChildren().size();
 		assertThat(resultElementCount, equalTo(1));
 	}
-	
+
 	@Test
 	public void generateRequestedOutputName() throws ResponseGenerateException {
 		// generate
 		Element responseElement = XMLResponseGenerator.generate(TestData.getHashResponse(), Arrays.asList(new RequestedOutput[] {
 				new RequestedOutput("SHA1", false)
 		}));;
-		
+
 		// check
 		Element resultElement = responseElement.getChild("SHA1", Namespaces.PS);
 		assertThat(resultElement, notNullValue());
