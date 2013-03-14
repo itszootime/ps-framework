@@ -12,16 +12,11 @@ import java.util.Arrays;
 import org.jdom.Element;
 import org.junit.Rule;
 import org.junit.Test;
-import org.uncertweb.ps.data.ProcessOutputs;
 import org.uncertweb.ps.data.RequestedOutput;
-import org.uncertweb.ps.data.Response;
-import org.uncertweb.ps.data.SingleOutput;
 import org.uncertweb.ps.handler.ResponseGenerateException;
 import org.uncertweb.ps.test.ConfiguredService;
+import org.uncertweb.test.util.TestData;
 import org.uncertweb.xml.Namespaces;
-
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.GeometryFactory;
 public class XMLResponseGeneratorTest {
 
 	@Rule
@@ -30,7 +25,7 @@ public class XMLResponseGeneratorTest {
 	@Test
 	public void generateNotNull() throws ResponseGenerateException {
 		// generate
-		Element responseElement = generateTestSumResponse();
+		Element responseElement = XMLResponseGenerator.generate(TestData.getSumResponse());
 
 		// check
 		assertThat(responseElement, notNullValue());
@@ -39,7 +34,7 @@ public class XMLResponseGeneratorTest {
 	@Test
 	public void generateElementName() throws ResponseGenerateException {
 		// generate
-		Element responseElement = generateTestSumResponse();
+		Element responseElement = XMLResponseGenerator.generate(TestData.getSumResponse());
 
 		// check
 		assertThat(responseElement.getName(), allOf(notNullValue(), equalTo("SumProcessResponse")));
@@ -48,7 +43,7 @@ public class XMLResponseGeneratorTest {
 	@Test
 	public void generateElementNamespace() throws ResponseGenerateException {
 		// generate
-		Element responseElement = generateTestSumResponse();
+		Element responseElement = XMLResponseGenerator.generate(TestData.getSumResponse());
 
 		// check
 		assertThat(responseElement.getNamespace(), equalTo(Namespaces.PS));
@@ -57,7 +52,7 @@ public class XMLResponseGeneratorTest {
 	@Test
 	public void generateOutputNotNull() throws ResponseGenerateException {
 		// generate
-		Element responseElement = generateTestSumResponse();
+		Element responseElement = XMLResponseGenerator.generate(TestData.getSumResponse());
 
 		// check
 		Element resultElement = responseElement.getChild("Result", Namespaces.PS);
@@ -67,7 +62,7 @@ public class XMLResponseGeneratorTest {
 	@Test
 	public void generateOutputValue() throws ResponseGenerateException {
 		// generate
-		Element responseElement = generateTestSumResponse();
+		Element responseElement = XMLResponseGenerator.generate(TestData.getSumResponse());
 
 		// check
 		Element resultElement = responseElement.getChild("Result", Namespaces.PS);
@@ -77,7 +72,7 @@ public class XMLResponseGeneratorTest {
 	@Test
 	public void generateRequestedOutputsEmpty() throws ResponseGenerateException {
 		// generate
-		Element responseElement = generateTestHashResponseNoOutputs();
+		Element responseElement = XMLResponseGenerator.generate(TestData.getHashResponse(), Arrays.asList(new RequestedOutput[0]));
 		
 		// check
 		int resultElementCount = responseElement.getChildren().size();
@@ -87,7 +82,9 @@ public class XMLResponseGeneratorTest {
 	@Test
 	public void generateRequestedOutputsCount() throws ResponseGenerateException {
 		// generate
-		Element responseElement = generateTestHashResponse();
+		Element responseElement = XMLResponseGenerator.generate(TestData.getHashResponse(), Arrays.asList(new RequestedOutput[] {
+				new RequestedOutput("SHA1", false)
+		}));;
 		
 		// check
 		int resultElementCount = responseElement.getChildren().size();
@@ -97,7 +94,9 @@ public class XMLResponseGeneratorTest {
 	@Test
 	public void generateRequestedOutputName() throws ResponseGenerateException {
 		// generate
-		Element responseElement = generateTestHashResponse();
+		Element responseElement = XMLResponseGenerator.generate(TestData.getHashResponse(), Arrays.asList(new RequestedOutput[] {
+				new RequestedOutput("SHA1", false)
+		}));;
 		
 		// check
 		Element resultElement = responseElement.getChild("SHA1", Namespaces.PS);
@@ -110,7 +109,9 @@ public class XMLResponseGeneratorTest {
 		String expectedBaseURL = service.getBaseURL() + "/data/";
 
 		// generate
-		Element responseElement = generateTestBufferPolygonResponse();
+		Element responseElement = XMLResponseGenerator.generate(TestData.getBufferPolygonResponse(), Arrays.asList(new RequestedOutput[] {
+				new RequestedOutput("BufferedPolygon", true)
+		}));
 
 		// check
 		Element referenceElement = responseElement.getChild("BufferedPolygon", Namespaces.PS).getChild("DataReference", Namespaces.PS);
@@ -121,45 +122,14 @@ public class XMLResponseGeneratorTest {
 	@Test
 	public void generateDataReferenceMimeType() throws ResponseGenerateException, IOException {
 		// generate
-		Element responseElement = generateTestBufferPolygonResponse();
+		Element responseElement = XMLResponseGenerator.generate(TestData.getBufferPolygonResponse(), Arrays.asList(new RequestedOutput[] {
+				new RequestedOutput("BufferedPolygon", true)
+		}));
 
 		// check
 		Element referenceElement = responseElement.getChild("BufferedPolygon", Namespaces.PS).getChild("DataReference", Namespaces.PS);
 		String url = referenceElement.getAttributeValue("mimeType");
 		assertThat(url, equalTo("text/xml"));
-	}
-
-	private Element generateTestSumResponse() throws ResponseGenerateException {
-		ProcessOutputs outputs = new ProcessOutputs();
-		outputs.add(new SingleOutput("Result", 101.05));
-		Response response = new Response("SumProcess", outputs);
-		return XMLResponseGenerator.generate(response);
-	}
-	
-	private Response createTestHashResponse() {
-		ProcessOutputs outputs = new ProcessOutputs();
-		outputs.add(new SingleOutput("MD5", "084c2f7604f15207fcf115632fc4b75e"));
-		outputs.add(new SingleOutput("SHA1", "e834f00fd86f2635ed6821cb979eb4f73f68b56d"));
-		return new Response("HashProcess", outputs);
-	}
-	
-	private Element generateTestHashResponse() throws ResponseGenerateException {
-		return XMLResponseGenerator.generate(createTestHashResponse(), Arrays.asList(new RequestedOutput[] {
-				new RequestedOutput("SHA1", false)
-		}));
-	}
-	
-	private Element generateTestHashResponseNoOutputs() throws ResponseGenerateException {
-		return XMLResponseGenerator.generate(createTestHashResponse(), Arrays.asList(new RequestedOutput[0]));
-	}
-
-	private Element generateTestBufferPolygonResponse() throws ResponseGenerateException {
-		ProcessOutputs outputs = new ProcessOutputs();
-		outputs.add(new SingleOutput("BufferedPolygon", new GeometryFactory().createPoint(new Coordinate(-2.63, 51.16))));
-		Response response = new Response("BufferPolygonProcess", outputs);
-		return XMLResponseGenerator.generate(response, Arrays.asList(new RequestedOutput[] {
-				new RequestedOutput("BufferedPolygon", true)
-		}));
 	}
 
 }
