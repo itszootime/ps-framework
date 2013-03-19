@@ -141,8 +141,8 @@ public class XMLResponseGeneratorTest {
 
 		// check
 		Element referenceElement = responseElement.getChild("BufferedPolygon", Namespaces.PS).getChild("DataReference", Namespaces.PS);
-		String url = referenceElement.getAttributeValue("mimeType");
-		assertThat(url, equalTo("text/xml"));
+		String mimeType = referenceElement.getAttributeValue("mimeType");
+		assertThat(mimeType, equalTo("text/xml"));
 	}
 
 }
