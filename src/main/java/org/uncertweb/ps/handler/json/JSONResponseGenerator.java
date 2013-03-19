@@ -4,9 +4,11 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.uncertweb.ps.data.DataReference;
+import org.uncertweb.ps.data.Output;
 import org.uncertweb.ps.data.RequestedOutput;
 import org.uncertweb.ps.data.Response;
 import org.uncertweb.ps.encoding.EncodeException;
@@ -16,6 +18,7 @@ import org.uncertweb.ps.handler.json.gson.GsonWrapper;
 import org.uncertweb.ps.storage.StorageException;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
@@ -32,49 +35,42 @@ public class JSONResponseGenerator {
 		JsonObject innerObject = responseObject.get(response.getProcessIdentifier() + "Response").getAsJsonObject();
 
 		// check requested outputs
-//		List<RequestedOutput> reqOutputs = request.getRequestedOutputs();
-//		if (reqOutputs.size() > 0) {
-//			// horrible inefficient
-//			for (Output output : response.getOutputs()) {
-//				String outputIdentifier = output.getIdentifier();
-//				boolean include = false;
-//				for (RequestedOutput reqOutput : reqOutputs) {
-//					if (reqOutput.getName().equals(output.getIdentifier())) {
-//						// set include flag
-//						include = true;
-//
-//						// check for ref
-//						if (reqOutput.isReference()) {
-//							// get config
-//							Config config = Config.getInstance();
-//							String basePath = config.getServerProperty("basePath");
-//							String baseURL = config.getServerProperty("baseURL");
-//
-//							JsonElement dataElement;
-//							if (output.isMultipleOutput()) {
-//								JsonArray array = new JsonArray();
-//								for (JsonElement element : innerObject.get(outputIdentifier).getAsJsonArray()) {
-//									array.add(generateReferenceObject(element, basePath, baseURL));
-//								}
-//								dataElement = array;
-//							}
-//							else {
-//								dataElement = generateReferenceObject(innerObject.get(outputIdentifier), basePath, baseURL);
-//							}
-//							innerObject.add(outputIdentifier, dataElement);
-//						}
-//
-//						// all done
-//						break;
-//					}
-//				}
-//
-//				// if not included, remove
-//				if (!include) {
-//					innerObject.remove(outputIdentifier);
-//				}
-//			}
-//		}
+		if (reqOutputs != null) {
+			// remove outputs not in requested, modify to references where necessary
+			// FIXME: horribly inefficient
+			for (Output output : response.getOutputs()) {
+				String outputIdentifier = output.getIdentifier();
+				boolean include = false;
+				boolean reference = false;
+				
+				// set include/reference flags
+				for (RequestedOutput reqOutput : reqOutputs) {
+					if (reqOutput.getName().equals(output.getIdentifier())) {
+						include = true;
+						reference = reqOutput.isReference();
+						break;
+					}
+				}
+				
+				// check include/reference flags
+				if (!include) {
+					// remove if not included
+					innerObject.remove(outputIdentifier);
+				}
+				else {
+					// convert to data reference
+					if (reference) {						
+						try {
+							JsonElement element = createReferenceElement(output);
+							innerObject.add(outputIdentifier, element);
+						}
+						catch (EncodeException | StorageException e) {
+							throw new ResponseGenerateException("Couldn't generate output data reference", e);
+						}					
+					}
+				}
+			}
+		}
 
 		// write
 		try {
@@ -87,17 +83,41 @@ public class JSONResponseGenerator {
 		}
 	}
 
-	private JsonObject generateReferenceObject(JsonElement element, String basePath, String baseURL) throws IOException, EncodeException, StorageException {
-		// generate reference
-		DataReferenceGenerator generator = new DataReferenceGenerator();
-		DataReference ref = generator.generate(element);
-
-		// return as object
-		JsonObject refObj = new JsonObject();
-		JsonObject innerRefObj = new JsonObject();
-		refObj.add("DataReference", innerRefObj);
-		innerRefObj.addProperty("href", ref.getURL().toString());
-		innerRefObj.addProperty("mimeType", ref.getMimeType());
-		return refObj;
+	private static JsonElement createReferenceElement(Output output) throws EncodeException, StorageException {
+		// objects to encode
+		List<Object> objects;
+		if (output.isSingleOutput()) {
+			objects = new ArrayList<Object>();
+			objects.add(output.getAsSingleOutput().getObject());
+		}
+		else {
+			objects = output.getAsMultipleOutput().getObjects();
+		}
+		
+		// generate references
+		DataReferenceGenerator gen = new DataReferenceGenerator();
+		List<JsonObject> refObjs = new ArrayList<JsonObject>();
+		for (Object obj : objects) {
+			DataReference ref = gen.generate(obj);
+			JsonObject refObj = new JsonObject();
+			refObj.addProperty("href", ref.getURL().toString());
+			refObj.addProperty("mimeType", ref.getMimeType());
+			JsonObject outerRefObj = new JsonObject();
+			outerRefObj.add("DataReference", refObj);
+			refObjs.add(outerRefObj);
+		}
+		
+		// add to response object
+		JsonElement element;
+		if (output.isSingleOutput()) {
+			element = refObjs.get(0);
+		}
+		else {
+			element = new JsonArray();
+			for (JsonObject refObj : refObjs) {
+				((JsonArray)element).add(refObj);
+			}
+		}
+		return element;
 	}
 }

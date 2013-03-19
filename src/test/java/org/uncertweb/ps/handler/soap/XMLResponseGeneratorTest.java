@@ -6,7 +6,6 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.startsWith;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -117,7 +116,7 @@ public class XMLResponseGeneratorTest {
 	}
 
 	@Test
-	public void generateDataReferenceSensibleURL() throws ResponseGenerateException, IOException {
+	public void generateDataReferenceSensibleURL() throws ResponseGenerateException {
 		// setup
 		String expectedBaseURL = service.getBaseURL() + "/data/";
 
@@ -133,7 +132,7 @@ public class XMLResponseGeneratorTest {
 	}
 
 	@Test
-	public void generateDataReferenceMimeType() throws ResponseGenerateException, IOException {
+	public void generateDataReferenceMimeType() throws ResponseGenerateException {
 		// generate
 		Element responseElement = XMLResponseGenerator.generate(TestData.getBufferPolygonResponse(), Arrays.asList(new RequestedOutput[] {
 				new RequestedOutput("BufferedPolygon", true)

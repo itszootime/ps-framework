@@ -112,7 +112,20 @@ public class JSONResponseGeneratorTest {
 	}	
 	
 	@Test
-	public void generateDataReferenceExists() throws ResponseGenerateException, IOException {
+	public void generateDataReferenceExists() throws ResponseGenerateException {
+		// generate
+		JsonObject response = generateResponse(TestData.getBufferPolygonResponse(), Arrays.asList(new RequestedOutput[] {
+				new RequestedOutput("BufferedPolygon", true)
+		}));
+
+		// check
+		JsonObject outputs = response.get("BufferPolygonProcessResponse").getAsJsonObject();
+		assertThat(outputs.get("BufferedPolygon").getAsJsonObject().has("DataReference"), equalTo(true));
+	}
+
+	
+	@Test
+	public void generateDataReferenceSensibleURL() throws ResponseGenerateException {
 		// setup
 		String expectedBaseURL = service.getBaseURL() + "/data/";
 		
@@ -128,19 +141,7 @@ public class JSONResponseGeneratorTest {
 	}
 
 	@Test
-	public void generateDataReferenceSensibleURL() throws ResponseGenerateException, IOException {
-		// generate
-		JsonObject response = generateResponse(TestData.getBufferPolygonResponse(), Arrays.asList(new RequestedOutput[] {
-				new RequestedOutput("BufferedPolygon", true)
-		}));
-
-		// check
-		JsonObject outputs = response.get("BufferPolygonProcessResponse").getAsJsonObject();
-		assertThat(outputs.get("BufferedPolygon").getAsJsonObject().has("DataReference"), equalTo(true));
-	}
-
-	@Test
-	public void generateDataReferenceMimeType() throws ResponseGenerateException, IOException {
+	public void generateDataReferenceMimeType() throws ResponseGenerateException {
 		// generate
 		JsonObject response = generateResponse(TestData.getBufferPolygonResponse(), Arrays.asList(new RequestedOutput[] {
 				new RequestedOutput("BufferedPolygon", true)
@@ -149,7 +150,7 @@ public class JSONResponseGeneratorTest {
 		// check
 		JsonObject outputs = response.get("BufferPolygonProcessResponse").getAsJsonObject();
 		JsonObject ref = outputs.get("BufferedPolygon").getAsJsonObject().get("DataReference").getAsJsonObject();
-		assertThat(ref.get("mimeType").getAsString(), equalTo("text/xml"));
+		assertThat(ref.get("mimeType").getAsString(), equalTo("application/json"));
 	}
 
 }
