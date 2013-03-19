@@ -2,15 +2,16 @@ package org.uncertweb.ps.handler.json.gson;
 
 import java.lang.reflect.Type;
 
-import org.uncertweb.api.om.io.JSONObservationEncoder;
-import org.uncertweb.api.om.observation.AbstractObservation;
-import org.uncertweb.api.om.observation.collections.IObservationCollection;
 import org.uncertweb.ps.data.Output;
 import org.uncertweb.ps.data.Response;
+import org.uncertweb.ps.encoding.EncodeException;
+import org.uncertweb.ps.encoding.EncodingRepository;
+import org.uncertweb.ps.encoding.json.AbstractJSONEncoding;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
@@ -29,58 +30,51 @@ public class ResponseSerializer implements JsonSerializer<Response> {
 
 		// add each output
 		for (Output output : src.getOutputs()) {
-			// create appropriate element
-			JsonElement outputElement;
-			if (output.isMultipleOutput()) {
-				JsonArray outputArray = new JsonArray();
-				for (Object o : output.getAsMultipleOutput().getObjects()) {
-					outputArray.add(encodeDataElement(o, context));
+			try {
+				// create appropriate element
+				JsonElement outputElement;
+				if (output.isMultipleOutput()) {
+					JsonArray outputArray = new JsonArray();
+					for (Object o : output.getAsMultipleOutput().getObjects()) {
+						outputArray.add(encodeDataElement(o, context));
+					}
+					outputElement = outputArray;
 				}
-				outputElement = outputArray;
+				else {
+					outputElement = encodeDataElement(output.getAsSingleOutput().getObject(), context);
+				}
+				response.add(output.getIdentifier(), outputElement);
 			}
-			else {
-				outputElement = encodeDataElement(output.getAsSingleOutput().getObject(), context);
+			catch (Exception e) {
+				throw new IllegalArgumentException(e);
 			}
-			response.add(output.getIdentifier(), outputElement);
 		}
 
 		return object;
 	}
 
-	private JsonElement encodeDataElement(Object src, JsonSerializationContext context) {
-		if (isOM(src.getClass())) {
-			try {
-				JSONObservationEncoder encoder = new JSONObservationEncoder();
-				String json;
-				if (src instanceof IObservationCollection) {
-					json = encoder.encodeObservationCollection((IObservationCollection)src);
-				}
-				else {
-					json = encoder.encodeObservation((AbstractObservation)src);					
-				}
-				return new JsonParser().parse(json);
-			}
-			catch (Exception e) {
-				return null; // shouldn't ever happen?
-			}
+	private JsonElement encodeDataElement(Object src, JsonSerializationContext context) throws EncodeException {
+		// get type of object
+		Class<?> type = src.getClass();
+
+		// look in the factory first
+		AbstractJSONEncoding encoding = EncodingRepository.getInstance().getJSONEncoding(type);
+		if (encoding != null) {
+			// encode to string
+			String json = encoding.encode(src);
+			// return as element
+			JsonParser parser = new JsonParser();
+			return parser.parse(json);
 		}
 		else {
-			return context.serialize(src);
-		}
-	}
-
-	// FIXME: hacky
-	private boolean isOM(Class<?> classOf) {
-		for (Class<?> interf : classOf.getInterfaces()) {
-			if (interf.equals(IObservationCollection.class)) {
-				return true;
+			// try and encode with gson
+			try {
+				return context.serialize(src);
+			}
+			catch (JsonParseException e) {
+				throw new EncodeException("Couldn't automatically encode " + type.getSimpleName() + " type.");
 			}
 		}
-		Class<?> superClass = classOf.getSuperclass();
-		if (superClass != null) {
-			return superClass.equals(AbstractObservation.class);
-		}
-		return false;
 	}
 
 }

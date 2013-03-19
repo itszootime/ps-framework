@@ -145,8 +145,7 @@ public class RequestDeserializer implements JsonDeserializer<Request> {
 				catch (JsonParseException e) {
 					throw new ParseException("Couldn't automatically parse " + type.getSimpleName() + " type.");
 				}
-			}
-			
+			}			
 		}
 	}
 

@@ -7,15 +7,13 @@ import static org.hamcrest.Matchers.notNullValue;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 
-import org.jdom.Element;
 import org.junit.Rule;
 import org.junit.Test;
 import org.uncertweb.ps.data.RequestedOutput;
 import org.uncertweb.ps.data.Response;
-import org.uncertweb.ps.handler.RequestParseException;
 import org.uncertweb.ps.handler.ResponseGenerateException;
-import org.uncertweb.ps.handler.soap.XMLResponseGenerator;
 import org.uncertweb.ps.test.ConfiguredService;
 import org.uncertweb.test.util.TestData;
 
@@ -31,6 +29,17 @@ public class JSONResponseGeneratorTest {
 	private JsonObject generateResponse(Response response) throws ResponseGenerateException {
 		try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
 			JSONResponseGenerator.generate(response, baos);
+			JsonParser parser = new JsonParser();
+			return parser.parse(new String(baos.toByteArray())).getAsJsonObject();
+		}
+		catch (IOException e) {
+			return null;
+		}
+	}
+	
+	private JsonObject generateResponse(Response response, List<RequestedOutput> reqOutputs) throws ResponseGenerateException {
+		try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+			JSONResponseGenerator.generate(response, reqOutputs, baos);
 			JsonParser parser = new JsonParser();
 			return parser.parse(new String(baos.toByteArray())).getAsJsonObject();
 		}
@@ -70,14 +79,15 @@ public class JSONResponseGeneratorTest {
 	public void generateWithComplex() throws ResponseGenerateException {
 		JsonObject response = generateResponse(TestData.getBufferPolygonResponse());
 		JsonObject outputs = response.get("BufferPolygonProcessResponse").getAsJsonObject();
-		JsonElement polygon = outputs.get("Polygon");
+		JsonElement polygon = outputs.get("BufferedPolygon");
 		assertThat(polygon, notNullValue());
+		assertThat(polygon.getAsJsonObject().get("type").getAsString(), equalTo("Polygon"));
 	}
 	
 	@Test
 	public void generateRequestedOutputsEmpty() throws ResponseGenerateException {
 		JsonObject response = generateResponse(TestData.getHashResponse(), Arrays.asList(new RequestedOutput[0]));
-		JsonObject outputs = response.get("BufferPolygonProcessResponse").getAsJsonObject();
+		JsonObject outputs = response.get("HashProcessResponse").getAsJsonObject();
 		assertThat(outputs.entrySet().size(), equalTo(0));
 	}
 	
