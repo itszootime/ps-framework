@@ -98,16 +98,21 @@
 		</dependency>
 
 		<!-- Encoding dependencies -->
-    <dependency>
+		<dependency>
 			<groupId>me.itszooti</groupId>
 			<artifactId>geojson-core</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
-    <dependency>
-      <groupId>me.itszooti</groupId>
-      <artifactId>geojson-jts</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-    </dependency>
+		<dependency>
+			<groupId>me.itszooti</groupId>
+			<artifactId>geojson-jts</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>edu.ucar</groupId>
+			<artifactId>netcdf</artifactId>
+			<version>4.2</version>
+		</dependency>
 	</dependencies>
 
 	<distributionManagement>

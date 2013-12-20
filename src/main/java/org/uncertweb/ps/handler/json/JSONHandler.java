@@ -3,23 +3,22 @@ package org.uncertweb.ps.handler.json;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 
 import org.apache.log4j.Logger;
 import org.uncertweb.ps.ServiceException;
-import org.uncertweb.ps.data.DataReference;
 import org.uncertweb.ps.data.ProcessOutputs;
 import org.uncertweb.ps.data.Request;
 import org.uncertweb.ps.data.Response;
 import org.uncertweb.ps.encoding.EncodeException;
-import org.uncertweb.ps.handler.data.DataReferenceGenerator;
+import org.uncertweb.ps.handler.json.gson.GsonWrapper;
 import org.uncertweb.ps.process.AbstractProcess;
 import org.uncertweb.ps.process.ProcessException;
 import org.uncertweb.ps.process.ProcessRepository;
 import org.uncertweb.ps.storage.StorageException;
 import org.uncertweb.util.Stopwatch;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import com.google.gson.Gson;
 
 public class JSONHandler {
 
@@ -57,9 +56,11 @@ public class JSONHandler {
 	}
 
 	private void handleException(Exception e, OutputStream outputStream) {
+		Gson gson = GsonWrapper.getGson();
+		OutputStreamWriter writer = new OutputStreamWriter(outputStream);
 		if (e instanceof ProcessException) {
 			logger.error("Failed to execute process.", e);
-			// write
+			gson.toJson(e, writer);
 		}
 		else if (e instanceof EncodeException) {
 			logger.error("Couldn't generate data reference.", e);
