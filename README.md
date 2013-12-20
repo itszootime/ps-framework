@@ -1,5 +1,6 @@
 The UncertWeb Processing Service is a generic framework for exposing processes on the web. Processes are exposed using two interfaces: SOAP/WSDL and JSON.
 
+[![Build Status](https://travis-ci.org/itszootime/ps-framework.png)](https://travis-ci.org/itszootime/ps-framework)
 
 ## Getting started
 
