@@ -125,7 +125,7 @@ public class XMLResponseGenerator {
 
 	private static Content generateReferenceData(Object object, Class<?> type) throws EncodeException, StorageException {
 		// generate data
-		DataReference ref = new DataReferenceGenerator().generate(object);
+		DataReference ref = new DataReferenceGenerator().generate(object, AbstractXMLEncoding.class);
 
 		// add reference url to response
 		Element referenceElement = new Element("DataReference", Namespaces.PS);

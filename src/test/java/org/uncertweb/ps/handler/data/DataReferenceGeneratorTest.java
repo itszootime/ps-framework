@@ -12,6 +12,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.uncertweb.ps.data.DataReference;
 import org.uncertweb.ps.encoding.EncodeException;
+import org.uncertweb.ps.encoding.xml.AbstractXMLEncoding;
 import org.uncertweb.ps.storage.Storage;
 import org.uncertweb.ps.storage.StorageException;
 import org.uncertweb.ps.test.ConfiguredService;
@@ -59,7 +60,7 @@ public class DataReferenceGeneratorTest {
 	
 	private DataReference generateTestDataReference() throws EncodeException, StorageException {
 		Point point = new GeometryFactory().createPoint(new Coordinate(-2.63, 51.16));
-		return generator.generate(point);
+		return generator.generate(point, AbstractXMLEncoding.class);
 	}
 
 }

@@ -3,6 +3,8 @@ package org.uncertweb.ps.handler.data;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.Comparator;
 
 import org.uncertweb.ps.Config;
 import org.uncertweb.ps.data.DataReference;
@@ -15,7 +17,7 @@ import org.uncertweb.ps.storage.StorageException;
 public class DataReferenceGenerator {
 	
 	// FIXME: need a priority flag! (e.g. XML, JSON)
-	public <T> DataReference generate(T object) throws EncodeException, StorageException {
+	public <T> DataReference generate(T object, final Class<? extends Encoding> priority) throws EncodeException, StorageException {
 		// find encoding
 		Class<?> type = object.getClass();
 		EncodingRepository repo = EncodingRepository.getInstance();
@@ -24,6 +26,21 @@ public class DataReferenceGenerator {
 				repo.getXMLEncoding(type),
 				repo.getJSONEncoding(type)
 		};
+		
+		// respect priority
+		Arrays.sort(encodings, new Comparator<Encoding>() {
+			@Override
+			public int compare(Encoding e1, Encoding e2) {                                                                                            
+				boolean is1 = priority.isInstance(e1);                                                                                                  
+				boolean is2 = priority.isInstance(e2);
+				if (is1 && !is2) {
+					return -1;
+				} else if (is2 && !is1) {
+					return 1;
+				}
+				return 0;
+			}
+		});
 		
 		// encode
 		for (Encoding encoding : encodings) {

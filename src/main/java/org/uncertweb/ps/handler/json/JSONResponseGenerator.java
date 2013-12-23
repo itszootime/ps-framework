@@ -12,6 +12,7 @@ import org.uncertweb.ps.data.Output;
 import org.uncertweb.ps.data.RequestedOutput;
 import org.uncertweb.ps.data.Response;
 import org.uncertweb.ps.encoding.EncodeException;
+import org.uncertweb.ps.encoding.json.AbstractJSONEncoding;
 import org.uncertweb.ps.handler.ResponseGenerateException;
 import org.uncertweb.ps.handler.data.DataReferenceGenerator;
 import org.uncertweb.ps.handler.json.gson.GsonWrapper;
@@ -98,7 +99,7 @@ public class JSONResponseGenerator {
 		DataReferenceGenerator gen = new DataReferenceGenerator();
 		List<JsonObject> refObjs = new ArrayList<JsonObject>();
 		for (Object obj : objects) {
-			DataReference ref = gen.generate(obj);
+			DataReference ref = gen.generate(obj, AbstractJSONEncoding.class);
 			JsonObject refObj = new JsonObject();
 			refObj.addProperty("href", ref.getURL().toString());
 			refObj.addProperty("mimeType", ref.getMimeType());
